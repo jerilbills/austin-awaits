@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Data.Common;
+using System.Diagnostics.Eventing.Reader;
 
 namespace Capstone.Models
 {
@@ -11,5 +13,8 @@ namespace Capstone.Models
         public string Description { get; set; }
         public string Avatar { get; set; }
         public List<User> Users { get; set; }
+        public bool IsActive { get; set; }
+        public DateTime CreatedDate { get; set; }
+        public List<ShoppingList> ShoppingLists { get; set; }
     }
 }

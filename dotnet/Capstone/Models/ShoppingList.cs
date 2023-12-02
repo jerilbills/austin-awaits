@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace Capstone.Models
 {
@@ -13,5 +14,6 @@ namespace Capstone.Models
         public bool IsActive { get; set; }
         public DateTime CreatedDate { get; set; }
         public DateTime LastModified { get; set; }
+        public List<Item> Items { get; set; }
     }
 }
