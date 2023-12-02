@@ -7,7 +7,7 @@ namespace Capstone.DAO
     {
         public Group CreateGroup();
         public Group UpdateGroup(int id);
-        public Group DeleteGroup(int id);
+        public bool DeleteGroup(int id);
         public Group AddUser(User userToAdd);
         public Group DeleteUser(User userToDelete);
         public Group AddShoppingList(ShoppingList shoppingListToAdd);

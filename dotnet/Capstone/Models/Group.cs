@@ -5,7 +5,7 @@ using System.Diagnostics.Eventing.Reader;
 
 namespace Capstone.Models
 {
-    public class Group
+    public class Group : IJoinable
     {
         public int Id { get; set; }
         public int OwnerId { get; set; }
@@ -20,6 +20,11 @@ namespace Capstone.Models
         public Group(string name)
         {
             Name = name;
+        }
+
+        public IJoinable Join()
+        {
+            throw new NotImplementedException();
         }
     }
 }
