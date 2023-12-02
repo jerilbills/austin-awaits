@@ -16,5 +16,10 @@ namespace Capstone.Models
         public bool IsActive { get; set; }
         public DateTime CreatedDate { get; set; }
         public List<ShoppingList> ShoppingLists { get; set; }
+
+        public Group(string name)
+        {
+            Name = name;
+        }
     }
 }
