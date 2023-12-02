@@ -1,6 +1,6 @@
 ﻿namespace Capstone.DAO
 {
-    public interface IShoppingListDao
+    public interface IInviteDao
     {
     }
 }
