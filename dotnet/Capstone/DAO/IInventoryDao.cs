@@ -2,7 +2,7 @@
 
 namespace Capstone.DAO
 {
-    public interface IInventoryDao
+    public interface IInviteDao
     {
         public Inventory AddItem(Item itemToAdd);
         public Inventory RemoveItem(Item itemToRemove);

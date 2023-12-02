@@ -1,6 +1,6 @@
 ﻿namespace Capstone.DAO
 {
-    public class InviteSqlDao
+    public class InviteSqlDao : IInviteDao
     {
     }
 }
