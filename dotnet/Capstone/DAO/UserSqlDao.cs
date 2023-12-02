@@ -155,5 +155,15 @@ namespace Capstone.DAO
             user.Role = Convert.ToString(reader["user_role"]);
             return user;
         }
+
+        public User UpdateName(User userToUpdate)
+        {
+            throw new NotImplementedException();
+        }
+
+        public User UpdateAvatar(User userToUpdate)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
