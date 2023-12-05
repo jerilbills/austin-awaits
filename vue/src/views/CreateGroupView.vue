@@ -9,5 +9,22 @@
 </template>
 
 <script>
-
+export default {
+    methods: {
+        handleErrorResponse(error, verb) {
+            if (error.response) {
+            if (error.response.status == 404) {
+                this.$router.push({name: 'NotFoundView'});
+            } else {
+                this.$store.commit('SET_NOTIFICATION',
+                ` Error ${verb} topic. Response received was "${error.response.statusText}".`);
+            }
+            } else if (error.request) {
+                this.$store.commit('SET_NOTIFICATION', `Error ${verb} topic. Server could not be reached.`);
+            } else {
+                this.$store.commit('SET_NOTIFICATION', `Error ${verb} topic. Request could not be created.`);
+            }
+        }
+    }
+}
 </script>
