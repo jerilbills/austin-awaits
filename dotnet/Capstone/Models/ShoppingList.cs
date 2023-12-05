@@ -10,11 +10,11 @@ namespace Capstone.Models
         public string Name { get; set; }
         public int ClaimantId { get; set; }
         public DateTime DueDate { get; set; }
-        public string Status { get; set; }
+        public int Status { get; set; }
         public bool IsActive { get; set; }
         public DateTime CreatedDate { get; set; }
         public DateTime LastModified { get; set; }
-        public List<Item> Items { get; set; }
+       
 
         public IJoinable Join()
         {
