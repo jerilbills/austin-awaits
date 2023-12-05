@@ -2,40 +2,14 @@
   <div class="kanban-board">
     <div class="container mt-0 pt-3 mb-5">
       <div class="columns">
-        <div class="column is-4">
+        <div class="column is-4" v-for="(column, key) in status" :key="key">
           <div class="box custom-box" style="width: 350px; height: auto;">
-            <h6 class="title is-6">Items Needed</h6>
-            <draggable class="draggable-list" :list="status.itemsNeeded" group="tasks" item-key="id">
-              <!-- Add the item slot -->
-              <template #item="{ element, index }">
-                <div>
-                  <task-card :item="element" />
-                </div>
-              </template>
-            </draggable>
-          </div>
-        </div>
-        <div class="column is-4">
-          <div class="box custom-box" style="width: 350px; height: auto;">
-            <h6 class="title is-6">Claimed</h6>
-            <draggable class="draggable-list" :list="status.claimed" group="tasks" item-key="id">
-              <!-- Add the item slot -->
-              <template #item="{ element, index }">
-                <div>
-                  <task-card :item="element" />
-                </div>
-              </template>
-            </draggable>
-          </div>
-        </div>
-        <div class="column is-4">
-          <div class="box custom-box" style="width: 350px; height: auto;">
-            <h6 class="title is-6">Purchased</h6>
-            <draggable class="draggable-list" :list="status.inProgress" group="tasks" item-key="id">
-              <!-- Add the item slot -->
-              <template #item="{ element, index }">
-                <div>
-                  <task-card :item="element" />
+            <h6 class="title is-6">{{ column.title }}</h6>
+            <draggable class="draggable-list" :list="column.items" group="tasks" item-key="id">
+              <!-- Use v-for to dynamically render TaskCard components -->
+              <template #item="{ element }">
+                <div v-for="(item, index) in element" :key="index">
+                  <task-card :item="item" />
                 </div>
               </template>
             </draggable>
@@ -49,6 +23,7 @@
 <script>
 import draggable from "vuedraggable";
 import TaskCard from "../components/TaskCard.vue"; // Adjust the path based on your project structure
+import ShoppingListService from "@/path/to/ShoppingListService.js"; // Adjust the path as needed
 
 export default {
   components: {
@@ -57,26 +32,38 @@ export default {
   },
   data() {
     return {
-      status: {
-        itemsNeeded: [
-          { id: 1, text: "Cowboy boots", avatar: "" },
-          // Add more items with unique IDs
-        ],
-        claimed: [
-          { id: 2, text: "Denim", avatar: "https://api.dicebear.com/7.x/bottts/svg" },
-          { id: 3, text: "Big Truck", avatar: "https://api.dicebear.com/7.x/bottts/svg" },
-          // Add more items with unique IDs
-        ],
-        inProgress: [
-          { id: 4, text: "Keep Austin Weird Tshirt", avatar: "https://api.dicebear.com/7.x/bottts/svg" },
-          { id: 5, text: "Cowboy boots", avatar: "https://api.dicebear.com/7.x/bottts/svg" },
-          // Add more items with unique IDs
-        ],
-      },
+      items: [
+        { title: "Items Needed", items: [] },
+        { title: "Claimed", items: [] },
+        { title: "Purchased", items: [] },
+        // Add more columns as needed
+      ],
     };
+  },
+  methods: {
+    // Function to load shopping list items
+    loadShoppingList() {
+      // Simulating API call or any other logic to fetch shopping list items
+      // Replace this with actual API call or data loading logic
+      ShoppingList.getLists()
+        .then(response => {
+          // Assuming your API response contains an array of tasks for each status
+          this.status.forEach((column, index) => {
+            column.items = response.data[index].tasks;
+          });
+        })
+        .catch(error => {
+          console.error('Error fetching shopping list:', error);
+        });
+    },
+  },
+  created() {
+    // Load shopping list items when the component is created
+    this.loadShoppingList();
   },
 };
 </script>
+
 
 <style scoped>
 .avatar {
