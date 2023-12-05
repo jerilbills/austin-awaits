@@ -1,5 +1,7 @@
 <template>
-    <a>Create a group</a>
+    <router-link :to="{ name: 'CreateGroup' }">
+        Create a group
+    </router-link>
 </template>
 
 <script>
