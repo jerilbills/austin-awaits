@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Capstone.DAO
 {
-    public class InviteSqlDao : IInviteDao
+    public class InvitationSqlDao : IInvitationDao
     {
         public Inventory AddItem(Item itemToAdd)
         {
