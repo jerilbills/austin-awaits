@@ -10,6 +10,8 @@
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string Avatar { get; set; }
+        public int GroupId { get; set; }
+        public bool IsActive { get; set; }
     }
 
     /// <summary>
