@@ -24,6 +24,20 @@ export default {
             } else {
                 this.$store.commit('SET_NOTIFICATION', `Error ${verb} topic. Request could not be created.`);
             }
+        },
+        validateForm() {
+            let msg = '';
+            if (this.editCard.title.length === 0) {
+                msg += 'The new card must have a title. ';
+            }
+            if (this.editCard.status.length === 0) {
+                msg += 'The new card must have a status.';
+            }
+            if (msg.length > 0) {
+                this.$store.commit('SET_NOTIFICATION', msg);
+                return false;
+            }
+            return true;
         }
     }
 }
