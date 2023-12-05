@@ -47,6 +47,8 @@
   
   li:hover {
     color: #bf5700;
+    font-weight: bold;
+    font-size: large;
     
   }
   </style>

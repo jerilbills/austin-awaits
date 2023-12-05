@@ -4,21 +4,9 @@
         <a class="navbar-item" href="#">
           <img src="../assets/logo-placeholder.jpg" width="auto" height="200%">
         </a>
-  
-        <a
-          role="button"
-          class="navbar-burger"
-          aria-label="menu"
-          aria-expanded="false"
-          data-target="navbarBasicExample"
-        >
-          <span aria-hidden="true"></span>
-          <span aria-hidden="true"></span>
-          <span aria-hidden="true"></span>
-        </a>
       </div>
   
-      <div id="navbarBasicExample" class="navbar-menu">
+      <div id="navbar" class="navbar-menu">
         <div class="navbar-start">
           <div class="navbar-brand-text">PROJECT DASHBOARD</div>
         </div>
