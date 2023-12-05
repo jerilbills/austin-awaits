@@ -25,17 +25,17 @@ namespace Capstone.DAO
             throw new System.NotImplementedException();
         }
 
-        public bool DeleteGroup(int id)
+        public int DeleteGroup(int id)
         {
             throw new System.NotImplementedException();
         }
 
-        public Group DeleteShoppingList(ShoppingList shoppingListToDelete)
+        public int DeleteShoppingList(ShoppingList shoppingListToDelete)
         {
             throw new System.NotImplementedException();
         }
 
-        public Group DeleteUser(User userToDelete)
+        public int DeleteUser(User userToDelete)
         {
             throw new System.NotImplementedException();
         }
@@ -54,5 +54,6 @@ namespace Capstone.DAO
         {
             throw new System.NotImplementedException();
         }
+
     }
 }

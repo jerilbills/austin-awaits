@@ -7,9 +7,9 @@ namespace Capstone.DAO
     {
         public ShoppingList CreateShoppingList();
         public ShoppingList UpdateShoppingList(ShoppingList listToUpdate);
-        public bool DeleteShoppingList(ShoppingList listToDelete);
+        public int DeleteShoppingList(ShoppingList listToDelete);
         public ShoppingList AddItem(Item itemToAdd);
-        public ShoppingList DeleteItem(Item itemToDelete);
+        public int DeleteItem(Item itemToDelete);
         public ShoppingList PurchaseItem(Item itemToPurchase);
         public ShoppingList GetShoppingListById(int id);
         public List<ShoppingList> GetShoppingLists();

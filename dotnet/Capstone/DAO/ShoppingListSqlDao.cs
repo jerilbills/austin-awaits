@@ -15,12 +15,12 @@ namespace Capstone.DAO
             throw new System.NotImplementedException();
         }
 
-        public ShoppingList DeleteItem(Item itemToDelete)
+        public int DeleteItem(Item itemToDelete)
         {
             throw new System.NotImplementedException();
         }
 
-        public bool DeleteShoppingList(ShoppingList listToDelete)
+        public int DeleteShoppingList(ShoppingList listToDelete)
         {
             throw new System.NotImplementedException();
         }
