@@ -48,6 +48,14 @@ const routes = [
     meta: {
       requiresAuth: false
     }
+  },
+  {
+    path: "/groups/create",
+    name: "CreateGroup",
+    component: CreateGroupView,
+    meta: {
+      requiresAuth: true
+    }
   }
 ];
 
