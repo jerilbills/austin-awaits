@@ -100,6 +100,12 @@ ALTER TABLE lists ADD CONSTRAINT FK_lists_users FOREIGN KEY (list_owner_user_id)
 ALTER TABLE items ADD CONSTRAINT FK_items_users_created FOREIGN KEY (created_by_user_id) REFERENCES users(user_id);
 ALTER TABLE items ADD CONSTRAINT FK_items_users_modified FOREIGN KEY (last_modified_by_user_id) REFERENCES users(user_id);
 
+ALTER TABLE list_items ADD CONSTRAINT FK_list_items_lists FOREIGN KEY (list_id) REFERENCES lists(list_id);
+ALTER TABLE list_items ADD CONSTRAINT FK_list_items_items FOREIGN KEY (item_id) REFERENCES items(item_id);
+ALTER TABLE list_items ADD CONSTRAINT FK_list_items_list_item_statues FOREIGN KEY (list_item_status_id) REFERENCES list_item_statuses(list_item_status_id);
+ALTER TABLE list_items ADD CONSTRAINT FK_list_items_users_claimed FOREIGN KEY (list_item_claimed_by_user_id) REFERENCES user(user_id);
+ALTER TABLE list_items ADD CONSTRAINT FK_list_items_users_modified FOREIGN KEY (last_modified_by_user_id) REFERENCES user(user_id);
+
 
 --populate default data
 INSERT INTO departments (department_name) VALUES ('Engineering');
