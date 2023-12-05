@@ -26,7 +26,7 @@ namespace Capstone.DAO
 
         public List<Item> GetItemsByListId(int listID)
         {
-            string sql = "SELECT items.item_id, item_name, item_image_url, is_tracked_inventory, created_by_user_id, items.created_date_utc, items.last_modified_by_user_id, items.last_modified_date_utc, items.is_active, list_id, items.item_id, quantity, list_item_claimed_by_user_id, list_item_status_id, items.created_date_utc, items.last_modified_by_user_id, items.last_modified_date_utc, items.is_active " +
+            string sql = "SELECT items.item_id, item_name, item_description, item_image_url, is_tracked_inventory, created_by_user_id, items.created_date_utc, items.last_modified_by_user_id, items.last_modified_date_utc, items.is_active, list_id, items.item_id, quantity, list_item_claimed_by_user_id, list_item_status_id, items.created_date_utc, items.last_modified_by_user_id, items.last_modified_date_utc, items.is_active " +
                 "FROM items JOIN list_items ON list_items.item_id = items.item_id " +
                 "WHERE list_id = @listID;";
             List<Item> output = new List<Item>();
@@ -65,7 +65,7 @@ namespace Capstone.DAO
             item.Id = Convert.ToInt32(reader["item_id"]);
             item.CreatedBy = Convert.ToInt32(reader["created_by_user_id"]);
             item.CreatedDate = Convert.ToDateTime(reader["created_date_utc"]);
-            item.Description = Convert.ToString(reader["description"]);
+            item.Description = Convert.ToString(reader["item_description"]);
             item.ImgUrl = Convert.ToString(reader["item_image_url"]);
             item.IsActive = Convert.ToBoolean(reader["is_active"]);
             item.isTrackedInventory = Convert.ToBoolean(reader["is_tracked_inventory"]);
