@@ -60,7 +60,7 @@ namespace Capstone.DAO
                 "list_status_id, list_owner_user_id, due_date_utc, " +
                 "created_date_utc, last_modified_date_utc, is_active " +
                 "FROM lists WHERE department_id = @department_id;";
-            List<ShoppingList> output = null;
+            List<ShoppingList> output = new List<ShoppingList>();
             try
             {
                 using (SqlConnection conn = new SqlConnection(connectionString))

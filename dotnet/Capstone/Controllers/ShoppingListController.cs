@@ -21,12 +21,12 @@ namespace Capstone.Controllers
 
         [HttpGet]
 
-        public ActionResult<List<ShoppingList>> GetShoppingListsByDepartmentID(int departmentId)
+        public ActionResult<List<ShoppingList>> GetShoppingListsByDepartmentID(int id)
         {
             List<ShoppingList> output = new List<ShoppingList>();
             try
             {
-                output = shoppingListDao.GetShoppingListsByDepartmentID(departmentId);
+                output = shoppingListDao.GetShoppingListsByDepartmentID(id);
             }
             catch (System.Exception)
             {
