@@ -64,6 +64,8 @@ namespace Capstone
             services.AddSingleton<ITokenGenerator>(tk => new JwtGenerator(Configuration["JwtSecret"]));
             services.AddSingleton<IPasswordHasher>(ph => new PasswordHasher());
             services.AddTransient<IUserDao>(m => new UserSqlDao(connectionString));
+            services.AddTransient<IItemDao>(it => new ItemSqlDao(connectionString));
+            services.AddTransient<IShoppingListDao>(sl => new ShoppingListSqlDao(connectionString));
 
             // Swagger set up
             services.AddSwaggerGen(s => {

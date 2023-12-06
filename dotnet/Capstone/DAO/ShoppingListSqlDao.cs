@@ -8,7 +8,12 @@ namespace Capstone.DAO
 {
     public class ShoppingListSqlDao : IShoppingListDao
     {
-        private static string connectionString;
+        private readonly string connectionString;
+
+        public ShoppingListSqlDao(string dbConnectionString)
+        {
+            connectionString = dbConnectionString;
+        }
         public ShoppingList AddItem(Item itemToAdd)
         {
             throw new System.NotImplementedException();
@@ -51,10 +56,11 @@ namespace Capstone.DAO
 
         public List<ShoppingList> GetShoppingListsByDepartmentID(int departmentId)
         {
-            string sql = "SELECT *" +
-                "FROM ShoppingList" +
-                "WHERE department_id = @departmentId";
-            List<ShoppingList> output = null;
+            string sql = "SELECT list_id, list_name, department_id, " +
+                "list_status_id, list_owner_user_id, due_date_utc, " +
+                "created_date_utc, last_modified_date_utc, is_active " +
+                "FROM lists WHERE department_id = @department_id;";
+            List<ShoppingList> output = new List<ShoppingList>();
             try
             {
                 using (SqlConnection conn = new SqlConnection(connectionString))
@@ -85,15 +91,15 @@ namespace Capstone.DAO
         public ShoppingList MapRowToShoppingList(SqlDataReader reader)
         {
             ShoppingList ShoppingList = new ShoppingList();
-            ShoppingList.Id = Convert.ToInt32(reader["id"]);
-            ShoppingList.OwnerId = Convert.ToInt32(reader["ownerId"]);
-            ShoppingList.Name = Convert.ToString(reader["name"]);
-            ShoppingList.ClaimantId = Convert.ToInt32(reader["claimant_id"]);
-            ShoppingList.DueDate = Convert.ToDateTime(reader["due_date"]);
-            ShoppingList.Status = Convert.ToInt32(reader["status"]);
-            ShoppingList.IsActive = Convert.ToBoolean(reader["is_Active"]);
-            ShoppingList.CreatedDate = Convert.ToDateTime(reader["created_date"]);
-            ShoppingList.LastModified = Convert.ToDateTime(reader["last_modified"]);
+            ShoppingList.Id = Convert.ToInt32(reader["list_id"]);
+            ShoppingList.OwnerId = Convert.ToInt32(reader["list_owner_user_id"]);
+            ShoppingList.Name = Convert.ToString(reader["list_name"]);
+            ShoppingList.DueDate = Convert.ToDateTime(reader["due_date_utc"]);
+            ShoppingList.Status = Convert.ToInt32(reader["list_status_id"]);
+            ShoppingList.IsActive = Convert.ToBoolean(reader["is_active"]);
+            ShoppingList.CreatedDate = Convert.ToDateTime(reader["created_date_utc"]);
+            ShoppingList.LastModified = Convert.ToDateTime(reader["last_modified_date_utc"]);
+            ShoppingList.DeparmentId = Convert.ToInt32(reader["department_id"]);
 
             return ShoppingList;
 
