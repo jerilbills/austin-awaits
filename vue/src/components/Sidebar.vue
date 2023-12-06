@@ -1,7 +1,7 @@
 <template>
   <div class="sidebar">
     <ul>
-      <li v-for="(list, index) in lists" :key="index" @click="navigateTo('home')">
+      <li v-for="list in lists" :key="list.id" @click="navigateTo(list.id)">
         {{ list.name }}
       </li>
     </ul>
@@ -21,7 +21,7 @@ export default {
     };
   },
   created() {
-    ShoppingListService.getLists()
+    ShoppingListService.getLists(this.$store.state.user.departmentId)
       .then(response => {
        // API response data will need to contain array of shopping lists
         this.lists = response.data;
@@ -33,10 +33,15 @@ export default {
 
 
     methods: {
-    navigateTo(route) {
-      route
-      // vue router to navigate to individual list
-      console.log(`Navigating to ${route}`);
+    navigateTo(listId) {
+      ShoppingListService.getSpecificList(this.$store.state.user.departmentId, listId)
+      .then(response => {
+        // this.$store.state.activeItems = response.data;
+        this.$store.commit('SET_ITEMS', response.data);
+      })
+      .catch(error => {
+        console.error('Error fetching list:', error);
+      });
     },
   },
 };
