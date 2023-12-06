@@ -22,7 +22,7 @@
                             INVITES
                         </a>
                         <p> | </p>
-                        <a class="navbar-item">
+                        <a class="navbar-item" href="/logout">
                             LOGOUT
                         </a>
                     </div>

@@ -1,46 +1,49 @@
-import { createStore as _createStore } from 'vuex';
-import axios from 'axios';
+import { createStore as _createStore } from "vuex";
+import axios from "axios";
 const NOTIFICATION_TIMEOUT = 6000;
 
 export function createStore(currentToken, currentUser) {
   let store = _createStore({
     state: {
-      token: currentToken || '',
-      user: currentUser || {}
+      token: currentToken || "",
+      user: currentUser || {},
+      activeItems: [
+        
+      ],
     },
     mutations: {
       SET_AUTH_TOKEN(state, token) {
         state.token = token;
-        localStorage.setItem('token', token);
-        axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+        localStorage.setItem("token", token);
+        axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
       },
       SET_USER(state, user) {
         state.user = user;
-        localStorage.setItem('user', JSON.stringify(user));
+        localStorage.setItem("user", JSON.stringify(user));
       },
       LOGOUT(state) {
-        localStorage.removeItem('token');
-        localStorage.removeItem('user');
-        state.token = '';
+        localStorage.removeItem("token");
+        localStorage.removeItem("user");
+        state.token = "";
         state.user = {};
         axios.defaults.headers.common = {};
       },
       SET_NOTIFICATION(state, notification) {
         // Clear the current notification if one exists
         if (state.notification) {
-          this.commit('CLEAR_NOTIFICATION');
+          this.commit("CLEAR_NOTIFICATION");
         }
 
-        if (typeof notification === 'string') {
+        if (typeof notification === "string") {
           // If only a string was sent, create a notification object with defaults
           notification = {
             message: notification,
-            type: 'error',
-            timeout: NOTIFICATION_TIMEOUT
-          }
+            type: "error",
+            timeout: NOTIFICATION_TIMEOUT,
+          };
         } else {
           // Else add default values if needed
-          notification.type = notification.type || 'error';
+          notification.type = notification.type || "error";
           notification.timeout = notification.timeout || NOTIFICATION_TIMEOUT;
         }
 
@@ -49,10 +52,19 @@ export function createStore(currentToken, currentUser) {
 
         // Clear the message after timeout (see https://developer.mozilla.org/en-US/docs/Web/API/setTimeout)
         notification.timer = window.setTimeout(() => {
-          this.commit('CLEAR_NOTIFICATION');
+          this.commit("CLEAR_NOTIFICATION");
         }, notification.timeout);
-      }
+      },
+      SET_ITEMS(state, items) {
+        state.activeItems = {};
+        state.activeItems = items.map(item => item);
+      },
     },
+    getters:{
+      getItems() {
+        return this.activeItems;
+      }
+    }
   });
   return store;
 }

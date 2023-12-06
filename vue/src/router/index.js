@@ -7,8 +7,8 @@ import LoginView from '../views/LoginView.vue';
 import LogoutView from '../views/LogoutView.vue';
 import RegisterView from '../views/RegisterView.vue';
 import CreateGroupView from '../views/CreateGroupView.vue';
-import PageVue from '../views/Page.vue';
-
+import DepartmentListView from '../views/DepartmentListView.vue';
+import ListView from '../views/ListView.vue';
 /**
  * The Vue Router is used to "direct" the browser to render a specific view component
  * inside of App.vue depending on the URL.
@@ -21,7 +21,7 @@ const routes = [
   {
     path: '/',
     name: 'home',
-    component: PageVue,
+    component: DepartmentListView,
     meta: {
       requiresAuth: true
     }
@@ -57,6 +57,11 @@ const routes = [
     meta: {
       requiresAuth: true
     }
+  },
+  {
+    path:"/testing",
+    name:"testing",
+    component: ListView
   }
 ];
 
