@@ -5,12 +5,11 @@ namespace Capstone.DAO
 {
     public interface IUserDao
     {
-        IList<User> GetUsers();
-        User GetUserById(int id);
-        User GetUserByUsername(string username);
-        User CreateUser(string username, string password, string role);
-
-        User UpdateName(User userToUpdate);
+        IList<User> GetActiveUsers();
+        User GetActiveUserById(int id);
+        User GetActiveUserByUsername(string username);
+        User CreateUser(RegisterUser newUser);
+        User UpdateName(User potentialUser);
         User UpdateAvatar(User userToUpdate);
     }
 }

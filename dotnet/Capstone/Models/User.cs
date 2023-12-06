@@ -1,27 +1,26 @@
-﻿namespace Capstone.Models
+﻿using System;
+using System.Text.Json.Serialization;
+
+namespace Capstone.Models
 {
     public class User
     {
         public int UserId { get; set; }
         public string Username { get; set; }
-        public string PasswordHash { get; set; }
-        public string Salt { get; set; }
         public string Role { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
-        public string Avatar { get; set; }
-        public int GroupId { get; set; }
-        public bool IsActive { get; set; }
-    }
+        public string AvatarUrl { get; set; }
+        public int DepartmentId { get; set; }
 
-    /// <summary>
-    /// Model of user data to return upon successful login
-    /// </summary>
-    public class ReturnUser
-    {
-        public int UserId { get; set; }
-        public string Username { get; set; }
-        public string Role { get; set; }
+        [JsonIgnore]
+        public string PasswordHash { get; set; }
+        [JsonIgnore]
+        public string Salt { get; set; }
+        [JsonIgnore]
+        public bool IsActive { get; set; }
+        [JsonIgnore]
+        public DateTime CreatedDateUtc { get; set; }
     }
 
     /// <summary>
@@ -29,7 +28,7 @@
     /// </summary>
     public class LoginResponse
     {
-        public ReturnUser User { get; set; }
+        public User User { get; set; }
         public string Token { get; set; }
     }
 
@@ -47,6 +46,10 @@
     /// </summary>
     public class RegisterUser
     {
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
+        // TODO - need to add department model, controller, and DAO and to the front end so this can be dynamically generated; for now, hardcoding to default to 1
+        public int DepartmentId { get; set; } = 1;
         public string Username { get; set; }
         public string Password { get; set; }
         public string ConfirmPassword { get; set; }

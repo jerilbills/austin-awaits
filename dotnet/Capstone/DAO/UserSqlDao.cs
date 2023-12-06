@@ -18,11 +18,12 @@ namespace Capstone.DAO
             connectionString = dbConnectionString;
         }
 
-        public IList<User> GetUsers()
+        public IList<User> GetActiveUsers()
         {
             IList<User> users = new List<User>();
 
-            string sql = "SELECT user_id, username, password_hash, salt, user_role FROM users";
+            string sql = "SELECT user_id, username, first_name, last_name, department_id, password_hash, salt, user_role, avatar_url, " +
+                "is_active, created_date_utc FROM users WHERE is_active = 1";
 
             try
             {
@@ -48,11 +49,12 @@ namespace Capstone.DAO
             return users;
         }
 
-        public User GetUserById(int userId)
+        public User GetActiveUserById(int userId)
         {
             User user = null;
 
-            string sql = "SELECT user_id, username, password_hash, salt, user_role FROM users WHERE user_id = @user_id";
+            string sql = "SELECT TOP 1 user_id, username, first_name, last_name, department_id, password_hash, salt, user_role, avatar_url, " +
+                "is_active, created_date_utc FROM users WHERE user_id = @user_id AND is_active = 1";
 
             try
             {
@@ -78,11 +80,12 @@ namespace Capstone.DAO
             return user;
         }
 
-        public User GetUserByUsername(string username)
+        public User GetActiveUserByUsername(string username)
         {
             User user = null;
 
-            string sql = "SELECT user_id, username, password_hash, salt, user_role FROM users WHERE username = @username";
+            string sql = "SELECT TOP 1 user_id, username, first_name, last_name, department_id, password_hash, salt, user_role, avatar_url, " +
+                "is_active, created_date_utc FROM users WHERE username = @username AND is_active = 1";
 
             try
             {
@@ -108,16 +111,20 @@ namespace Capstone.DAO
             return user;
         }
 
-        public User CreateUser(string username, string password, string role)
+        public User CreateUser(RegisterUser potentialUser)
         {
+            //string username, string password, string role
             User newUser = null;
 
             IPasswordHasher passwordHasher = new PasswordHasher();
-            PasswordHash hash = passwordHasher.ComputeHash(password);
+            PasswordHash hash = passwordHasher.ComputeHash(potentialUser.Password);
 
-            string sql = "INSERT INTO users (username, password_hash, salt, user_role) " +
+            // TODO - consider changing this to a service vs. hardcoding here
+            string avatarUrl = $"https://api.dicebear.com/7.x/initials/svg?seed={potentialUser.FirstName.Trim().Substring(0,1)}{potentialUser.LastName.Trim().Substring(0, 1)}";
+
+            string sql = "INSERT INTO users (username, first_name, last_name, department_id, password_hash, salt, user_role, avatar_url) " +
                          "OUTPUT INSERTED.user_id " +
-                         "VALUES (@username, @password_hash, @salt, @user_role)";
+                         "VALUES (@username, @first_name, @last_name, @department_id, @password_hash, @salt, @user_role, @avatar_url)";
 
             int newUserId = 0;
             try
@@ -127,15 +134,19 @@ namespace Capstone.DAO
                     conn.Open();
 
                     SqlCommand cmd = new SqlCommand(sql, conn);
-                    cmd.Parameters.AddWithValue("@username", username);
+                    cmd.Parameters.AddWithValue("@username", potentialUser.Username);
+                    cmd.Parameters.AddWithValue("@first_name", potentialUser.FirstName);
+                    cmd.Parameters.AddWithValue("@last_name", potentialUser.LastName);
+                    cmd.Parameters.AddWithValue("@department_id", potentialUser.DepartmentId);
                     cmd.Parameters.AddWithValue("@password_hash", hash.Password);
                     cmd.Parameters.AddWithValue("@salt", hash.Salt);
-                    cmd.Parameters.AddWithValue("@user_role", role);
+                    cmd.Parameters.AddWithValue("@user_role", potentialUser.Role);
+                    cmd.Parameters.AddWithValue("@avatar_url", avatarUrl);
 
                     newUserId = Convert.ToInt32(cmd.ExecuteScalar());
                     
                 }
-                newUser = GetUserById(newUserId);
+                newUser = GetActiveUserById(newUserId);
             }
             catch (SqlException ex)
             {
@@ -150,9 +161,15 @@ namespace Capstone.DAO
             User user = new User();
             user.UserId = Convert.ToInt32(reader["user_id"]);
             user.Username = Convert.ToString(reader["username"]);
+            user.Role = Convert.ToString(reader["user_role"]);
+            user.FirstName = Convert.ToString(reader["first_name"]);
+            user.LastName = Convert.ToString(reader["last_name"]);
+            user.AvatarUrl = Convert.ToString(reader["avatar_url"]);
+            user.DepartmentId = Convert.ToInt32(reader["department_id"]);
             user.PasswordHash = Convert.ToString(reader["password_hash"]);
             user.Salt = Convert.ToString(reader["salt"]);
-            user.Role = Convert.ToString(reader["user_role"]);
+            user.IsActive = Convert.ToBoolean(reader["is_active"]);
+            user.CreatedDateUtc = Convert.ToDateTime(reader["created_date_utc"]);
             return user;
         }
 
