@@ -8,8 +8,8 @@ namespace Capstone.DAO
         IList<User> GetActiveUsers();
         User GetActiveUserById(int id);
         User GetActiveUserByUsername(string username);
-        User CreateUser(RegisterUser newUser);
-        User UpdateName(User potentialUser);
+        User CreateUser(RegisterUser potentialUser);
+        User UpdateName(User userToUpdate);
         User UpdateAvatar(User userToUpdate);
     }
 }
