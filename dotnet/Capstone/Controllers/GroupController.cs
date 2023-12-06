@@ -1,6 +1,8 @@
-﻿namespace Capstone.Controllers
+﻿using Microsoft.AspNetCore.Mvc;
+
+namespace Capstone.Controllers
 {
-    public class GroupController
+    public class GroupController : ControllerBase 
     {
     }
 }
