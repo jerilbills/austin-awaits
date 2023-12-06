@@ -8,7 +8,7 @@ using System.Collections.Generic;
 namespace Capstone.Controllers
 {
     [ApiController]
-    [Route("department/{id}/lists")]
+    [Route("department/{id}/list")]
     [Authorize]
     public class ShoppingListController : ControllerBase
     {
