@@ -31,7 +31,7 @@ namespace Capstone.Controllers
             // Get the user by username
             try
             { 
-                user = userDao.GetUserByUsername(userParam.Username);
+                user = userDao.GetActiveUserByUsername(userParam.Username);
             }
             catch (DaoException)
             {
@@ -45,11 +45,11 @@ namespace Capstone.Controllers
                 // Create an authentication token
                 string token = tokenGenerator.GenerateToken(user.UserId, user.Username, user.Role);
 
-                // Create a ReturnUser object to return to the client
-                LoginResponse retUser = new LoginResponse() { User = new ReturnUser() { UserId = user.UserId, Username = user.Username, Role = user.Role }, Token = token };
+                // Create a user object to return to the client
+                LoginResponse returnUser = new LoginResponse() { User = user, Token = token };
 
                 // Switch to 200 OK
-                result = Ok(retUser);
+                result = Ok(returnUser);
             }
 
             return result;
@@ -66,7 +66,7 @@ namespace Capstone.Controllers
             // is username already taken?
             try
             {
-                User existingUser = userDao.GetUserByUsername(userParam.Username);
+                User existingUser = userDao.GetActiveUserByUsername(userParam.Username);
                 if (existingUser != null)
                 {
                     return Conflict(new { message = "Username already taken. Please choose a different username." });
@@ -81,7 +81,7 @@ namespace Capstone.Controllers
             User newUser;
             try
             {
-                newUser = userDao.CreateUser(userParam.Username, userParam.Password, userParam.Role);
+                newUser = userDao.CreateUser(userParam);
             }
             catch (DaoException)
             {
@@ -90,10 +90,7 @@ namespace Capstone.Controllers
 
             if (newUser != null)
             {
-                // Create a ReturnUser object to return to the client
-                ReturnUser returnUser = new ReturnUser() { UserId = newUser.UserId, Username = newUser.Username, Role = newUser.Role };
-
-                result = Created("/login", returnUser);
+                result = Created("/login", newUser);
             }
 
             return result;
