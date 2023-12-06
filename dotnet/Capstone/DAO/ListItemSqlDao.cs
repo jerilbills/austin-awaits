@@ -13,7 +13,7 @@ namespace Capstone.DAO
         public ListItem UpdateListItem(int listId, int itemId, int status)
         {
 
-            string sql = "UPDATE ListItem SET listItem_status = @status WHERE list_id = @ListId AND item_id = @ItemId";
+            string sql = "UPDATE list_items SET list_item_status_id = @status WHERE list_id = @ListId AND item_id = @ItemId;";
 
             ListItem output = null;
 
@@ -52,9 +52,11 @@ namespace Capstone.DAO
 
         public ListItem GetListItemById(int itemId, int listId)
         {
-            string sql = @"SELECT * 
-                           FROM ListItem 
-                           WHERE item_id = @itemId AND list_id = @listId;";
+            string sql = @"SELECT list_id, item_id, quantity, 
+                list_item_claimed_by_user_id, list_item_status_id, 
+                created_date_utc, last_modified_by_user_id, 
+                last_modified_date_utc, is_active 
+                FROM list_items WHERE list_id = @ListId AND item_id = @ItemId;";
             ListItem output = null;
             try
             {
@@ -86,11 +88,14 @@ namespace Capstone.DAO
             ListItem listItem = new ListItem();
             listItem.ListID = Convert.ToInt32(reader["list_id"]);
             listItem.ItemID = Convert.ToInt32(reader["item_id"]);
-            listItem.IsActive = Convert.ToBoolean(reader["isActive"]);
-            listItem.LastModifiedBy = Convert.ToInt32(reader["lastModifiedBy"]);
+            listItem.IsActive = Convert.ToBoolean(reader["is_active"]);
+            listItem.LastModifiedBy = Convert.ToInt32(reader["last_modified_by_user_id"]);
             listItem.CreatedBy = Convert.ToInt32(reader["createdBy"]);
             listItem.Quantity = Convert.ToInt32(reader["quantity"]);
-            listItem.CreatedDate = Convert.ToDateTime(reader["created_date"]);
+            listItem.CreatedDate = Convert.ToDateTime(reader["created_date_utc"]);
+            listItem.ClaimedBy = Convert.ToInt32(reader["list_item_claimed_by_user_id"]);
+            listItem.ListItemStatusId = Convert.ToInt32(reader["list_item_status_id"]);
+            listItem.LastModifiedDate = Convert.ToDateTime(reader["last_modified_date_utc"]);
             return listItem;
         }
 
