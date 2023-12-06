@@ -7,7 +7,7 @@ using System.Collections.Generic;
 namespace Capstone.Controllers
 {
     [ApiController]
-    [Route("department/{id}/lists/{list_id}/listitem")]
+    [Route("department/{department_id}/list/{list_id}/listitem")]
     [Authorize]
     public class ItemController : ControllerBase
     {
