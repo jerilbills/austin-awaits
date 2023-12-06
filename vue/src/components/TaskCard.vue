@@ -4,10 +4,11 @@
       <!-- Displaying item information -->
       <div class="media is-justify-content-space-between">
         <div class="media-left">
-          <p class="text-gray-700 font-semibold font-sans tracking-wide text-sm">{{ item.text }}</p>
+          <p class="text-gray-700 font-semibold font-sans tracking-wide text-sm">{{ item.name }}</p>
         </div>
         <div class="media-right">
-          <img v-if="item.avatar" class="image is-32x32" :src="getAvatarUrl(item.avatar)" alt="Avatar">
+          <!-- <img v-if="item.imgUrl" class="image is-32x32" :src="getAvatarUrl()" alt="Avatar"> -->
+          <img class="image is-32x32" :src="getAvatarUrl()" alt="Avatar">
           <badge v-if="item.type" :color="badgeColor">{{ item.type }}</badge>
         </div>
       </div>
@@ -23,21 +24,19 @@ export default {
     Badge,
   },
   props: {
-    item: {
-      type: Object,
-      default: () => ({}),
-    },
+    item: {},
   },
   methods: {
     getAvatarUrl() {
       // Directly use the avatar property from the item prop
-      return this.item.avatar;
+      // return this.item.imgUrl ? this.item.imgUrl : "../assets/AvatarMaker.png"
+      return "@/assets/AvatarMaker.png"
     },
     handleAvatarError(event) {
       // Handle avatar loading errors
       console.error('Error loading avatar:', event.target.src);
       // basically set a default avatar image
-      event.target.src = '../assets/AvatarMaker.png';
+      event.target.src = '@/assets/AvatarMaker.png';
     },
   },
   computed: {

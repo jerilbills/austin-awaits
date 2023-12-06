@@ -2,39 +2,12 @@
   <div class="kanban-board">
     <div class="container mt-0 pt-3 mb-5">
       <div class="columns">
-        <div class="column is-4">
+        <div class="column is-4" v-for="(column, key) in columns" :key="key">
           <div class="box custom-box" style="width: 350px; height: auto;">
-            <h6 class="title is-6">Items Needed</h6>
-            <draggable class="draggable-list" :list="status.itemsNeeded" group="tasks" item-key="id">
-              <!-- Add the item slot -->
-              <template #item="{ element, index }">
-                <div>
-                  <task-card :item="element" />
-                </div>
-              </template>
-            </draggable>
-          </div>
-        </div>
-        <div class="column is-4">
-          <div class="box custom-box" style="width: 350px; height: auto;">
-            <h6 class="title is-6">Claimed</h6>
-            <draggable class="draggable-list" :list="status.claimed" group="tasks" item-key="id">
-              <!-- Add the item slot -->
-              <template #item="{ element, index }">
-                <div>
-                  <task-card :item="element" />
-                </div>
-              </template>
-            </draggable>
-          </div>
-        </div>
-        <div class="column is-4">
-          <div class="box custom-box" style="width: 350px; height: auto;">
-            <h6 class="title is-6">Purchased</h6>
-            <draggable class="draggable-list" :list="status.inProgress" group="tasks" item-key="id">
-              <!-- Add the item slot -->
-              <template #item="{ element, index }">
-                <div>
+            <h6 class="title is-6">{{ column.title }}</h6>
+            <draggable class="draggable-list" :list="column.items" group="tasks" item-key="id">
+              <template #item="{ element }">
+                <div :key="element.id">
                   <task-card :item="element" />
                 </div>
               </template>
@@ -48,67 +21,89 @@
 
 <script>
 import draggable from "vuedraggable";
-import TaskCard from "../components/TaskCard.vue"; // Adjust the path based on your project structure
+import TaskCard from "../components/TaskCard.vue";
 
 export default {
   components: {
     draggable,
     TaskCard,
   },
+  computed:{
+    myItems() {
+      return this.$store.state.activeItems;
+    }
+  },
+
   data() {
     return {
-      status: {
-        itemsNeeded: [
-          { id: 1, text: "Cowboy boots", avatar: "" },
-          // Add more items with unique IDs
-        ],
-        claimed: [
-          { id: 2, text: "Denim", avatar: "https://api.dicebear.com/7.x/bottts/svg" },
-          { id: 3, text: "Big Truck", avatar: "https://api.dicebear.com/7.x/bottts/svg" },
-          // Add more items with unique IDs
-        ],
-        inProgress: [
-          { id: 4, text: "Keep Austin Weird Tshirt", avatar: "https://api.dicebear.com/7.x/bottts/svg" },
-          { id: 5, text: "Cowboy boots", avatar: "https://api.dicebear.com/7.x/bottts/svg" },
-          // Add more items with unique IDs
-        ],
-      },
+      columns: [
+        { title: "Items Needed", items: [] },
+        { title: "Claimed", items: [] },
+        { title: "Purchased", items: [] },
+      ],
+      activeItems: [],
     };
   },
+  methods: {
+    // Function to load list items
+    loadShoppingList() {
+      this.clearScreen();
+      this.myItems.forEach((item) => {
+        const columnIndex = item.statusId - 1;
+        if (this.columns[columnIndex]) {
+          this.columns[columnIndex].items.push(item);
+        }
+      });
+    },
+    clearScreen(){
+      this.columns = [
+        { title: "Items Needed", items: [] },
+        { title: "Claimed", items: [] },
+        { title: "Purchased", items: [] },
+      ];
+    }
+  },
+  created() {
+      this.loadShoppingList();
+  },
+  updated(){
+    this.loadShoppingList();
+  },
+  watch:{
+    myItems: 'loadShoppingList'
+  }
 };
 </script>
 
 <style scoped>
 .avatar {
-    width: 35px;
-    height: 35px;
-    border-radius: 50%;
-  }
-  .custom-box {
-    width: 100%;
-  }
-  
-  .draggable-list {
-    min-height: 10vh;
-  }
-  
-  .draggable-list>div {
-    cursor: pointer;
-  }
-  
-  .kanban-board {
-    margin-left: 100px;
-    font-family: 'Barlow', sans-serif;
-    position: fixed; /* Set position to fixed */
-    top: 100px; /* Pin to the top of the viewport */
-    left: 200px; /* Pin to the left of the viewport */
-    height: 100%; 
-  }
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+}
 
-  .columns {
-    background-color: rgb(249, 249, 249);
-  }
-  
+.custom-box {
+  width: 100%;
+}
 
+.draggable-list {
+  min-height: 10vh;
+}
 
-  </style>
+.draggable-list>div {
+  cursor: pointer;
+}
+
+.kanban-board {
+  margin-left: 100px;
+  font-family: 'Barlow', sans-serif;
+  position: fixed;
+  top: 100px;
+  left: 200px;
+  height: 100%;
+}
+
+.columns {
+  background-color: rgb(249, 249, 249);
+}
+</style>
