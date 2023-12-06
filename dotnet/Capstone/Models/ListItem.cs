@@ -8,6 +8,11 @@ namespace Capstone.Models
         public int ListID { get; set; }
         public int ItemID { get; set; }
 
+        public string Name { get; set; }
+        public string Description { get; set; }
+        public string ImgUrl { get; set; }
+
+
         public int ListItemStatusId { get; set; } = 0;
         public bool IsActive { get; set; }
         public DateTime CreatedDate { get; set; }
