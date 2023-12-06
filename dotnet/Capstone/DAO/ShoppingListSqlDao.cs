@@ -8,7 +8,12 @@ namespace Capstone.DAO
 {
     public class ShoppingListSqlDao : IShoppingListDao
     {
-        private static string connectionString;
+        private readonly string connectionString;
+
+        public ShoppingListSqlDao(string dbConnectionString)
+        {
+            connectionString = dbConnectionString;
+        }
         public ShoppingList AddItem(Item itemToAdd)
         {
             throw new System.NotImplementedException();

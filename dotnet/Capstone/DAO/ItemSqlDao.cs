@@ -8,7 +8,12 @@ namespace Capstone.DAO
 {
     public class ItemSqlDao : IItemDao
     {
-        private static string connectionString;
+        private readonly string connectionString;
+
+        public ItemSqlDao(string dbConnectionString)
+        {
+            connectionString = dbConnectionString;
+        }
         public Item CreateItem()
         {
             throw new System.NotImplementedException();
