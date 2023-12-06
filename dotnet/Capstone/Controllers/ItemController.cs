@@ -20,12 +20,12 @@ namespace Capstone.Controllers
 
         [HttpGet]
 
-        public ActionResult<List<Item>> GetItemsByListId(int id)
+        public ActionResult<List<Item>> GetItemsByListId(int list_id)
         {
             List<Item> output = new List<Item>();
             try
             {
-                output = itemDao.GetItemsByListId(id);
+                output = itemDao.GetItemsByListId(list_id);
             }
             catch (System.Exception)
             {
