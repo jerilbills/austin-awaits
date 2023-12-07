@@ -12,5 +12,6 @@ namespace Capstone.DAO
         User UpdateName(User userToUpdate);
         User UpdateAvatar(User userToUpdate);
         List<User> GetActiveUsersByDepartmentId(int departmentId);
+        int AddUserToList(UserList userList);
     }
 }

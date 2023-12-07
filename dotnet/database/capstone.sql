@@ -89,6 +89,10 @@ CREATE TABLE list_items (
 	CONSTRAINT PK_list_items PRIMARY KEY (list_id, item_id)
 )
 
+CREATE TABLE users_lists (
+	user_id int NOT NULL,
+	list_id int NOT NULL
+)
 
 --add FKs
 ALTER TABLE users ADD CONSTRAINT FK_users_departments FOREIGN KEY (department_id) REFERENCES departments(department_id);
@@ -105,7 +109,8 @@ ALTER TABLE list_items ADD CONSTRAINT FK_list_items_items FOREIGN KEY (item_id) 
 ALTER TABLE list_items ADD CONSTRAINT FK_list_items_list_item_statues FOREIGN KEY (list_item_status_id) REFERENCES list_item_statuses(list_item_status_id);
 ALTER TABLE list_items ADD CONSTRAINT FK_list_items_users_claimed FOREIGN KEY (list_item_claimed_by_user_id) REFERENCES users(user_id);
 ALTER TABLE list_items ADD CONSTRAINT FK_list_items_users_modified FOREIGN KEY (last_modified_by_user_id) REFERENCES users(user_id);
-
+ALTER TABLE users_lists ADD CONSTRAINT FK_users_lists_users FOREIGN KEY (user_id) REFERENCES users(user_id);
+ALTER TABLE users_lists ADD CONSTRAINT FK_users_lists_lists FOREIGN KEY (list_id) REFERENCES lists(list_id);
 
 --populate default data
 INSERT INTO departments (department_name) VALUES ('Engineering');

@@ -182,5 +182,73 @@ namespace Capstone.DAO
         {
             throw new NotImplementedException();
         }
+
+        public List<User> GetActiveUsersByDepartmentId(int departmentId)
+        {
+            List<User> output = new List<User>();
+            string sql = "SELECT user_id, username, first_name, last_name, " +
+                "department_id, password_hash, salt, user_role, avatar_url, " +
+                "is_active, created_date_utc FROM users " +
+                "WHERE department_id = @department_id AND is_active = 1;";
+
+            try
+            {
+                using (SqlConnection conn = new SqlConnection(connectionString))
+                {
+                    conn.Open();
+
+                    SqlCommand cmd = new SqlCommand(sql, conn);
+                    cmd.Parameters.AddWithValue("@department_id", departmentId);
+                    SqlDataReader reader = cmd.ExecuteReader();
+
+                    while (reader.Read())
+                    {
+                        User user = MapRowToUser(reader);
+                        output.Add(user);
+                    }
+                }
+            }
+            catch (SqlException ex)
+            {
+                throw new DaoException("SQL exception occurred", ex);
+            }
+            catch (Exception)
+            {
+
+            }
+
+            return output;
+        }
+
+        public int AddUserToList(UserList userListToAdd)
+        {
+            int rowsAffected = 0;
+            string sql = "INSERT INTO users_lists (user_id, list_id) VALUES (@user_id, @list_id);";
+
+            try
+            {
+                using (SqlConnection conn = new SqlConnection(connectionString))
+                {
+                    conn.Open();
+
+                    SqlCommand cmd = new SqlCommand(sql, conn);
+                    cmd.Parameters.AddWithValue("@user_id", userListToAdd.UserId);
+                    cmd.Parameters.AddWithValue("@list_id", userListToAdd.ListId);
+
+                    rowsAffected = cmd.ExecuteNonQuery();
+
+                }
+            }
+            catch (SqlException ex)
+            {
+                throw new DaoException("SQL exception occurred", ex);
+            }
+            catch (Exception)
+            {
+                
+            }
+
+            return rowsAffected;
+        }
     }
 }
