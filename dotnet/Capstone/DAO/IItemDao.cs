@@ -7,8 +7,8 @@ namespace Capstone.DAO
     {
         public Item CreateItem();
         public Item UpdateItem(Item itemToUpdate);
-        public Item GetItemById(int id);
-        public List<Item> GetItemsByListId(int listID);
+       
+        
 
         
 
