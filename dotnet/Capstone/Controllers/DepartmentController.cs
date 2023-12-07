@@ -8,7 +8,6 @@ namespace Capstone.Controllers
 {
     [ApiController]
     [Route("department")]
-    [Authorize]
     public class DepartmentController : ControllerBase
     {
         private readonly IDepartmentDao departmentDao;

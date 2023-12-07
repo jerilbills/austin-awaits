@@ -7,15 +7,21 @@
       </div>
       <div class="form-input-group">
         <label for="firstName">First Name</label>
-        <input type="text" id="username" v-model="user.firstName" required autofocus />
+        <input type="text" id="firstName" v-model="user.firstName" required autofocus />
       </div>
       <div class="form-input-group">
         <label for="lastName">Last Name</label>
-        <input type="text" id="username" v-model="user.lastName" required autofocus />
+        <input type="text" id="lastName" v-model="user.lastName" required autofocus />
       </div>
       <div class="form-input-group">
         <label for="username">Username</label>
         <input type="text" id="username" v-model="user.username" required autofocus />
+      </div>
+      <div class="form-input-group" v-if="departments.length > 0">
+        <label for="department">Department</label>
+        <select id="department" name="department" v-model="user.departmentId" required>
+          <option v-for="dept in departments" :key="dept.departmentId" :value="dept.departmentId">{{ dept.departmentName }}</option>
+        </select>
       </div>
       <div class="form-input-group">
         <label for="password">Password</label>
@@ -33,6 +39,7 @@
 
 <script>
 import authService from '../services/AuthService';
+import departmentService from '../services/DepartmentService';
 
 export default {
   data() {
@@ -40,11 +47,13 @@ export default {
       user: {
         username: '',
         password: '',
-        fistName: '',
+        firstName: '',
         lastName: '',
+        departmentId: 0,
         confirmPassword: '',
         role: 'user',
       },
+      departments: [],
       registrationErrors: false,
       registrationErrorMsg: 'There were problems registering this user.',
     };
@@ -78,6 +87,21 @@ export default {
       this.registrationErrors = false;
       this.registrationErrorMsg = 'There were problems registering this user.';
     },
+    loadDepartmentList() {
+      departmentService
+        .getDepartments()
+        .then((response) => {
+          response.data.forEach((dept) => {
+            this.departments.push(dept);
+          });
+        })
+        .catch((error) => {
+          this.registrationErrorMsg = 'There were problems registering this user.';
+        })
+    }
+  },
+  created() {
+      this.loadDepartmentList();
   },
 };
 </script>
