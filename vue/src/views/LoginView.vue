@@ -90,7 +90,9 @@ export default {
   background-color: #BF5700;
   position: fixed;
   width: 100%;
-  height: 100%;
+  height: 100vh;
+  margin: 0px;
+  padding: 0px;
 }
 
 #alert {
