@@ -9,6 +9,7 @@
 
       <!-- KanbanBoard component goes here -->
       <KanbanBoard />
+
     </div>
   </div>
 </template>

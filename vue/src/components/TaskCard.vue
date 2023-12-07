@@ -8,8 +8,8 @@
         </div>
         <div class="media-right">
           <!-- <img v-if="item.imgUrl" class="image is-32x32" :src="getAvatarUrl()" alt="Avatar"> -->
-          <img class="image is-32x32" :src="getAvatarUrl()" alt="Avatar">
-          <badge v-if="item.type" :color="badgeColor">{{ item.type }}</badge>
+          <!-- <img class="image is-32x32" :src="getAvatarUrl()" alt="Avatar"> -->
+          <!-- <badge v-if="item.type" :color="badgeColor">{{ item.type }}</badge> -->
         </div>
       </div>
     </div>

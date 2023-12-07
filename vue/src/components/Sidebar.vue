@@ -10,6 +10,7 @@
   
 <script>
 import ShoppingListService from '../services/ShoppingListService';
+import KanbanBoard from './KanbanBoard.vue';
 
 export default {
   data() {
@@ -42,6 +43,7 @@ export default {
       .catch(error => {
         console.error('Error fetching list:', error);
       });
+
     },
   },
 };
@@ -49,7 +51,7 @@ export default {
   
 <style scoped>
 .sidebar {
-  width: 250px;
+  width: 200px;
   background-color: #ffffff;
   color: rgb(0, 0, 0);
   padding: 20px;
