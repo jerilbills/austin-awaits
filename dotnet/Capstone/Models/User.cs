@@ -48,8 +48,7 @@ namespace Capstone.Models
     {
         public string FirstName { get; set; }
         public string LastName { get; set; }
-        // TODO - need to add department model, controller, and DAO and to the front end so this can be dynamically generated; for now, hardcoding to default to 1
-        public int DepartmentId { get; set; } = 1;
+        public int DepartmentId { get; set; }
         public string Username { get; set; }
         public string Password { get; set; }
         public string ConfirmPassword { get; set; }
