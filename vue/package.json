@@ -2,12 +2,16 @@
   "name": "final-vue-capstone-seed",
   "version": "0.1.0",
   "private": true,
+  "main": "src/sass/mystyles.scss",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
     "prepreview": "npm run build",
-    "lint": "eslint --ext .js,.vue --ignore-path .gitignore src"
+    "lint": "eslint --ext .js,.vue --ignore-path .gitignore src",
+    "css-build": "node-sass --omit-source-map-url src/sass/mystyles.scss src/css/mystyles.css",
+    "css-watch": "npm run css-build -- --watch",
+    "start": "npm run css-watch"
   },
   "dependencies": {
     "axios": "^0.21.4",
@@ -23,6 +27,7 @@
     "eslint-import-resolver-alias": "^1.1.2",
     "eslint-plugin-import": "^2.27.5",
     "eslint-plugin-vue": "^7.20.0",
+    "node-sass": "^9.0.0",
     "vite": "^3.2.7",
     "vue-eslint-parser": "^9.3.0"
   }
