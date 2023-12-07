@@ -5,10 +5,10 @@
       <div id="logo"><img src="/src/assets/austin-awaits-logo.png" alt="Austin Awaits" width="400"></div>
       <form v-on:submit.prevent="login" class="box">
         <h1 class="is-size-3">Login</h1>
-        <div role="alert" v-if="invalidCredentials" id="alert">
-          Invalid username and password!
+        <div role="alert" v-if="invalidCredentials" class="has-text-danger">
+          Invalid username and password.
         </div>
-        <div role="alert" v-if="this.$route.query.registration">
+        <div role="alert" v-if="this.$route.query.registration" class="has-text-success">
           Thank you for registering, please sign in.
         </div>
         <div class="field">
@@ -23,11 +23,16 @@
         </div>
         <div class="field">
           <label for="password" class="label">Password</label>
-          <p class="control has-icons-left">
+          <p class="control has-icons-left has-icons-right">
             <input type="password" id="password" v-model="user.password" required placeholder="Password"
               autocomplete="off" autocapitalize="off" class="input" />
             <span class="icon is-small is-left">
               <i class="fas fa-lock"></i>
+            </span>
+            <span class="icon is-small is-right is-clickable" @click="togglePassword()"
+              @mouseover="isHoveringOnPasswordToggle = true" @mouseout="isHoveringOnPasswordToggle = false">
+              <i class="fas fa-eye" v-if="!showingPassword" :class="{ hovering: isHoveringOnPasswordToggle }"></i>
+              <i class="fas fa-eye-slash" v-if="showingPassword" :class="{ hovering: isHoveringOnPasswordToggle }"></i>
             </span>
           </p>
         </div>
@@ -40,7 +45,7 @@
           </p>
         </div>
         <div id="register">
-            <router-link v-bind:to="{ name: 'register' }">Need an account? Sign up.</router-link>
+          <router-link v-bind:to="{ name: 'register' }">Need an account? Sign up.</router-link>
         </div>
       </form>
     </div>
@@ -59,11 +64,14 @@ export default {
         username: "",
         password: ""
       },
-      invalidCredentials: false
+      invalidCredentials: false,
+      showingPassword: false,
+      isHoveringOnPasswordToggle: false
     };
   },
   methods: {
     login() {
+
       authService
         .login(this.user)
         .then(response => {
@@ -78,8 +86,19 @@ export default {
 
           if (response.status === 401) {
             this.invalidCredentials = true;
+            this.$router.push("/");
           }
         });
+    },
+    togglePassword() {
+      var x = document.getElementById("password");
+      if (x.type === "password") {
+        x.type = "text";
+        this.showingPassword = true;
+      } else {
+        x.type = "password";
+        this.showingPassword = false;
+      }
     }
   }
 };
@@ -95,9 +114,10 @@ export default {
   padding: 0px;
 }
 
-#alert {
-  color: red;
+.has-text-danger,
+.has-text-success {
   margin: 0px 0px 20px 0px;
+  font-weight: bold;
 }
 
 #register {
@@ -115,5 +135,9 @@ h1 {
 
 label {
   margin-right: 0.5rem;
+}
+
+.hovering {
+  color: #000000;
 }
 </style>
