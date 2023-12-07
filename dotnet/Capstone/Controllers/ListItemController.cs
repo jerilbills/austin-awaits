@@ -27,7 +27,7 @@ namespace Capstone.Controllers
 
         [HttpPut("{itemID}")]
 
-        public ActionResult<ListItem> UpdateListItem(int itemID, int list_id, int status, int userId)
+        public ActionResult<ListItem> UpdateListItem(int itemID, int list_id, ListItem itemToUpdate)
         {
             try
             {
@@ -38,7 +38,7 @@ namespace Capstone.Controllers
                     return NotFound();
                 }
 
-                ListItem updatedListItem = listItemDao.UpdateListItem(list_id, itemID, status, userId);
+                ListItem updatedListItem = listItemDao.UpdateListItem(list_id, itemID, itemToUpdate);
 
                 return updatedListItem;
 
