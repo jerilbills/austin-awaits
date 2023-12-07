@@ -1,12 +1,12 @@
 <template>
   <div id="register" class="columns">
     <div class="column spacer"></div>
-    <div class="column is-narrow">
+    <div class="column is-narrow ">
       <div id="logo"><img src="/src/assets/austin-awaits-logo.png" alt="Austin Awaits" width="400"></div>
       <form v-on:submit.prevent="register" class="box">
         <h1 class="is-size-3">Create Account</h1>
         <div role="alert" v-if="registrationErrors" class="has-text-danger">
-          {{ registrationErrorMsg }}
+          <span id="alert">{{ registrationErrorMsg }}</span>
         </div>
 
         <div class="field is-horizontal">
@@ -173,7 +173,12 @@ export default {
       if (this.user.password != this.user.confirmPassword) {
         this.registrationErrors = true;
         this.registrationErrorMsg = 'Password & Confirm Password do not match.';
-      } else {
+      } 
+      else if (this.checkPasswordComplexity()) {
+        this.registrationErrors = true;
+        this.registrationErrorMsg = 'Password must contain at least one capital letter, one lowercase letter, one number, and a minimum of 8 characters.';
+      }
+      else {
         authService
           .register(this.user)
           .then((response) => {
@@ -228,6 +233,9 @@ export default {
         x.type = "password";
         this.showingConfirmPassword = false;
       }
+    },
+    checkPasswordComplexity() {
+      return false;
     }
   },
   created() {
@@ -250,6 +258,12 @@ export default {
 .has-text-success {
   margin: 0px 0px 20px 0px;
   font-weight: bold;
+}
+
+#alert {
+  display: block;
+  width: 600px; 
+ white-space: normal;
 }
 
 #login {
