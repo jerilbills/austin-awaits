@@ -170,13 +170,14 @@ export default {
   },
   methods: {
     register() {
+      this.clearErrors();
       if (this.user.password != this.user.confirmPassword) {
         this.registrationErrors = true;
         this.registrationErrorMsg = 'Password & Confirm Password do not match.';
       } 
-      else if (this.checkPasswordComplexity()) {
+      else if (!this.isPasswordComplexEnough()) {
         this.registrationErrors = true;
-        this.registrationErrorMsg = 'Password must contain at least one capital letter, one lowercase letter, one number, and a minimum of 8 characters.';
+        this.registrationErrorMsg = 'Password must have at least one capital letter, one lowercase letter, one number, and a minimum of 8 characters.';
       }
       else {
         authService
@@ -234,8 +235,9 @@ export default {
         this.showingConfirmPassword = false;
       }
     },
-    checkPasswordComplexity() {
-      return false;
+    isPasswordComplexEnough() {
+      let passwordRequirements = new RegExp('(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.{8,})');
+      return passwordRequirements.test(this.user.password);
     }
   },
   created() {
