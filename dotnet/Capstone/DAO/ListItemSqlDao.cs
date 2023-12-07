@@ -16,7 +16,7 @@ namespace Capstone.DAO
         }
 
 
-        public ListItem UpdateListItem(int listId, int itemId, int status, int userId) //take in userID so that u can change claimant,
+        public ListItem UpdateListItem(int listId, int itemId, ListItem itemToUpdate)
         {
 
             //edit sql to change the userID as well
@@ -32,10 +32,14 @@ namespace Capstone.DAO
                 {
                     conn.Open();
                     SqlCommand cmd = new SqlCommand(sql, conn);
-                    cmd.Parameters.AddWithValue("@status", status);
+                    cmd.Parameters.AddWithValue("@status", itemToUpdate.ListItemStatusId);
                     cmd.Parameters.AddWithValue("@ListId", listId);
                     cmd.Parameters.AddWithValue("@ItemId", itemId);
-                    cmd.Parameters.AddWithValue("@userId", userId);
+                    SqlParameter claimedByParam = cmd.Parameters.AddWithValue("@userId", itemToUpdate.ClaimedBy);
+                    if (itemToUpdate.ClaimedBy == null)
+                    {
+                        claimedByParam.Value = DBNull.Value;
+                    }
                     //add userID parameter
 
 
