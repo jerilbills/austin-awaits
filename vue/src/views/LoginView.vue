@@ -1,25 +1,50 @@
 <template>
-  <div id="login">
-    <form v-on:submit.prevent="login">
-      <h1 >Please Sign In</h1>
-      <div role="alert" v-if="invalidCredentials">
-        Invalid username and password!
-      </div>
-      <div role="alert" v-if="this.$route.query.registration">
-        Thank you for registering, please sign in.
-      </div>
-      <div class="form-input-group">
-        <label for="username">Username</label>
-        <input type="text" id="username" v-model="user.username" required autofocus />
-      </div>
-      <div class="form-input-group">
-        <label for="password">Password</label>
-        <input type="password" id="password" v-model="user.password" required />
-      </div>
-      <button type="submit">Sign in</button>
-      <p>
-      <router-link v-bind:to="{ name: 'register' }">Need an account? Sign up.</router-link></p>
-    </form>
+  <div id="login" class="columns">
+    <div class="column"></div>
+    <div class=" column is-narrow">
+      <div id="logo"><img src="/src/assets/austin-awaits-logo.png" alt="Austin Awaits" width="400"></div>
+      <form v-on:submit.prevent="login" class="box">
+        <h1 class="is-size-3">Login</h1>
+        <div role="alert" v-if="invalidCredentials" id="alert">
+          Invalid username and password!
+        </div>
+        <div role="alert" v-if="this.$route.query.registration">
+          Thank you for registering, please sign in.
+        </div>
+        <div class="field">
+          <label for="username" class="label">Username</label>
+          <p class="control has-icons-left">
+            <input type="text" id="username" v-model="user.username" required autofocus placeholder="Username"
+              autocomplete="off" autocapitalize="off" class="input" />
+            <span class="icon is-small is-left">
+              <i class="fas fa-user"></i>
+            </span>
+          </p>
+        </div>
+        <div class="field">
+          <label for="password" class="label">Password</label>
+          <p class="control has-icons-left">
+            <input type="password" id="password" v-model="user.password" required placeholder="Password"
+              autocomplete="off" autocapitalize="off" class="input" />
+            <span class="icon is-small is-left">
+              <i class="fas fa-lock"></i>
+            </span>
+          </p>
+        </div>
+        <div class="field">
+          <p class="control">
+            <button type="submit" class="button is-rounded is-primary is-fullwidth"
+              :disabled="(!user.username || !user.password)">
+              Login
+            </button>
+          </p>
+        </div>
+        <div id="register">
+            <router-link v-bind:to="{ name: 'register' }">Need an account? Sign up.</router-link>
+        </div>
+      </form>
+    </div>
+    <div class="column"></div>
   </div>
 </template>
 
@@ -61,9 +86,31 @@ export default {
 </script>
 
 <style scoped>
-.form-input-group {
-  margin-bottom: 1rem;
+#login {
+  background-color: #BF5700;
+  position: fixed;
+  width: 100%;
+  height: 100%;
 }
+
+#alert {
+  color: red;
+  margin: 0px 0px 20px 0px;
+}
+
+#register {
+  padding: 20px 0px 0px 0px;
+}
+
+#logo {
+  padding: 80px 0px 20px 0px;
+  margin: auto;
+}
+
+h1 {
+  padding: 0px 0px 20px 0px;
+}
+
 label {
   margin-right: 0.5rem;
 }

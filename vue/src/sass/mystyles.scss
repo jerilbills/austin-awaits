@@ -1,0 +1,16 @@
+@charset "utf-8";
+
+// Set your brand colors
+$orange: hsl(27.3,100%,37.5%);
+$orange-darker: hsl(27.3,100%,30%);
+$medium-blue: #63BAAB;
+$light-blue: #C4FCF0;
+$dark-blue: #4C8077;
+
+// Update Bulma's global variables
+$family-primary: Cutive, Georgia, 'Times New Roman', Times, serif;
+$primary: $dark-blue;
+$link: $orange;
+$link-hover: $orange-darker;
+
+@import "../../node_modules/bulma/bulma.sass";
