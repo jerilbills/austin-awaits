@@ -1,7 +1,7 @@
 <template>
   <div id="login" class="columns">
-    <div class="column"></div>
-    <div class=" column is-narrow">
+    <div class="column spacer"></div>
+    <div class="column is-narrow">
       <div id="logo"><img src="/src/assets/austin-awaits-logo.png" alt="Austin Awaits" width="400"></div>
       <form v-on:submit.prevent="login" class="box">
         <h1 class="is-size-3">Login</h1>
@@ -49,7 +49,7 @@
         </div>
       </form>
     </div>
-    <div class="column"></div>
+    <div class="column spacer"></div>
   </div>
 </template>
 
@@ -126,7 +126,9 @@ export default {
 
 #logo {
   padding: 80px 0px 20px 0px;
-  margin: auto;
+  width:100%;
+  text-align: center;
+  margin: auto
 }
 
 h1 {
