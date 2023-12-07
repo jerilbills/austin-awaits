@@ -5,6 +5,5 @@
         public int Id { get; set; }
         public User UserFrom { get; set; }
         public User UserTo { get; set; }
-        public IJoinable ThingToJoin { get; set; }
     }
 }
