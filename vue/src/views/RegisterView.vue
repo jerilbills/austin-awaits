@@ -37,7 +37,7 @@
           </div>
         </div>
 
-        <div class="field is-horizontal" v-if="departments.length > 0">
+        <div class="field is-horizontal" >
           <div class="field-label is-normal">
             <label for="department" class="label">Department</label>
           </div>
