@@ -196,6 +196,9 @@ export default {
             if (response.status === 400) {
               this.registrationErrorMsg = 'Bad Request: Validation Errors';
             }
+            if (response.status === 409) {
+              this.registrationErrorMsg = 'Username already taken. Please choose a different username.';
+            }
           });
       }
     },
@@ -211,7 +214,7 @@ export default {
             this.departments.push(dept);
           });
         })
-        .catch((error) => {
+        .catch((error) => {          
           this.registrationErrorMsg = 'There were problems registering this user.';
         })
     },
