@@ -1,6 +1,7 @@
 <template>
   <div class="kanban-board-header">
-    <div class="page-title">{{ $store.state.activeListName }}<span v-if="!$store.state.activeListName">Please select a list to work on. Austin Awaits!</span></div>
+    <div class="page-title">{{ $store.state.activeListName }}<span v-if="!$store.state.activeListName">Please select a
+        list to work on. Austin Awaits!</span></div>
     <div class="invites">
       <div class="is-size-7">List Owner</div>
       <div><img src="https://api.dicebear.com/7.x/initials/svg?seed=JB" class="avatar"></div>
@@ -36,6 +37,8 @@
             </div>
           </div>
         </div>
+        <div id="snackbar-purchased">Items cannot be removed from Purchased.</div>
+        <div id="snackbar-claimed">You are not the owner of this item.</div>
       </div>
     </div>
   </div>
@@ -83,11 +86,12 @@ export default {
       if (this.draggedItem && this.draggedColumn) {
         const columnStatusId = column.statusId;
         if (this.draggedColumn === "Purchased") {
+          this.showPurchasedSnackbar();
           return;
         } else {
           console.log(this.draggedItem.claimedBy);
           if (this.draggedColumn === "Claimed" && this.$store.state.user.userId != this.draggedItem.claimedBy) {
-            console.log("User is not the owner of this item");
+            this.showClaimedSnackbar();
             return;
           } else {
             this.updateItemStatus(columnStatusId);
@@ -124,6 +128,21 @@ export default {
           break;
       }
     },
+    showPurchasedSnackbar() {
+      let x = document.getElementById("snackbar-purchased");
+      x.className = "show";
+      setTimeout(function () {
+        x.className = x.className.replace("show", "");
+      }, 4000);
+    },
+    showClaimedSnackbar() {
+      let x = document.getElementById("snackbar-claimed");
+      x.className = "show";
+      setTimeout(function () {
+        x.className = x.className.replace("show", "");
+      }, 4000);
+    },
+
 
     dragLeave() {
 
@@ -249,5 +268,104 @@ h6 {
 
 .fa-user-plus {
   color: hsl(27.3, 100%, 37.5%);
+}
+
+#snackbar-purchased {
+  visibility: hidden;
+  min-width: 250px;
+  margin-left: -125px;
+  /* Divide value of min-width by 2 */
+  background-color: #333;
+  color: #fff;
+  text-align: center;
+  border-radius: 2px;
+  padding: 16px;
+  position: fixed;
+  z-index: 1;
+  left: 50%;
+  bottom: 30px;
+}
+
+#snackbar-purchased.show {
+  visibility: visible;
+  /* Show the snackbar */
+  /* Add animation: Take 0.5 seconds to fade in and out the snackbar.
+  Delay the fade out process for 3.5 seconds */
+  -webkit-animation: fadein 0.5s, fadeout 0.5s 3.5s;
+  animation: fadein 0.5s, fadeout 0.5s 3.5s;
+}
+
+#snackbar-claimed {
+  visibility: hidden;
+  min-width: 250px;
+  margin-left: -125px;
+  /* Divide value of min-width by 2 */
+  background-color: #333;
+  color: #fff;
+  text-align: center;
+  border-radius: 2px;
+  padding: 16px;
+  position: fixed;
+  z-index: 1;
+  left: 50%;
+  bottom: 30px;
+}
+
+#snackbar-claimed.show {
+  visibility: visible;
+  /* Show the snackbar */
+  /* Add animation: Take 0.5 seconds to fade in and out the snackbar.
+  Delay the fade out process for 3.5 seconds */
+  -webkit-animation: fadein 0.5s, fadeout 0.5s 3.5s;
+  animation: fadein 0.5s, fadeout 0.5s 3.5s;
+}
+
+/* Animations to fade the snackbar in and out */
+@-webkit-keyframes fadein {
+  from {
+    bottom: 0;
+    opacity: 0;
+  }
+
+  to {
+    bottom: 30px;
+    opacity: 1;
+  }
+}
+
+@keyframes fadein {
+  from {
+    bottom: 0;
+    opacity: 0;
+  }
+
+  to {
+    bottom: 30px;
+    opacity: 1;
+  }
+}
+
+@-webkit-keyframes fadeout {
+  from {
+    bottom: 30px;
+    opacity: 1;
+  }
+
+  to {
+    bottom: 0;
+    opacity: 0;
+  }
+}
+
+@keyframes fadeout {
+  from {
+    bottom: 30px;
+    opacity: 1;
+  }
+
+  to {
+    bottom: 0;
+    opacity: 0;
+  }
 }
 </style>
