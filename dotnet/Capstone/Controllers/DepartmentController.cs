@@ -11,10 +11,12 @@ namespace Capstone.Controllers
     public class DepartmentController : ControllerBase
     {
         private readonly IDepartmentDao departmentDao;
+        private readonly IUserDao userDao;
 
-        public DepartmentController(IDepartmentDao departmentDao)
+        public DepartmentController(IDepartmentDao departmentDao, IUserDao userDao)
         {
             this.departmentDao = departmentDao;
+            this.userDao = userDao;
         }
 
         [HttpGet]
@@ -32,5 +34,23 @@ namespace Capstone.Controllers
             }
             return output;
         }
+
+        [HttpGet("{id}/user")]
+
+        public ActionResult<List<User>> GetUsersByDepartmentId(int id)
+        {
+            List<User> output = new List<User>();
+            try
+            {
+                output = userDao.GetActiveUsersByDepartmentId(id);
+            }
+            catch (System.Exception)
+            {
+                return StatusCode(500);
+            }
+
+            return output;
+        }
+
     }
 }
