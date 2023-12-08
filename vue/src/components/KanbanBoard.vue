@@ -52,7 +52,7 @@ import ItemDetailsModal from './ItemDetailsModal.vue';
 
 export default {
   name: 'HTMLDraggable',
-  props: ['title', 'cards', 'boardID'],
+  props: ['title', 'cards', 'boardId'],
   components: {
     ItemDetailsModal,
   },

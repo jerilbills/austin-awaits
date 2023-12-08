@@ -16,11 +16,11 @@ namespace Capstone.DAO
         }
 
 
-        public ListItem UpdateListItem(int listId, int itemId, ListItem itemToUpdate)
+        public ListItem UpdateListItem(int listId, int itemId, int updatingUserId, ListItem itemToUpdate)
         {
 
             //edit sql to change the userID as well
-            string sql = "UPDATE list_items SET list_item_status_id = @status, list_item_claimed_by_user_id = @userId WHERE list_id = @ListId AND item_id = @ItemId;";
+            string sql = "UPDATE list_items SET list_item_status_id = @status, list_item_claimed_by_user_id = @userId, last_modified_date_utc = GETUTCDATE(), last_modified_by_user_id = @updatinguserid WHERE list_id = @ListId AND item_id = @ItemId;";
 
             ListItem output = null;
 
@@ -35,13 +35,8 @@ namespace Capstone.DAO
                     cmd.Parameters.AddWithValue("@status", itemToUpdate.ListItemStatusId);
                     cmd.Parameters.AddWithValue("@ListId", listId);
                     cmd.Parameters.AddWithValue("@ItemId", itemId);
-                    SqlParameter claimedByParam = cmd.Parameters.AddWithValue("@userId", itemToUpdate.ClaimedBy);
-                    if (itemToUpdate.ClaimedBy == null)
-                    {
-                        claimedByParam.Value = DBNull.Value;
-                    }
-                    //add userID parameter
-
+                    cmd.Parameters.AddWithValue("@userId", (itemToUpdate.ClaimedBy == null) ? DBNull.Value : itemToUpdate.ClaimedBy);
+                    cmd.Parameters.AddWithValue("@updatinguserid", updatingUserId);
 
                     rowsAffected = cmd.ExecuteNonQuery();
 
@@ -133,8 +128,8 @@ namespace Capstone.DAO
             
 
 
-            listItem.ListID = Convert.ToInt32(reader["list_id"]);
-            listItem.ItemID = Convert.ToInt32(reader["item_id"]);
+            listItem.ListId = Convert.ToInt32(reader["list_id"]);
+            listItem.ItemId = Convert.ToInt32(reader["item_id"]);
             listItem.IsActive = Convert.ToBoolean(reader["is_active"]);
             listItem.LastModifiedBy = Convert.ToInt32(reader["last_modified_by_user_id"]);
             listItem.Quantity = Convert.ToInt32(reader["quantity"]);
