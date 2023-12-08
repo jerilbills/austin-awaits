@@ -73,7 +73,7 @@ export default {
   padding: 25px;
   position: fixed;
   /* Set position to fixed */
-  top: 40px;
+  top: 25px;
   /* Pin to the top of the viewport */
   left: 0;
   height: 100%;
@@ -105,8 +105,7 @@ li:hover {
 
 .sidebar-header {
   font-weight: bold;
-  text-decoration: underline;
-  padding: 10px 0px 0px 0px;
+  padding: 15px 0px 0px 0px;
   display: block;
 }
 </style>
