@@ -127,7 +127,7 @@ export default {
 }
 
 .kanban-board {
-  margin-left: 210px;
+  margin-left: 275px;
   font-family: 'Barlow', sans-serif;
   position: fixed;
   top: 100px;
