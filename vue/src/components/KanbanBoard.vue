@@ -1,6 +1,7 @@
 <template>
   <div class="kanban-board-header">
-    <div class="page-title">{{ $store.state.activeList.name }}<span v-if="!$store.state.activeList.name">Please select a list to work on. Austin Awaits!</span></div>
+    <div class="page-title">{{ $store.state.activeList.name }}<span v-if="!$store.state.activeList.name">Please select a
+        list to work on. Austin Awaits!</span></div>
     <div class="invites">
       <div class="is-size-7">List Owner</div>
       <div><img src="https://api.dicebear.com/7.x/initials/svg?seed=JB" class="avatar"></div>
@@ -39,8 +40,9 @@
         <!-- SNACKBAR ALERTS-->
         <div id="snackbar-purchased">Items cannot be removed from Purchased.</div>
         <div id="snackbar-claimed">You are not the owner of this item.</div>
+        <div id="snackbar-needed">Items must be claimed before they can be purchased.</div>
         <!-- ITEM DETAILS MODAL -->
-        <ItemDetailsModal v-if="showModal" :item="selectedItem" @close="closeModal"/>
+        <ItemDetailsModal v-if="showModal" :item="selectedItem" @close="closeModal" />
       </div>
     </div>
   </div>
@@ -80,6 +82,10 @@ export default {
   methods: {
     dragStart(columnTitle) {
       this.draggedColumn = columnTitle;
+      console.log(this.draggedColumn);
+      if (this.draggedColumn === 'Items Needed') {
+        return
+      }
     },
     dragStartItem(item) {
       this.draggedItem = item;
@@ -94,31 +100,33 @@ export default {
         if (this.draggedColumn === "Purchased") {
           this.showPurchasedSnackbar();
           return;
+        } else if (this.draggedColumn === "Claimed" && this.$store.state.user.userId != this.draggedItem.claimedBy) {
+          this.showClaimedSnackbar();
+          return;
+        } else if (this.draggedColumn === "Items Needed" && columnStatusId === 3) {
+          console.log("Needed Snackbar")
+          this.showNeededSnackbar();
+          return;
         } else {
-          console.log(this.draggedItem.claimedBy);
-          if (this.draggedColumn === "Claimed" && this.$store.state.user.userId != this.draggedItem.claimedBy) {
-            this.showClaimedSnackbar();
-            return;
-          } else {
-            this.updateItemStatus(columnStatusId);
-          }
+          this.updateItemStatus(columnStatusId);
         }
       }
     },
     updateItemStatus(columnStatusId) {
-      const date = new Date();
+      const formattedDate = new Date().toISOString();
+
       switch (columnStatusId) {
         case 1:
           this.draggedItem.claimedBy = null;
           this.draggedItem.listItemStatusId = 1;
-          this.draggedItem.lastModifiedDate = date;
+          this.draggedItem.lastModifiedDate = formattedDate;
           this.draggedItem.lastModifiedBy = this.$store.state.user.userId;
           ShoppingListService.updateItem(this.draggedItem);
           break;
         case 2:
           this.draggedItem.claimedBy = this.$store.state.user.userId;
           this.draggedItem.listItemStatusId = 2;
-          this.draggedItem.lastModifiedDate = date;
+          this.draggedItem.lastModifiedDate = formattedDate;
           this.draggedItem.lastModifiedBy = this.$store.state.user.userId;
           ShoppingListService.updateItem(this.draggedItem);
           break;
@@ -127,9 +135,8 @@ export default {
             break;
           }
           this.draggedItem.listItemStatusId = 3;
-          this.draggedItem.lastModifiedDate = date;
+          this.draggedItem.lastModifiedDate = formattedDate;
           this.draggedItem.lastModifiedBy = this.$store.state.user.userId;
-          // TODO: Add a method to update inventory. Probably a second API call.
           ShoppingListService.updateItem(this.draggedItem);
           break;
       }
@@ -148,6 +155,14 @@ export default {
         x.className = x.className.replace("show", "");
       }, 4000);
     },
+    showNeededSnackbar() {
+      let x = document.getElementById("snackbar-needed");
+      x.className = "show";
+      setTimeout(function () {
+        x.className = x.className.replace("show", "");
+      }, 4000);
+    },
+
     openModal(item) {
       this.selectedItem = item;
       this.showModal = true;
@@ -158,7 +173,7 @@ export default {
     },
 
 
-    dragLeave() {
+    dragLeave(columnTitle) {
 
     },
     filteredItems(statusId) {
@@ -326,6 +341,31 @@ h6 {
 }
 
 #snackbar-claimed.show {
+  visibility: visible;
+  /* Show the snackbar */
+  /* Add animation: Take 0.5 seconds to fade in and out the snackbar.
+  Delay the fade out process for 3.5 seconds */
+  -webkit-animation: fadein 0.5s, fadeout 0.5s 3.5s;
+  animation: fadein 0.5s, fadeout 0.5s 3.5s;
+}
+
+#snackbar-needed {
+  visibility: hidden;
+  min-width: 250px;
+  margin-left: -125px;
+  /* Divide value of min-width by 2 */
+  background-color: #333;
+  color: #fff;
+  text-align: center;
+  border-radius: 2px;
+  padding: 16px;
+  position: fixed;
+  z-index: 1;
+  left: 50%;
+  bottom: 30px;
+}
+
+#snackbar-needed.show {
   visibility: visible;
   /* Show the snackbar */
   /* Add animation: Take 0.5 seconds to fade in and out the snackbar.
