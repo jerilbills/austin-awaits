@@ -1,6 +1,7 @@
 <template>
   <div class="kanban-board-header">
-    <div class="page-title">{{ $store.state.activeList.name }}<span v-if="!$store.state.activeList.name">Please select a list to work on. Austin Awaits!</span></div>
+    <div class="page-title">{{ $store.state.activeList.name }}<span v-if="!$store.state.activeList.name">Please select a
+        list to work on. Austin Awaits!</span></div>
     <div class="invites">
       <div class="is-size-7">List Owner</div>
       <div><img src="https://api.dicebear.com/7.x/initials/svg?seed=JB" class="avatar"></div>
@@ -40,7 +41,7 @@
         <div id="snackbar-purchased">Items cannot be removed from Purchased.</div>
         <div id="snackbar-claimed">You are not the owner of this item.</div>
         <!-- ITEM DETAILS MODAL -->
-        <ItemDetailsModal v-if="showModal" :item="selectedItem" @close="closeModal"/>
+        <ItemDetailsModal v-if="showModal" :item="selectedItem" @close="closeModal" />
       </div>
     </div>
   </div>
@@ -106,19 +107,20 @@ export default {
       }
     },
     updateItemStatus(columnStatusId) {
-      const date = new Date();
+      const formattedDate = new Date().toISOString();
+
       switch (columnStatusId) {
         case 1:
           this.draggedItem.claimedBy = null;
           this.draggedItem.listItemStatusId = 1;
-          this.draggedItem.lastModifiedDate = date;
+          this.draggedItem.lastModifiedDate = formattedDate;
           this.draggedItem.lastModifiedBy = this.$store.state.user.userId;
           ShoppingListService.updateItem(this.draggedItem);
           break;
         case 2:
           this.draggedItem.claimedBy = this.$store.state.user.userId;
           this.draggedItem.listItemStatusId = 2;
-          this.draggedItem.lastModifiedDate = date;
+          this.draggedItem.lastModifiedDate = formattedDate;
           this.draggedItem.lastModifiedBy = this.$store.state.user.userId;
           ShoppingListService.updateItem(this.draggedItem);
           break;
@@ -127,9 +129,8 @@ export default {
             break;
           }
           this.draggedItem.listItemStatusId = 3;
-          this.draggedItem.lastModifiedDate = date;
+          this.draggedItem.lastModifiedDate = formattedDate;
           this.draggedItem.lastModifiedBy = this.$store.state.user.userId;
-          // TODO: Add a method to update inventory. Probably a second API call.
           ShoppingListService.updateItem(this.draggedItem);
           break;
       }
