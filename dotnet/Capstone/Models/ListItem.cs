@@ -16,6 +16,7 @@ namespace Capstone.Models
         public int LastModifiedBy { get; set; }
         public int Quantity { get; set; }
         public int? ClaimedBy { get; set; }
+        public User ClaimedByUser { get; set; } = null;
         public DateTime LastModifiedDate { get; set; }
 
     }

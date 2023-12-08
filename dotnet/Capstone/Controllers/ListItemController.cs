@@ -31,11 +31,11 @@ namespace Capstone.Controllers
 
         [HttpPut("{itemId}")]
 
-        public ActionResult<ListItem> UpdateListItem(int itemId, int listId, ListItem itemToUpdate)
+        public ActionResult<ListItem> UpdateListItemStatusAndClaimant(int itemId, int listId, ListItem itemToUpdate)
         {
             try
             {
-                ListItem updatingListItem = listItemDao.GetListItemById(itemId, listId);
+                ListItem updatingListItem = listItemDao.GetActiveListItemById(itemId, listId);
                 
                 if (updatingListItem == null)
                 {
@@ -44,7 +44,7 @@ namespace Capstone.Controllers
 
                 User loggedInUser = userDao.GetActiveUserByUsername(User.Identity.Name);
 
-                ListItem updatedListItem = listItemDao.UpdateListItem(listId, itemId, loggedInUser.UserId, itemToUpdate);
+                ListItem updatedListItem = listItemDao.UpdateListItemStatusAndClaimant(listId, itemId, loggedInUser.UserId, itemToUpdate);
 
                 return updatedListItem;
 
@@ -64,7 +64,7 @@ namespace Capstone.Controllers
             List<ListItem> output = new List<ListItem>();
             try
             {
-                output = listItemDao.GetListItemsByListId(listId);
+                output = listItemDao.GetActiveListItemsByListId(listId);
             }
             catch (System.Exception)
             {
@@ -82,7 +82,7 @@ namespace Capstone.Controllers
             ListItem output;
             try
             {
-                output = listItemDao.GetListItemById(itemId, listId);
+                output = listItemDao.GetActiveListItemById(itemId, listId);
             }
             catch (System.Exception)
             {
