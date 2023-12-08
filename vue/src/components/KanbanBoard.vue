@@ -1,11 +1,32 @@
 <template>
+  <div class="kanban-board-header">
+    <div class="page-title">{{ $store.state.activeListName }}<span v-if="!$store.state.activeListName">Please select a list to work on. Austin Awaits!</span></div>
+    <div class="invites">
+      <div class="is-size-7">List Owner</div>
+      <div><img src="https://api.dicebear.com/7.x/initials/svg?seed=JB" class="avatar"></div>
+      <div>&nbsp;&nbsp;</div>
+      <div class="is-size-7">List Members</div>
+      <div>
+        <img src="https://api.dicebear.com/7.x/initials/svg?seed=JB" class="avatar">
+        <img src="https://api.dicebear.com/7.x/initials/svg?seed=DM" class="avatar">
+        <img src="https://api.dicebear.com/7.x/initials/svg?seed=NH" class="avatar">
+        <img src="https://api.dicebear.com/7.x/initials/svg?seed=JF" class="avatar">
+      </div>
+      <div><i class="fa fa-user-plus fa-lg"></i></div>
+    </div>
+  </div>
   <div class="kanban-board">
     <div class="column is-4" v-for="(column, index) in columns" :key="index" :class="{ over: isDraggedOver }"
       @drop.prevent="drop(column)" @dragover.prevent="dragOver" @dragenter.prevent="dragEnter" @dragleave="dragLeave">
 
       <div class="box custom-box" style="width: 350px; height: auto;" @dragstart="dragStart(column.title)"
         draggable="true">
-        <h6 class="title is-6">{{ column.title }}</h6>
+        <h6 class="title is-6">
+          <i v-if="column.title == 'Items Needed'" class="fal fa-square"></i>
+          <i v-if="column.title == 'Claimed'" class="fa fa-arrow-right"></i>
+          <i v-if="column.title == 'Purchased'" class="fa fa-check"></i>
+          {{ column.title }}
+        </h6>
         <div class="items">
           <div class="item" v-for="item in column.items" :key="item.itemId" @dragstart="dragStartItem(item)"
             draggable="true">
@@ -64,7 +85,8 @@ export default {
         if (this.draggedColumn === "Purchased") {
           return;
         } else {
-          if (this.draggedColumn === "Claimed" && this.$store.state.user.userID != this.draggedItem.claimedBy) {
+          console.log(this.draggedItem.claimedBy);
+          if (this.draggedColumn === "Claimed" && this.$store.state.user.userId != this.draggedItem.claimedBy) {
             console.log("User is not the owner of this item");
             return;
           } else {
@@ -117,23 +139,58 @@ export default {
 
 <style scoped>
 .avatar {
-  width: 35px;
-  height: 35px;
+  width: 25px;
+  height: 25px;
   border-radius: 50%;
+  margin-left: 3px;
 }
 
 .custom-box {
   width: 100%;
 }
 
-.kanban-board {
-  margin-left: 210px;
-  font-family: 'Barlow', sans-serif;
+h6 {
+  color: hsl(27.3, 100%, 37.5%);
+}
+
+.kanban-board,
+.kanban-board-header {
+  margin-left: 275px;
   position: fixed;
   top: 100px;
   height: 100%;
   display: flex;
-  background-color: rgb(252, 252, 252);
+}
+
+.kanban-board-header {
+  top: 65px;
+  padding-left: 15px;
+  justify-content: space-between;
+  width: 100%;
+  position: relative;
+}
+
+.invites {
+  flex-grow: 3;
+  flex-shrink: 1;
+  flex-basis: 3;
+  margin-right: 25px;
+  margin-left: auto;
+  text-align: right;
+  margin-bottom: auto;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 10px;
+}
+
+
+.page-title {
+  font-weight: bold;
+  font-size: larger;
+  flex-grow: 1;
+  flex-shrink: 2;
 }
 
 .column {
@@ -150,6 +207,7 @@ export default {
   border-radius: 0.25rem;
   padding: 10px;
   border: 1px;
+  font-size: 1rem;
   box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
   margin-bottom: 10px;
   cursor: pointer;
@@ -161,7 +219,8 @@ export default {
 
 .item h3 {
   margin-top: 0px;
-  font-size: 0.875rem;
+  font-size: 0.885rem;
+  font-family: 'Barlow', sans-serif;
 }
 
 .item .header {
@@ -171,7 +230,6 @@ export default {
 
 .item .header img {
   border-radius: 9999px;
-  width: 32px;
   align-self: flex-start;
 }
 
@@ -189,18 +247,7 @@ export default {
   font-size: 0.7rem;
 }
 
-.design {
-  background-color: #faf5ff;
-  color: #6b46c1;
-}
-
-.qa {
-  background-color: #f0fff4;
-  color: #2c7a7b;
-}
-
-.feature {
-  background-color: #e6fffa;
-  color: #2c7a7b;
+.fa-user-plus {
+  color: hsl(27.3, 100%, 37.5%);
 }
 </style>

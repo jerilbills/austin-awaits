@@ -3,7 +3,7 @@
     <!-- Include the Navbar component -->
     <Navbar />
 
-    <div class="main-layout">
+    <div class="main-layout" style="background-color: red;">
       <!-- Include the Sidebar component -->
       <Sidebar />
 
