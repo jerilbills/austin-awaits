@@ -124,7 +124,10 @@ export default {
 
 .navbar-brand {
   padding: 0 1rem;
-  z-index: 50;
+}
+
+.navbar-menu {
+  margin-right: 1rem;
 }
 
 .welcome {
