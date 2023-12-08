@@ -18,7 +18,7 @@ namespace Capstone.Controllers
             this.shoppingListDao = shoppingListDao;
         }
 
-        [HttpGet("{user_id}/list")]
+        [HttpGet("{userId}/list")]
 
         public ActionResult<List<ShoppingList>> GetShoppingListsByUserID(int userId)
         {
