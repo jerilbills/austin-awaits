@@ -5,6 +5,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
+using System.Net.Http.Headers;
+using System.Net.Http;
 using System.Security.Cryptography.Xml;
 using System.Security.Principal;
 
@@ -17,10 +19,12 @@ namespace Capstone.Controllers
     public class ListItemController : ControllerBase
     {
         private readonly IListItemDao listItemDao;
+        private readonly IUserDao userDao;
 
-        public ListItemController(IListItemDao listItemDao)
+        public ListItemController(IListItemDao listItemDao, IUserDao userDao)
         {
             this.listItemDao = listItemDao;
+            this.userDao = userDao;
         }
 
 
@@ -32,13 +36,15 @@ namespace Capstone.Controllers
             try
             {
                 ListItem updatingListItem = listItemDao.GetListItemById(itemId, listId);
-
+                
                 if (updatingListItem == null)
                 {
                     return NotFound();
                 }
 
-                ListItem updatedListItem = listItemDao.UpdateListItem(listId, itemId, itemToUpdate);
+                User loggedInUser = userDao.GetActiveUserByUsername(User.Identity.Name);
+
+                ListItem updatedListItem = listItemDao.UpdateListItem(listId, itemId, loggedInUser.UserId, itemToUpdate);
 
                 return updatedListItem;
 
