@@ -30,15 +30,18 @@
         </h6>
         <div class="items">
           <div class="item" v-for="item in column.items" :key="item.itemId" @dragstart="dragStartItem(item)"
-            draggable="true">
+            draggable="true" @click="openModal(item)">
             <div class="header">
               <h3>{{ item.name }}</h3>
               <img v-if="item.claimedBy" :src="this.$store.state.user.avatarUrl" class="avatar" />
             </div>
           </div>
         </div>
+        <!-- SNACKBAR ALERTS-->
         <div id="snackbar-purchased">Items cannot be removed from Purchased.</div>
         <div id="snackbar-claimed">You are not the owner of this item.</div>
+        <!-- ITEM DETAILS MODAL -->
+        <ItemDetailsModal v-if="showModal" :item="selectedItem" @close="closeModal"/>
       </div>
     </div>
   </div>
@@ -46,14 +49,18 @@
 
 <script>
 import ShoppingListService from '../services/ShoppingListService';
+import ItemDetailsModal from './ItemDetailsModal.vue';
 
 export default {
   name: 'HTMLDraggable',
   props: ['title', 'cards', 'boardID'],
+  components: {
+    ItemDetailsModal,
+  },
   data() {
     return {
-      dragCounter: 0,
-
+      showModal: false,
+      selectedItem: null
     };
   },
   computed: {
@@ -141,6 +148,14 @@ export default {
       setTimeout(function () {
         x.className = x.className.replace("show", "");
       }, 4000);
+    },
+    openModal(item) {
+      this.selectedItem = item;
+      this.showModal = true;
+    },
+    closeModal() {
+      this.showModal = false;
+      this.selectedItem = null;
     },
 
 
