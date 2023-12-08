@@ -121,6 +121,36 @@ namespace Capstone.DAO
 
         }
 
+        public int AddUserToList(UserList userListToAdd)
+        {
+            int rowsAffected = 0;
+            string sql = "INSERT INTO users_lists (user_id, list_id) VALUES (@user_id, @list_id);";
+
+            try
+            {
+                using (SqlConnection conn = new SqlConnection(connectionString))
+                {
+                    conn.Open();
+
+                    SqlCommand cmd = new SqlCommand(sql, conn);
+                    cmd.Parameters.AddWithValue("@user_id", userListToAdd.UserId);
+                    cmd.Parameters.AddWithValue("@list_id", userListToAdd.ListId);
+
+                    rowsAffected = cmd.ExecuteNonQuery();
+
+                }
+            }
+            catch (SqlException ex)
+            {
+                throw new DaoException("SQL exception occurred", ex);
+            }
+            catch (Exception)
+            {
+
+            }
+
+            return rowsAffected;
+        }
 
         public ShoppingList MapRowToShoppingList(SqlDataReader reader)
         {

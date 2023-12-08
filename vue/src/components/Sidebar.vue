@@ -55,7 +55,7 @@ export default {
         .then(response => {
           this.$store.commit('SET_ITEMS', response.data);
           const activeList = this.lists.find((element) => element.id == listId);
-          this.$store.commit('SET_ACTIVE_LIST_NAME', activeList.name)
+          this.$store.commit('SET_ACTIVE_LIST', activeList)
         })
         .catch(error => {
           console.error('Error fetching list:', error);
