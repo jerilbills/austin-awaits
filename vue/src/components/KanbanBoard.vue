@@ -21,7 +21,12 @@
 
       <div class="box custom-box" style="width: 350px; height: auto;" @dragstart="dragStart(column.title)"
         draggable="true">
-        <h6 class="title is-6">{{ column.title }}</h6>
+        <h6 class="title is-6">
+          <i v-if="column.title == 'Items Needed'" class="fal fa-square"></i>
+          <i v-if="column.title == 'Claimed'" class="fa fa-arrow-right"></i>
+          <i v-if="column.title == 'Purchased'" class="fa fa-check"></i>
+          {{ column.title }}
+        </h6>
         <div class="items">
           <div class="item" v-for="item in column.items" :key="item.itemId" @dragstart="dragStartItem(item)"
             draggable="true">
@@ -80,7 +85,8 @@ export default {
         if (this.draggedColumn === "Purchased") {
           return;
         } else {
-          if (this.draggedColumn === "Claimed" && this.$store.state.user.userID != this.draggedItem.claimedBy) {
+          console.log(this.draggedItem.claimedBy);
+          if (this.draggedColumn === "Claimed" && this.$store.state.user.userId != this.draggedItem.claimedBy) {
             console.log("User is not the owner of this item");
             return;
           } else {
@@ -224,7 +230,6 @@ h6 {
 
 .item .header img {
   border-radius: 9999px;
-  width: 32px;
   align-self: flex-start;
 }
 
