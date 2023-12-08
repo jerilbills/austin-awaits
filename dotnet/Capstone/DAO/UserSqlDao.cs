@@ -6,6 +6,7 @@ using Capstone.Exceptions;
 using Capstone.Models;
 using Capstone.Security;
 using Capstone.Security.Models;
+using Microsoft.AspNetCore.SignalR;
 
 namespace Capstone.DAO
 {
@@ -119,8 +120,8 @@ namespace Capstone.DAO
             IPasswordHasher passwordHasher = new PasswordHasher();
             PasswordHash hash = passwordHasher.ComputeHash(potentialUser.Password);
 
-            // TODO - consider changing this to a service vs. hardcoding here
-            string avatarUrl = $"https://api.dicebear.com/7.x/initials/svg?seed={potentialUser.FirstName.Trim().Substring(0,1)}{potentialUser.LastName.Trim().Substring(0, 1)}";
+            string initials = potentialUser.FirstName.Trim().Substring(0, 1) + potentialUser.LastName.Trim().Substring(0, 1);
+            string avatarUrl = GetRandomAvatar(initials);
 
             string sql = "INSERT INTO users (username, first_name, last_name, department_id, password_hash, salt, user_role, avatar_url) " +
                          "OUTPUT INSERTED.user_id " +
@@ -171,6 +172,17 @@ namespace Capstone.DAO
             user.IsActive = Convert.ToBoolean(reader["is_active"]);
             user.CreatedDateUtc = Convert.ToDateTime(reader["created_date_utc"]);
             return user;
+        }
+
+        private string GetRandomAvatar(string initials)
+        {
+            string baseUrl = "https://api.dicebear.com/7.x";
+            string avatarFamily = "initials";
+            string seedParamater = "svg?seed=";
+            Random random = new Random();
+            // Testing found that random numbers between 1000 - 9999 generated the best variation in colors
+            int seedSalt = random.Next(1000, 9999);
+            return $"{baseUrl}/{avatarFamily}/{seedParamater}{initials}{seedSalt}";
         }
 
         public User UpdateName(User userToUpdate)
