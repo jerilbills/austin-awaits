@@ -53,8 +53,9 @@ export default {
     navigateTo(listId) {
       ShoppingListService.getSpecificList(this.$store.state.user.departmentId, listId)
         .then(response => {
-          // this.$store.state.activeItems = response.data;
           this.$store.commit('SET_ITEMS', response.data);
+          const activeList = this.lists.find((element) => element.id == listId);
+          this.$store.commit('SET_ACTIVE_LIST_NAME', activeList.name)
         })
         .catch(error => {
           console.error('Error fetching list:', error);

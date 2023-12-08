@@ -1,6 +1,6 @@
 <template>
   <div class="kanban-board-header">
-    <div class="page-title">Mimi Malone</div>
+    <div class="page-title">{{ $store.state.activeListName }}<span v-if="!$store.state.activeListName">Please select a list to work on. Austin Awaits!</span></div>
     <div class="invites">
       <div class="is-size-7">List Owner</div>
       <div><img src="https://api.dicebear.com/7.x/initials/svg?seed=JB" class="avatar"></div>
