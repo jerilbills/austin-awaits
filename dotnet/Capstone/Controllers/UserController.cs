@@ -1,27 +1,38 @@
-﻿using Microsoft.AspNetCore.Mvc;
 using Capstone.DAO;
-using Capstone.Exceptions;
 using Capstone.Models;
-using Capstone.Security;
+using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
-using Microsoft.AspNetCore.Authorization;
 
 namespace Capstone.Controllers
 {
     [Route("user")]
     [ApiController]
-    [Authorize]
     public class UserController : ControllerBase
     {
-        private readonly ITokenGenerator tokenGenerator;
-        private readonly IPasswordHasher passwordHasher;
         private readonly IUserDao userDao;
+        private readonly IShoppingListDao shoppingListDao;
 
-        public UserController(ITokenGenerator tokenGenerator, IPasswordHasher passwordHasher, IUserDao userDao)
+        public UserController(IUserDao userDao, IShoppingListDao shoppingListDao)
         {
-            this.tokenGenerator = tokenGenerator;
-            this.passwordHasher = passwordHasher;
             this.userDao = userDao;
+            this.shoppingListDao = shoppingListDao;
+        }
+
+        [HttpGet("{userId}/list")]
+
+        public ActionResult<List<ShoppingList>> GetInvitedShoppingListsByUserID(int userId)
+        {
+            List<ShoppingList> output = new List<ShoppingList>();
+            try
+            {
+                output = shoppingListDao.GetInvitedShoppingListsByUserID(userId);
+            }
+            catch (System.Exception)
+            {
+
+                return StatusCode(500);
+            }
+            return output;
         }
 
         [HttpGet]

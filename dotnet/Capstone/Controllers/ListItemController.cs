@@ -29,6 +29,10 @@ namespace Capstone.Controllers
 
         public ActionResult<ListItem> UpdateListItem(int itemID, int list_id, ListItem itemToUpdate)
         {
+            if (itemToUpdate.ListItemStatusId == 3)
+            {
+                return BadRequest();
+            }
             try
             {
                 ListItem updatingListItem = listItemDao.GetListItemById(itemID, list_id);

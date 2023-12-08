@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Capstone.Models
 {
-    public class ShoppingList : IJoinable
+    public class ShoppingList
     {
         public int Id { get; set; }
         public int OwnerId { get; set; }
@@ -15,10 +15,5 @@ namespace Capstone.Models
         public DateTime CreatedDate { get; set; }
         public DateTime LastModified { get; set; }
        
-
-        public IJoinable Join()
-        {
-            throw new NotImplementedException();
-        }
     }
 }
