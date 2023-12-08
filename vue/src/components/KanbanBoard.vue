@@ -40,6 +40,7 @@
         <!-- SNACKBAR ALERTS-->
         <div id="snackbar-purchased">Items cannot be removed from Purchased.</div>
         <div id="snackbar-claimed">You are not the owner of this item.</div>
+        <div id="snackbar-needed">Items must be claimed before they can be purchased.</div>
         <!-- ITEM DETAILS MODAL -->
         <ItemDetailsModal v-if="showModal" :item="selectedItem" @close="closeModal" />
       </div>
@@ -81,6 +82,10 @@ export default {
   methods: {
     dragStart(columnTitle) {
       this.draggedColumn = columnTitle;
+      console.log(this.draggedColumn);
+      if (this.draggedColumn === 'Items Needed') {
+        return
+      }
     },
     dragStartItem(item) {
       this.draggedItem = item;
@@ -95,14 +100,15 @@ export default {
         if (this.draggedColumn === "Purchased") {
           this.showPurchasedSnackbar();
           return;
+        } else if (this.draggedColumn === "Claimed" && this.$store.state.user.userId != this.draggedItem.claimedBy) {
+          this.showClaimedSnackbar();
+          return;
+        } else if (this.draggedColumn === "Items Needed" && columnStatusId === 3) {
+          console.log("Needed Snackbar")
+          this.showNeededSnackbar();
+          return;
         } else {
-          console.log(this.draggedItem.claimedBy);
-          if (this.draggedColumn === "Claimed" && this.$store.state.user.userId != this.draggedItem.claimedBy) {
-            this.showClaimedSnackbar();
-            return;
-          } else {
-            this.updateItemStatus(columnStatusId);
-          }
+          this.updateItemStatus(columnStatusId);
         }
       }
     },
@@ -149,6 +155,14 @@ export default {
         x.className = x.className.replace("show", "");
       }, 4000);
     },
+    showNeededSnackbar() {
+      let x = document.getElementById("snackbar-needed");
+      x.className = "show";
+      setTimeout(function () {
+        x.className = x.className.replace("show", "");
+      }, 4000);
+    },
+
     openModal(item) {
       this.selectedItem = item;
       this.showModal = true;
@@ -159,7 +173,7 @@ export default {
     },
 
 
-    dragLeave() {
+    dragLeave(columnTitle) {
 
     },
     filteredItems(statusId) {
@@ -327,6 +341,31 @@ h6 {
 }
 
 #snackbar-claimed.show {
+  visibility: visible;
+  /* Show the snackbar */
+  /* Add animation: Take 0.5 seconds to fade in and out the snackbar.
+  Delay the fade out process for 3.5 seconds */
+  -webkit-animation: fadein 0.5s, fadeout 0.5s 3.5s;
+  animation: fadein 0.5s, fadeout 0.5s 3.5s;
+}
+
+#snackbar-needed {
+  visibility: hidden;
+  min-width: 250px;
+  margin-left: -125px;
+  /* Divide value of min-width by 2 */
+  background-color: #333;
+  color: #fff;
+  text-align: center;
+  border-radius: 2px;
+  padding: 16px;
+  position: fixed;
+  z-index: 1;
+  left: 50%;
+  bottom: 30px;
+}
+
+#snackbar-needed.show {
   visibility: visible;
   /* Show the snackbar */
   /* Add animation: Take 0.5 seconds to fade in and out the snackbar.
