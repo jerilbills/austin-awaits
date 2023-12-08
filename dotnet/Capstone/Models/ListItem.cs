@@ -4,9 +4,8 @@ namespace Capstone.Models
 {
     public class ListItem 
     {
-       
-        public int ListID { get; set; }
-        public int ItemID { get; set; }
+        public int ListId { get; set; }
+        public int ItemId { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
         public string ImgUrl { get; set; }

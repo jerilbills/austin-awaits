@@ -39,13 +39,13 @@ namespace Capstone.DAO
         public Item MapRowToItem(SqlDataReader reader)
         {
             Item item = new Item();
-            item.Id = Convert.ToInt32(reader["item_id"]);
+            item.ItemId = Convert.ToInt32(reader["item_id"]);
             item.CreatedBy = Convert.ToInt32(reader["created_by_user_id"]);
             item.CreatedDate = Convert.ToDateTime(reader["created_date_utc"]);
             item.Description = Convert.ToString(reader["item_description"]);
             item.ImgUrl = Convert.ToString(reader["item_image_url"]);
             item.IsActive = Convert.ToBoolean(reader["is_active"]);
-            item.isTrackedInventory = Convert.ToBoolean(reader["is_tracked_inventory"]);
+            item.IsTrackedInventory = Convert.ToBoolean(reader["is_tracked_inventory"]);
             item.LastModifiedBy = Convert.ToInt32(reader["last_modified_by_user_id"]);
             item.LastModifiedDate = Convert.ToDateTime(reader["last_modified_date_utc"]);
             item.Name = Convert.ToString(reader["item_name"]);

@@ -12,7 +12,7 @@ using System.Security.Principal;
 namespace Capstone.Controllers
 {
     [ApiController]
-    [Route("department/{department_id}/list/{list_id}/listitem")]
+    [Route("department/{departmentId}/list/{listId}/listitem")]
     [Authorize]
     public class ListItemController : ControllerBase
     {
@@ -25,24 +25,20 @@ namespace Capstone.Controllers
 
 
 
-        [HttpPut("{itemID}")]
+        [HttpPut("{itemId}")]
 
-        public ActionResult<ListItem> UpdateListItem(int itemID, int list_id, ListItem itemToUpdate)
+        public ActionResult<ListItem> UpdateListItem(int itemId, int listId, ListItem itemToUpdate)
         {
-            if (itemToUpdate.ListItemStatusId == 3)
-            {
-                return BadRequest();
-            }
             try
             {
-                ListItem updatingListItem = listItemDao.GetListItemById(itemID, list_id);
+                ListItem updatingListItem = listItemDao.GetListItemById(itemId, listId);
 
                 if (updatingListItem == null)
                 {
                     return NotFound();
                 }
 
-                ListItem updatedListItem = listItemDao.UpdateListItem(list_id, itemID, itemToUpdate);
+                ListItem updatedListItem = listItemDao.UpdateListItem(listId, itemId, itemToUpdate);
 
                 return updatedListItem;
 
@@ -57,12 +53,12 @@ namespace Capstone.Controllers
 
         [HttpGet]
 
-        public ActionResult<List<ListItem>> GetListItemsByListId(int list_id)
+        public ActionResult<List<ListItem>> GetListItemsByListId(int listId)
         {
             List<ListItem> output = new List<ListItem>();
             try
             {
-                output = listItemDao.GetListItemsByListId(list_id);
+                output = listItemDao.GetListItemsByListId(listId);
             }
             catch (System.Exception)
             {
@@ -73,14 +69,14 @@ namespace Capstone.Controllers
             return output;
         }
 
-        [HttpGet("{itemID}")]
+        [HttpGet("{itemId}")]
 
-        public ActionResult<ListItem> GetListItemById(int itemID, int list_id)
+        public ActionResult<ListItem> GetListItemById(int itemId, int listId)
         {
             ListItem output;
             try
             {
-                output = listItemDao.GetListItemById(itemID, list_id);
+                output = listItemDao.GetListItemById(itemId, listId);
             }
             catch (System.Exception)
             {
@@ -90,7 +86,5 @@ namespace Capstone.Controllers
 
             return output;
         }
-
-
     }
 }

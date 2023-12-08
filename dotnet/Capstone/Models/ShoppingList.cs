@@ -5,10 +5,10 @@ namespace Capstone.Models
 {
     public class ShoppingList
     {
-        public int Id { get; set; }
+        public int ListId { get; set; }
         public int OwnerId { get; set; }
         public string Name { get; set; }
-        public int DeparmentId { get; set; }
+        public int DepartmentId { get; set; }
         public DateTime DueDate { get; set; }
         public int Status { get; set; }
         public bool IsActive { get; set; }

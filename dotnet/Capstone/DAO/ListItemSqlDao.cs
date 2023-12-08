@@ -133,8 +133,8 @@ namespace Capstone.DAO
             
 
 
-            listItem.ListID = Convert.ToInt32(reader["list_id"]);
-            listItem.ItemID = Convert.ToInt32(reader["item_id"]);
+            listItem.ListId = Convert.ToInt32(reader["list_id"]);
+            listItem.ItemId = Convert.ToInt32(reader["item_id"]);
             listItem.IsActive = Convert.ToBoolean(reader["is_active"]);
             listItem.LastModifiedBy = Convert.ToInt32(reader["last_modified_by_user_id"]);
             listItem.Quantity = Convert.ToInt32(reader["quantity"]);
