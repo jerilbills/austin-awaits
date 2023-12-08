@@ -85,7 +85,7 @@ namespace Capstone.DAO
 
         }
 
-        public List<ShoppingList> GetShoppingListsByUserID(int userId)
+        public List<ShoppingList> GetInvitedShoppingListsByUserID(int userId)
         {
             List<ShoppingList> output = new List<ShoppingList>();
             string sql = "SELECT lists.list_id, list_name, department_id, " +
