@@ -2,13 +2,13 @@
     <nav class="navbar" role="navigation" aria-label="main navigation">
       <div class="navbar-brand">
         <a class="navbar-item" href="#">
-          <img src="../assets/logo-placeholder.jpg" width="auto" height="200%">
+          <img src="../assets/austin-awaits-logo.png" width="auto" height="300%">
         </a>
       </div>
   
       <div id="navbar" class="navbar-menu">
         <div class="navbar-start">
-          <div class="navbar-brand-text">PROJECT DASHBOARD</div>
+          <div class="navbar-brand-text"></div>
         </div>
 
             <div class="navbar-end">
@@ -76,4 +76,9 @@ export default {
   font-weight: bold; 
   margin-top: 0.6rem;
 }
+
+.navbar-brand-text:hover {
+  font-weight: bold;
+}
+
 </style>
