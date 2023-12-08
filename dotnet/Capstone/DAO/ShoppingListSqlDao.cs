@@ -83,7 +83,41 @@ namespace Capstone.DAO
             }
             return output;
 
+        }
 
+        public List<ShoppingList> GetInvitedShoppingListsByUserID(int userId)
+        {
+            List<ShoppingList> output = new List<ShoppingList>();
+            string sql = "SELECT lists.list_id, list_name, department_id, " +
+                "list_status_id, list_owner_user_id, due_date_utc, " +
+                "created_date_utc, last_modified_date_utc, is_active " +
+                "FROM users_lists JOIN lists " +
+                "ON lists.list_id = users_lists.list_id WHERE user_id = @user_id;";
+
+            try
+            {
+                using(SqlConnection conn = new SqlConnection(connectionString))
+                {
+                    conn.Open();
+                    SqlCommand cmd = new SqlCommand(sql, conn);
+                    cmd.Parameters.AddWithValue("@user_id", userId);
+
+                    SqlDataReader reader = cmd.ExecuteReader();
+
+                    while (reader.Read())
+                    {
+                        ShoppingList shoppingList = MapRowToShoppingList(reader);
+                        output.Add(shoppingList);
+                    }
+                }
+            }
+            catch (Exception)
+            {
+
+                throw new DaoException();
+            }
+
+            return output;
 
         }
 
@@ -105,7 +139,6 @@ namespace Capstone.DAO
 
 
         }
-
 
     }
 }
