@@ -1,79 +1,130 @@
 <template>
-    <nav class="navbar" role="navigation" aria-label="main navigation">
+  <nav class="navbar is-dark is-fixed-top" role="navigation" aria-label="main navigation">
+
+
+    <div id="navbar" class="navbar-menu">
       <div class="navbar-brand">
-        <a class="navbar-item" href="#">
-          <img src="../assets/logo-placeholder.jpg" width="auto" height="200%">
+        <a class="navbar-item" href="/">
+          <img id="logo" src="../assets/austin-awaits-logo.png" width="auto" height="200%">
         </a>
       </div>
-  
-      <div id="navbar" class="navbar-menu">
-        <div class="navbar-start">
-          <div class="navbar-brand-text">PROJECT DASHBOARD</div>
+      <div class="navbar-end ">
+        <div class="navbar-item">
+          <div class="buttons">
+            <span class="is-size-7 welcome">Welcome, {{ $store.state.user.firstName }} {{ $store.state.user.lastName }} {{
+              userDepartmentName ? "(" + userDepartmentName + ")" : "" }}</span>
+            <a class="navbar-item" href="#">
+              My Account
+            </a>
+            <a class="navbar-item" href="/logout">
+              Logout
+            </a>
+          </div>
         </div>
-
-            <div class="navbar-end">
-                <div class="navbar-item">
-                    <div class="buttons">
-                        <a class="navbar-item">
-                            HOME
-                        </a>
-                        <p> | </p>
-                        <a class="navbar-item">
-                            INVITES
-                        </a>
-                        <p> | </p>
-                        <a class="navbar-item" href="/logout">
-                            LOGOUT
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </nav>
+      </div>
+    </div>
+  </nav>
 </template>
   
 <script>
+import departmentService from '../services/DepartmentService';
+
 export default {
-    data() {
-        return {
-            isNavbarActive: false,
-        };
+  data() {
+    return {
+      isNavbarActive: false,
+      userDepartmentName: ""
+    };
+  },
+  methods: {
+    toggleNavbar() {
+      this.isNavbarActive = !this.isNavbarActive;
     },
-    methods: {
-        toggleNavbar() {
-            this.isNavbarActive = !this.isNavbarActive;
-        },
-    },
+    getUserDepartment() {
+      if (!this.userDepartmentName) {
+        departmentService
+          .getDepartments()
+        .then((response) => {
+          response.data.forEach((dept) => {
+            console.log(dept.departmentId);
+            if (dept.departmentId == this.$store.state.user.departmentId) {
+              this.userDepartmentName = dept.departmentName;
+            }
+          });
+        })
+        .catch((error) => {
+          console.log("Could not retrieve departments");
+        })
+      }
+    }
+  },
+  created() {
+    this.getUserDepartment();
+  }
 };
 </script>
   
 <style scoped>
-.navbar {
-  background-color: #fff;
-  border-bottom: 1px solid #ddd;
+.navbar-item img {
+  max-height: 42px;
+  width: auto;
+  padding: 0px;
+  border: 0px;
+}
+
+.navbar-brand>a.navbar-item:hover {
+  background-color: #BF5700 !important;
+}
+
+.navbar-item {
+  display: flex;
+}
+
+.navbar a {
+  color: white;
+  padding: 5px;
+  margin-right: 10px;
+}
+
+.navbar a:hover {
+  color: #BF5700;
+}
+
+.navbar,
+.navbar-menu,
+.navbar-start,
+.navbar-end {
+  align-items: stretch;
+  display: flex;
+  padding: 0;
+  color: white;
+  background-color: #BF5700;
   position: fixed;
   width: 100%;
-  height: 100px;
+  height: 50px;
   top: 0;
   left: 0;
-  z-index: 1000;
-  display: flex;
-  justify-content: space-between; /* Align items to the start and end of the navbar */
-  align-items: center; /* Center items vertically */
-  font-family: 'Barlow', sans-serif;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.navbar-start {
+  justify-content: flex-start;
+  margin-right: auto;
+}
+
+.navbar-end {
+  justify-content: flex-end;
+  margin-left: auto;
+  z-index: -1;
 }
 
 .navbar-brand {
   padding: 0 1rem;
+  z-index: 50;
 }
 
-.navbar-menu {
-  margin-right: 1rem;
-}
-
-.navbar-brand-text {
-  font-size: 1.2rem; 
-  font-weight: bold; 
-  margin-top: 0.6rem;
-}
-</style>
+.welcome {
+  padding: 2px 20px 0px 0px;
+  color: white;
+}</style>
