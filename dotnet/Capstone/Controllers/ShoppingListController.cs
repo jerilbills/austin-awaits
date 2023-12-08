@@ -8,7 +8,7 @@ using System.Collections.Generic;
 namespace Capstone.Controllers
 {
     [ApiController]
-    [Route("department/{id}/list")]
+    [Route("department/{departmentId}/list")]
     [Authorize]
     public class ShoppingListController : ControllerBase
     {
@@ -20,12 +20,12 @@ namespace Capstone.Controllers
         }
 
         [HttpGet]
-        public ActionResult<List<ShoppingList>> GetShoppingListsByDepartmentID(int id)
+        public ActionResult<List<ShoppingList>> GetShoppingListsByDepartmentID(int departmentId)
         {
             List<ShoppingList> output = new List<ShoppingList>();
             try
             {
-                output = shoppingListDao.GetShoppingListsByDepartmentID(id);
+                output = shoppingListDao.GetShoppingListsByDepartmentID(departmentId);
             }
             catch (System.Exception)
             {
@@ -35,7 +35,7 @@ namespace Capstone.Controllers
             return output;
         }
 
-        [HttpPost("{list_id}/user/{user_id}")]
+        [HttpPost("{listId}/user/{userId}")]
         public ActionResult<int> AddUserToList(UserList userListToAdd)
         {
             int output;

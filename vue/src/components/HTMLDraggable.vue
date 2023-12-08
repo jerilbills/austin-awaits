@@ -27,7 +27,7 @@ import ShoppingListService from '../services/ShoppingListService';
 
 export default {
     name: 'HTMLDraggable',
-    props: ['title', 'cards', 'boardID'],
+    props: ['title', 'cards', 'boardId'],
     data() {
         return {
             dragCounter: 0,

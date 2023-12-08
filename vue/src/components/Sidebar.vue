@@ -2,7 +2,7 @@
   <div class="sidebar is-dark">
      <span class="sidebar-header"><span class="icon"><i class="fa fa-home"></i></span>My Department</span>
     <ul>
-      <li v-for="list in lists" :key="list.id" @click="navigateTo(list.id)">
+      <li v-for="list in lists" :key="list.listId" @click="navigateTo(list.listId)">
         {{ list.name }}
       </li>
     </ul>
@@ -54,7 +54,7 @@ export default {
       ShoppingListService.getSpecificList(this.$store.state.user.departmentId, listId)
         .then(response => {
           this.$store.commit('SET_ITEMS', response.data);
-          const activeList = this.lists.find((element) => element.id == listId);
+          const activeList = this.lists.find((element) => element.listId == listId);
           this.$store.commit('SET_ACTIVE_LIST', activeList)
         })
         .catch(error => {
