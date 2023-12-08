@@ -12,7 +12,65 @@
         <img src="https://api.dicebear.com/7.x/initials/svg?seed=NH" class="avatar">
         <img src="https://api.dicebear.com/7.x/initials/svg?seed=JF" class="avatar">
       </div>
-      <div><i class="fa fa-user-plus fa-lg"></i></div>
+      <div>
+        <i class="fa fa-user-plus fa-lg" @click="toggleDropdown"></i>
+        <div v-if="showDropdown" class="select" >
+          <select id="department" name="department" v-model="departmentId" required>
+          <option v-for="dept in departments" :key="dept.departmentId" :value="dept.departmentId">
+          {{ dept.departmentName }}
+          </option>
+           </select>
+        </div>
+        
+      <div v-if="departmentId">
+        <div class="select">
+          <select id="user" name="user" v-model="selectedUser" required>
+            <option value="">Select User</option>
+            <option v-for="user in departmentUsers" :key="user.userId" :value="user.userId">
+              {{user.firstName}} {{user.lastName}}
+            </option>
+          </select>
+        </div>
+      </div>
+
+
+
+
+
+
+
+
+<!-- 
+
+        <div>
+  <div class="select">
+    <select id="department" name="department" v-model="selectedDepartment" @change="departmentChanged" required>
+      <option value="">Select Department</option>
+      <option v-for="dept in departments" :key="dept.departmentId" :value="dept.departmentId">
+        {{ dept.departmentName }}
+      </option>
+    </select>
+  </div>
+
+  <div v-if="selectedDepartment">
+    <div class="select">
+      <select id="subDepartment" name="subDepartment" v-model="selectedSubDepartment" required>
+        <option value="">Select Sub-Department</option>
+        <option v-for="subDept in subDepartments" :key="subDept.subDepartmentId" :value="subDept.subDepartmentId">
+          {{ subDept.subDepartmentName }}
+        </option>
+      </select>
+    </div>
+  </div>
+</div> -->
+
+
+
+
+      </div>
+
+
+
     </div>
   </div>
   <div class="kanban-board">
@@ -43,6 +101,8 @@
 
 <script>
 import ShoppingListService from '../services/ShoppingListService';
+import DepartmentService from '../services/DepartmentService';
+
 
 export default {
   name: 'HTMLDraggable',
@@ -50,6 +110,12 @@ export default {
   data() {
     return {
       dragCounter: 0,
+      departments: [],
+      showDropdown: false,
+      //user: {}  vmodel user.departmentId
+      departmentId: null, 
+      selectedUser: null,
+      departmentUsers: [],
 
     };
   },
@@ -131,8 +197,45 @@ export default {
     filteredItems(statusId) {
       return this.myItems.filter(item => item.itemListStatusId === statusId);
     },
+    //loadDepartments should call a new method that gets only the other departments-
+    //update this method and the DepartmentService once we write that backend method 
+    loadDepartmentList() {
+      DepartmentService
+        .getDepartments()
+        .then((response) => {
+          response.data.forEach((dept) => {
+            this.departments.push(dept);
+          });
+        })
+        .catch((error) => {          
+          this.registrationErrorMsg = 'There were problems registering this user.';
+        })
+    },
+    toggleDropdown() {
+      this.showDropdown = !this.showDropdown;
+    },
+    loadDepartmentUsersList() {
+      UserService
+        .getUsersByDepartmentId(this.departmentId)
+        .then((response) => {
+          response.data.forEach((person) => {
+            this.departmentUsers.push(person);
+          });
+        })
+        .catch((error) => {          
+          this.registrationErrorMsg = 'There were problems registering this user.';
+        })
+    },
 
-  }
+
+  },
+  created() {
+    this.loadDepartmentList();
+    this.loadDDepartmentUserList();
+  },
+
+
+ 
 }
 
 </script>
