@@ -1,14 +1,16 @@
 <template>
   <div class="sidebar is-dark">
-     <span class="sidebar-header"><span class="icon"><i class="fa fa-home"></i></span>My Department</span>
+    <span class="sidebar-header"><span class="icon"><i class="fa fa-home"></i></span>My Department</span>
     <ul>
-      <li v-for="list in lists" :key="list.listId" @click="navigateTo(list.listId)">
+      <li v-for="list in lists" :key="list.listId" @click="navigateTo(this.$store.state.user.departmentId, list.listId)">
         {{ list.name }}
       </li>
     </ul>
-    <span class="sidebar-header"><span class="icon"><i class="fa fa-envelope"></i></span>Invitations</span>
+    <span class="sidebar-header"><span class="icon"><i class="fa fa-envelope"></i></span>Invited Lists</span>
     <ul>
-      <li>No other lists to work on</li>
+      <li v-for="list in invitedLists" :key="list.listId" @click="navigateTo(list.departmentId, list.listId)">
+        {{ list.name }}
+      </li>
     </ul>
 
     <span class="sidebar-header"><span class="icon"><i class="fa fa-filter"></i></span>Filters</span>
@@ -32,9 +34,10 @@ export default {
   data() {
     return {
       lists: [
-
-
       ],
+      invitedLists: [
+
+      ]
     };
   },
   created() {
@@ -45,16 +48,30 @@ export default {
       })
       .catch(error => {
         console.error('Error fetching lists:', error);
-      });
+      })
+
+    ShoppingListService.getInvitedLists(this.$store.state.user)
+      .then(response => {
+        this.invitedLists = response.data;
+      })
+      .catch(error => {
+        console.error('Error fetching invited lists:', error);
+      })
+
   },
 
 
   methods: {
-    navigateTo(listId) {
-      ShoppingListService.getSpecificList(this.$store.state.user.departmentId, listId)
+    navigateTo(departmentId, listId) {
+      let activeList = null;
+      ShoppingListService.getSpecificList(departmentId, listId)
         .then(response => {
           this.$store.commit('SET_ITEMS', response.data);
-          const activeList = this.lists.find((element) => element.listId == listId);
+          if (this.lists.find((element) => element.listId == listId)) {
+            activeList = this.lists.find((element) => element.listId == listId)
+          } else if (this.invitedLists.find((element) => element.listId == listId)) {
+            activeList = this.invitedLists.find((element) => element.listId == listId)
+          }
           this.$store.commit('SET_ACTIVE_LIST', activeList)
         })
         .catch(error => {
@@ -99,7 +116,8 @@ li {
 
 li:hover {
   background-color: #C4FCF0;
-  color: hsl(27.3,100%,37.5%);;
+  color: hsl(27.3, 100%, 37.5%);
+  ;
   font-weight: bold;
 
 }
