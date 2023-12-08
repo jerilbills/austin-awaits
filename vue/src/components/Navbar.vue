@@ -4,21 +4,21 @@
 
     <div id="navbar" class="navbar-menu">
       <div class="navbar-brand">
-        <a class="navbar-item" href="/">
+        <router-link class="navbar-item" :to="{ name: 'home' }">
           <img id="logo" src="../assets/austin-awaits-logo.png" width="auto" height="200%">
-        </a>
+        </router-link>
       </div>
       <div class="navbar-end ">
         <div class="navbar-item">
           <div class="buttons">
             <span class="is-size-7 welcome">Welcome, {{ $store.state.user.firstName }} {{ $store.state.user.lastName }} {{
               userDepartmentName ? "(" + userDepartmentName + ")" : "" }}</span>
-            <a class="navbar-item" href="#">
+            <a class="navbar-item" href="/">
               My Account
             </a>
-            <a class="navbar-item" href="/logout">
+            <router-link class="navbar-item" :to="{ name: 'logout' }">
               Logout
-            </a>
+            </router-link>
           </div>
         </div>
       </div>
@@ -44,17 +44,17 @@ export default {
       if (!this.userDepartmentName) {
         departmentService
           .getDepartments()
-        .then((response) => {
-          response.data.forEach((dept) => {
-            console.log(dept.departmentId);
-            if (dept.departmentId == this.$store.state.user.departmentId) {
-              this.userDepartmentName = dept.departmentName;
-            }
-          });
-        })
-        .catch((error) => {
-          console.log("Could not retrieve departments");
-        })
+          .then((response) => {
+            response.data.forEach((dept) => {
+              console.log(dept.departmentId);
+              if (dept.departmentId == this.$store.state.user.departmentId) {
+                this.userDepartmentName = dept.departmentName;
+              }
+            });
+          })
+          .catch((error) => {
+            console.log("Could not retrieve departments");
+          })
       }
     }
   },
@@ -72,7 +72,7 @@ export default {
   border: 0px;
 }
 
-.navbar-brand>a.navbar-item:hover {
+.navbar-brand>a.navbar-item:hover, .navbar-brand>a.navbar-item:visited, .navbar-brand>a.navbar-item:focus  {
   background-color: #BF5700 !important;
 }
 
@@ -86,7 +86,10 @@ export default {
   margin-right: 10px;
 }
 
-.navbar a:hover {
+.navbar a:hover, a:focus {
+  color: #BF5700;
+}
+.navbar  {
   color: #BF5700;
 }
 
@@ -127,4 +130,5 @@ export default {
 .welcome {
   padding: 2px 20px 0px 0px;
   color: white;
-}</style>
+}
+</style>
