@@ -103,8 +103,11 @@ namespace Capstone.DAO
                     cmd.Parameters.AddWithValue("@user_id", userId);
 
                     SqlDataReader reader = cmd.ExecuteReader();
-                    while (reader.Read()){
-                        output.Add(MapRowToShoppingList(reader));
+
+                    while (reader.Read())
+                    {
+                        ShoppingList shoppingList = MapRowToShoppingList(reader);
+                        output.Add(shoppingList);
                     }
                 }
             }
