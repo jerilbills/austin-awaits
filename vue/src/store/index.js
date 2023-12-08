@@ -10,7 +10,7 @@ export function createStore(currentToken, currentUser) {
       activeItems: [
         
       ],
-      activeListName: ""
+      activeList: {}
     },
     mutations: {
       SET_AUTH_TOKEN(state, token) {
@@ -60,8 +60,8 @@ export function createStore(currentToken, currentUser) {
         state.activeItems = {};
         state.activeItems = items.map(item => item);
       },
-      SET_ACTIVE_LIST_NAME(state, name) {
-        state.activeListName = name;
+      SET_ACTIVE_LIST(state, list) {
+        state.activeList = list;
       },
     },
     getters:{

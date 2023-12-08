@@ -13,18 +13,13 @@ namespace Capstone.Controllers
     public class ShoppingListController : ControllerBase
     {
         private readonly IShoppingListDao shoppingListDao;
-        private readonly IUserDao userDao;
 
-        public ShoppingListController(IShoppingListDao shoppingListDao, IUserDao userDao)
+        public ShoppingListController(IShoppingListDao shoppingListDao)
         {
             this.shoppingListDao = shoppingListDao;
-            this.userDao = userDao;
         }
 
-
-
         [HttpGet]
-
         public ActionResult<List<ShoppingList>> GetShoppingListsByDepartmentID(int id)
         {
             List<ShoppingList> output = new List<ShoppingList>();
@@ -46,7 +41,7 @@ namespace Capstone.Controllers
             int output;
             try
             {
-                output = userDao.AddUserToList(userListToAdd);
+                output = shoppingListDao.AddUserToList(userListToAdd);
             }
             catch (System.Exception)
             {
@@ -54,6 +49,22 @@ namespace Capstone.Controllers
                 return StatusCode(500);
             }
 
+            return output;
+        }
+
+        [HttpGet("/user/{userId}/list")]
+        public ActionResult<List<ShoppingList>> GetInvitedShoppingListsByUserID(int userId)
+        {
+            List<ShoppingList> output = new List<ShoppingList>();
+            try
+            {
+                output = shoppingListDao.GetInvitedShoppingListsByUserID(userId);
+            }
+            catch (System.Exception)
+            {
+
+                return StatusCode(500);
+            }
             return output;
         }
     }
