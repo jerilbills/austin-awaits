@@ -16,11 +16,12 @@ namespace Capstone.DAO
         }
 
 
-        public ListItem UpdateListItem(int listId, int itemId, ListItem itemToUpdate)
+        public ListItem UpdateListItemStatusAndClaimant(int listId, int itemId, int updatingUserId, ListItem itemToUpdate)
         {
 
             //edit sql to change the userID as well
-            string sql = "UPDATE list_items SET list_item_status_id = @status, list_item_claimed_by_user_id = @userId WHERE list_id = @ListId AND item_id = @ItemId;";
+            string sql = "UPDATE list_items SET list_item_status_id = @status, list_item_claimed_by_user_id = @userId, " +
+                "last_modified_date_utc = GETUTCDATE(), last_modified_by_user_id = @updatinguserid WHERE list_id = @ListId AND item_id = @ItemId;";
 
             ListItem output = null;
 
@@ -35,13 +36,8 @@ namespace Capstone.DAO
                     cmd.Parameters.AddWithValue("@status", itemToUpdate.ListItemStatusId);
                     cmd.Parameters.AddWithValue("@ListId", listId);
                     cmd.Parameters.AddWithValue("@ItemId", itemId);
-                    SqlParameter claimedByParam = cmd.Parameters.AddWithValue("@userId", itemToUpdate.ClaimedBy);
-                    if (itemToUpdate.ClaimedBy == null)
-                    {
-                        claimedByParam.Value = DBNull.Value;
-                    }
-                    //add userID parameter
-
+                    cmd.Parameters.AddWithValue("@userId", (itemToUpdate.ClaimedBy == null) ? DBNull.Value : itemToUpdate.ClaimedBy);
+                    cmd.Parameters.AddWithValue("@updatinguserid", updatingUserId);
 
                     rowsAffected = cmd.ExecuteNonQuery();
 
@@ -52,7 +48,7 @@ namespace Capstone.DAO
                 }
                 else
                 {
-                    output = GetListItemById(itemId, listId);
+                    output = GetActiveListItemById(itemId, listId);
                     
 
                 }
@@ -64,13 +60,16 @@ namespace Capstone.DAO
             return output;
         }
 
-        public ListItem GetListItemById(int itemId, int listId)
+        public ListItem GetActiveListItemById(int itemId, int listId)
         {
-            string sql = @"SELECT list_id, list_items.item_id, quantity, 
-                list_item_claimed_by_user_id, list_item_status_id, 
-                list_items.created_date_utc, list_items.last_modified_by_user_id, item_name, item_description, item_image_url, 
-                list_items.last_modified_date_utc, list_items.is_active  FROM list_items JOIN items on list_items.item_id = items.item_id
-				WHERE list_id = @ListId AND list_items.item_id = @ItemId;";
+            string sql = @"SELECT list_id, LI.item_id, quantity, 
+                        list_item_claimed_by_user_id, list_item_status_id, 
+                        LI.created_date_utc, LI.last_modified_by_user_id, item_name, item_description, item_image_url, 
+                        LI.last_modified_date_utc, LI.is_active, U.username, U.first_name, U.last_name, U.department_id, U.user_role, U.avatar_url
+                        FROM list_items as LI
+                        JOIN items AS I on LI.item_id = I.item_id
+                        LEFT JOIN users AS U ON U.user_id = LI.list_item_claimed_by_user_id
+                        WHERE list_id = @listId AND LI.item_id = @itemId AND LI.is_active = 1;";
             ListItem output = null;
             try
             {
@@ -78,8 +77,8 @@ namespace Capstone.DAO
                 {
                     conn.Open();
                     SqlCommand cmd = new SqlCommand(sql, conn);
-                    cmd.Parameters.AddWithValue("@ListId", listId);
-                    cmd.Parameters.AddWithValue("@ItemId", itemId);
+                    cmd.Parameters.AddWithValue("@listId", listId);
+                    cmd.Parameters.AddWithValue("@itemId", itemId);
                     SqlDataReader reader = cmd.ExecuteReader();
                     if (reader.Read())
                     {
@@ -96,11 +95,17 @@ namespace Capstone.DAO
             return output;
         }
 
-        public List<ListItem> GetListItemsByListId(int listID)
+        public List<ListItem> GetActiveListItemsByListId(int listId)
         {
             //use listID parameter in sql string
-            string sql = "SELECT list_id, list_items.item_id, quantity, list_item_claimed_by_user_id, list_item_status_id, list_items.created_date_utc, list_items.last_modified_by_user_id, item_name, item_description, item_image_url, list_items.last_modified_date_utc, list_items.is_active" +
-                " FROM list_items JOIN items on list_items.item_id = items.item_id WHERE list_id = @listID";
+            string sql = @"SELECT list_id, LI.item_id, quantity, 
+                    list_item_claimed_by_user_id, list_item_status_id, 
+                    LI.created_date_utc, LI.last_modified_by_user_id, item_name, item_description, item_image_url, 
+                    LI.last_modified_date_utc, LI.is_active, U.username, U.first_name, U.last_name, U.department_id, U.user_role, U.avatar_url
+                    FROM list_items as LI
+                    JOIN items AS I on LI.item_id = I.item_id
+                    LEFT JOIN users AS U ON U.user_id = LI.list_item_claimed_by_user_id
+                    WHERE list_id = @listId AND LI.is_active = 1;";
             List<ListItem> output = new List<ListItem>();
             try
             {
@@ -108,7 +113,7 @@ namespace Capstone.DAO
                 {
                     conn.Open();
                     SqlCommand cmd = new SqlCommand(sql, conn);
-                    cmd.Parameters.AddWithValue("@listID", listID);
+                    cmd.Parameters.AddWithValue("@listId", listId);
 
                     SqlDataReader reader = cmd.ExecuteReader();
                     while (reader.Read())
@@ -130,11 +135,8 @@ namespace Capstone.DAO
 
             ListItem listItem = new ListItem();
 
-            
-
-
-            listItem.ListID = Convert.ToInt32(reader["list_id"]);
-            listItem.ItemID = Convert.ToInt32(reader["item_id"]);
+            listItem.ListId = Convert.ToInt32(reader["list_id"]);
+            listItem.ItemId = Convert.ToInt32(reader["item_id"]);
             listItem.IsActive = Convert.ToBoolean(reader["is_active"]);
             listItem.LastModifiedBy = Convert.ToInt32(reader["last_modified_by_user_id"]);
             listItem.Quantity = Convert.ToInt32(reader["quantity"]);
@@ -146,8 +148,20 @@ namespace Capstone.DAO
             else
             {
                 listItem.ClaimedBy = Convert.ToInt32(reader["list_item_claimed_by_user_id"]);
+
+                if (listItem.ClaimedBy != null)
+                {
+                    listItem.ClaimedByUser = new User();
+                    listItem.ClaimedByUser.UserId = listItem.ClaimedBy.Value;
+                    listItem.ClaimedByUser.Username = Convert.ToString(reader["username"]);
+                    listItem.ClaimedByUser.Role = Convert.ToString(reader["user_role"]);
+                    listItem.ClaimedByUser.FirstName = Convert.ToString(reader["first_name"]);
+                    listItem.ClaimedByUser.LastName = Convert.ToString(reader["last_name"]);
+                    listItem.ClaimedByUser.AvatarUrl = Convert.ToString(reader["avatar_url"]);
+                    listItem.ClaimedByUser.UserId = Convert.ToInt32(reader["department_id"]);
+                }
             }
-            
+
             listItem.ListItemStatusId = Convert.ToInt32(reader["list_item_status_id"]);
             listItem.LastModifiedDate = Convert.ToDateTime(reader["last_modified_date_utc"]);
             listItem.Name = Convert.ToString(reader["item_name"]);

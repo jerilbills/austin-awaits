@@ -11,8 +11,12 @@ export default {
     },
 
     updateItem(item) {
-        return axios.put('/department/'+item.departmentId+'/list/' + item.listID + '/listitem/' + item.itemID, item);
+        return axios.put('/department/'+item.departmentId+'/list/' + item.listId + '/listitem/' + item.itemId, item);
     },
+
+    getInvitedLists(user) {
+        return axios.get('/user/' + user.userId + '/list')
+    }
 
 
   

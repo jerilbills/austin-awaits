@@ -121,11 +121,41 @@ namespace Capstone.DAO
 
         }
 
+        public int AddUserToList(UserList userListToAdd)
+        {
+            int rowsAffected = 0;
+            string sql = "INSERT INTO users_lists (user_id, list_id) VALUES (@user_id, @list_id);";
+
+            try
+            {
+                using (SqlConnection conn = new SqlConnection(connectionString))
+                {
+                    conn.Open();
+
+                    SqlCommand cmd = new SqlCommand(sql, conn);
+                    cmd.Parameters.AddWithValue("@user_id", userListToAdd.UserId);
+                    cmd.Parameters.AddWithValue("@list_id", userListToAdd.ListId);
+
+                    rowsAffected = cmd.ExecuteNonQuery();
+
+                }
+            }
+            catch (SqlException ex)
+            {
+                throw new DaoException("SQL exception occurred", ex);
+            }
+            catch (Exception)
+            {
+
+            }
+
+            return rowsAffected;
+        }
 
         public ShoppingList MapRowToShoppingList(SqlDataReader reader)
         {
             ShoppingList ShoppingList = new ShoppingList();
-            ShoppingList.Id = Convert.ToInt32(reader["list_id"]);
+            ShoppingList.ListId = Convert.ToInt32(reader["list_id"]);
             ShoppingList.OwnerId = Convert.ToInt32(reader["list_owner_user_id"]);
             ShoppingList.Name = Convert.ToString(reader["list_name"]);
             ShoppingList.DueDate = Convert.ToDateTime(reader["due_date_utc"]);
@@ -133,7 +163,7 @@ namespace Capstone.DAO
             ShoppingList.IsActive = Convert.ToBoolean(reader["is_active"]);
             ShoppingList.CreatedDate = Convert.ToDateTime(reader["created_date_utc"]);
             ShoppingList.LastModified = Convert.ToDateTime(reader["last_modified_date_utc"]);
-            ShoppingList.DeparmentId = Convert.ToInt32(reader["department_id"]);
+            ShoppingList.DepartmentId = Convert.ToInt32(reader["department_id"]);
 
             return ShoppingList;
 

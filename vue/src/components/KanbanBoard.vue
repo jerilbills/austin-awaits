@@ -1,6 +1,7 @@
 <template>
   <div class="kanban-board-header">
-    <div class="page-title">{{ $store.state.activeListName }}<span v-if="!$store.state.activeListName">Please select a list to work on. Austin Awaits!</span></div>
+    <div class="page-title">{{ $store.state.activeList.name }}<span v-if="!$store.state.activeList.name">Please select a
+        list to work on. Austin Awaits!</span></div>
     <div class="invites">
       <div class="is-size-7">List Owner</div>
       <div><img src="https://api.dicebear.com/7.x/initials/svg?seed=JB" class="avatar"></div>
@@ -87,13 +88,19 @@
         </h6>
         <div class="items">
           <div class="item" v-for="item in column.items" :key="item.itemId" @dragstart="dragStartItem(item)"
-            draggable="true">
+            draggable="true" @click="openModal(item)">
             <div class="header">
               <h3>{{ item.name }}</h3>
               <img v-if="item.claimedBy" :src="this.$store.state.user.avatarUrl" class="avatar" />
             </div>
           </div>
         </div>
+        <!-- SNACKBAR ALERTS-->
+        <div id="snackbar-purchased">Items cannot be removed from Purchased.</div>
+        <div id="snackbar-claimed">You are not the owner of this item.</div>
+        <div id="snackbar-needed">Items must be claimed before they can be purchased.</div>
+        <!-- ITEM DETAILS MODAL -->
+        <ItemDetailsModal v-if="showModal" :item="selectedItem" @close="closeModal" />
       </div>
     </div>
   </div>
@@ -103,19 +110,17 @@
 import ShoppingListService from '../services/ShoppingListService';
 import DepartmentService from '../services/DepartmentService';
 
+import ItemDetailsModal from './ItemDetailsModal.vue';
 
 export default {
   name: 'HTMLDraggable',
-  props: ['title', 'cards', 'boardID'],
+  props: ['title', 'cards', 'boardId'],
+  components: {
+    ItemDetailsModal,
+  },
   data() {
     return {
       dragCounter: 0,
-      departments: [],
-      showDropdown: false,
-      //user: {}  vmodel user.departmentId
-      departmentId: null, 
-      selectedUser: null,
-      departmentUsers: [],
 
     };
   },
@@ -137,6 +142,10 @@ export default {
   methods: {
     dragStart(columnTitle) {
       this.draggedColumn = columnTitle;
+      console.log(this.draggedColumn);
+      if (this.draggedColumn === 'Items Needed') {
+        return
+      }
     },
     dragStartItem(item) {
       this.draggedItem = item;
@@ -149,32 +158,35 @@ export default {
       if (this.draggedItem && this.draggedColumn) {
         const columnStatusId = column.statusId;
         if (this.draggedColumn === "Purchased") {
+          this.showPurchasedSnackbar();
+          return;
+        } else if (this.draggedColumn === "Claimed" && this.$store.state.user.userId != this.draggedItem.claimedBy) {
+          this.showClaimedSnackbar();
+          return;
+        } else if (this.draggedColumn === "Items Needed" && columnStatusId === 3) {
+          console.log("Needed Snackbar")
+          this.showNeededSnackbar();
           return;
         } else {
-          console.log(this.draggedItem.claimedBy);
-          if (this.draggedColumn === "Claimed" && this.$store.state.user.userId != this.draggedItem.claimedBy) {
-            console.log("User is not the owner of this item");
-            return;
-          } else {
-            this.updateItemStatus(columnStatusId);
-          }
+          this.updateItemStatus(columnStatusId);
         }
       }
     },
     updateItemStatus(columnStatusId) {
-      const date = new Date();
+      const formattedDate = new Date().toISOString();
+
       switch (columnStatusId) {
         case 1:
           this.draggedItem.claimedBy = null;
           this.draggedItem.listItemStatusId = 1;
-          this.draggedItem.lastModifiedDate = date;
+          this.draggedItem.lastModifiedDate = formattedDate;
           this.draggedItem.lastModifiedBy = this.$store.state.user.userId;
           ShoppingListService.updateItem(this.draggedItem);
           break;
         case 2:
           this.draggedItem.claimedBy = this.$store.state.user.userId;
           this.draggedItem.listItemStatusId = 2;
-          this.draggedItem.lastModifiedDate = date;
+          this.draggedItem.lastModifiedDate = formattedDate;
           this.draggedItem.lastModifiedBy = this.$store.state.user.userId;
           ShoppingListService.updateItem(this.draggedItem);
           break;
@@ -183,15 +195,45 @@ export default {
             break;
           }
           this.draggedItem.listItemStatusId = 3;
-          this.draggedItem.lastModifiedDate = date;
+          this.draggedItem.lastModifiedDate = formattedDate;
           this.draggedItem.lastModifiedBy = this.$store.state.user.userId;
-          // TODO: Add a method to update inventory. Probably a second API call.
           ShoppingListService.updateItem(this.draggedItem);
           break;
       }
     },
+    showPurchasedSnackbar() {
+      let x = document.getElementById("snackbar-purchased");
+      x.className = "show";
+      setTimeout(function () {
+        x.className = x.className.replace("show", "");
+      }, 4000);
+    },
+    showClaimedSnackbar() {
+      let x = document.getElementById("snackbar-claimed");
+      x.className = "show";
+      setTimeout(function () {
+        x.className = x.className.replace("show", "");
+      }, 4000);
+    },
+    showNeededSnackbar() {
+      let x = document.getElementById("snackbar-needed");
+      x.className = "show";
+      setTimeout(function () {
+        x.className = x.className.replace("show", "");
+      }, 4000);
+    },
 
-    dragLeave() {
+    openModal(item) {
+      this.selectedItem = item;
+      this.showModal = true;
+    },
+    closeModal() {
+      this.showModal = false;
+      this.selectedItem = null;
+    },
+
+
+    dragLeave(columnTitle) {
 
     },
     filteredItems(statusId) {
@@ -352,5 +394,129 @@ h6 {
 
 .fa-user-plus {
   color: hsl(27.3, 100%, 37.5%);
+}
+
+#snackbar-purchased {
+  visibility: hidden;
+  min-width: 250px;
+  margin-left: -125px;
+  /* Divide value of min-width by 2 */
+  background-color: #333;
+  color: #fff;
+  text-align: center;
+  border-radius: 2px;
+  padding: 16px;
+  position: fixed;
+  z-index: 1;
+  left: 50%;
+  bottom: 30px;
+}
+
+#snackbar-purchased.show {
+  visibility: visible;
+  /* Show the snackbar */
+  /* Add animation: Take 0.5 seconds to fade in and out the snackbar.
+  Delay the fade out process for 3.5 seconds */
+  -webkit-animation: fadein 0.5s, fadeout 0.5s 3.5s;
+  animation: fadein 0.5s, fadeout 0.5s 3.5s;
+}
+
+#snackbar-claimed {
+  visibility: hidden;
+  min-width: 250px;
+  margin-left: -125px;
+  /* Divide value of min-width by 2 */
+  background-color: #333;
+  color: #fff;
+  text-align: center;
+  border-radius: 2px;
+  padding: 16px;
+  position: fixed;
+  z-index: 1;
+  left: 50%;
+  bottom: 30px;
+}
+
+#snackbar-claimed.show {
+  visibility: visible;
+  /* Show the snackbar */
+  /* Add animation: Take 0.5 seconds to fade in and out the snackbar.
+  Delay the fade out process for 3.5 seconds */
+  -webkit-animation: fadein 0.5s, fadeout 0.5s 3.5s;
+  animation: fadein 0.5s, fadeout 0.5s 3.5s;
+}
+
+#snackbar-needed {
+  visibility: hidden;
+  min-width: 250px;
+  margin-left: -125px;
+  /* Divide value of min-width by 2 */
+  background-color: #333;
+  color: #fff;
+  text-align: center;
+  border-radius: 2px;
+  padding: 16px;
+  position: fixed;
+  z-index: 1;
+  left: 50%;
+  bottom: 30px;
+}
+
+#snackbar-needed.show {
+  visibility: visible;
+  /* Show the snackbar */
+  /* Add animation: Take 0.5 seconds to fade in and out the snackbar.
+  Delay the fade out process for 3.5 seconds */
+  -webkit-animation: fadein 0.5s, fadeout 0.5s 3.5s;
+  animation: fadein 0.5s, fadeout 0.5s 3.5s;
+}
+
+/* Animations to fade the snackbar in and out */
+@-webkit-keyframes fadein {
+  from {
+    bottom: 0;
+    opacity: 0;
+  }
+
+  to {
+    bottom: 30px;
+    opacity: 1;
+  }
+}
+
+@keyframes fadein {
+  from {
+    bottom: 0;
+    opacity: 0;
+  }
+
+  to {
+    bottom: 30px;
+    opacity: 1;
+  }
+}
+
+@-webkit-keyframes fadeout {
+  from {
+    bottom: 30px;
+    opacity: 1;
+  }
+
+  to {
+    bottom: 0;
+    opacity: 0;
+  }
+}
+
+@keyframes fadeout {
+  from {
+    bottom: 30px;
+    opacity: 1;
+  }
+
+  to {
+    bottom: 0;
+    opacity: 0;
+  }
 }
 </style>

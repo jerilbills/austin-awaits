@@ -8,29 +8,24 @@ using System.Collections.Generic;
 namespace Capstone.Controllers
 {
     [ApiController]
-    [Route("department/{id}/list")]
+    [Route("department/{departmentId}/list")]
     [Authorize]
     public class ShoppingListController : ControllerBase
     {
         private readonly IShoppingListDao shoppingListDao;
-        private readonly IUserDao userDao;
 
-        public ShoppingListController(IShoppingListDao shoppingListDao, IUserDao userDao)
+        public ShoppingListController(IShoppingListDao shoppingListDao)
         {
             this.shoppingListDao = shoppingListDao;
-            this.userDao = userDao;
         }
 
-
-
         [HttpGet]
-
-        public ActionResult<List<ShoppingList>> GetShoppingListsByDepartmentID(int id)
+        public ActionResult<List<ShoppingList>> GetShoppingListsByDepartmentID(int departmentId)
         {
             List<ShoppingList> output = new List<ShoppingList>();
             try
             {
-                output = shoppingListDao.GetShoppingListsByDepartmentID(id);
+                output = shoppingListDao.GetShoppingListsByDepartmentID(departmentId);
             }
             catch (System.Exception)
             {
@@ -40,13 +35,13 @@ namespace Capstone.Controllers
             return output;
         }
 
-        [HttpPost("{list_id}/user/{user_id}")]
+        [HttpPost("{listId}/user/{userId}")]
         public ActionResult<int> AddUserToList(UserList userListToAdd)
         {
             int output;
             try
             {
-                output = userDao.AddUserToList(userListToAdd);
+                output = shoppingListDao.AddUserToList(userListToAdd);
             }
             catch (System.Exception)
             {
@@ -54,6 +49,22 @@ namespace Capstone.Controllers
                 return StatusCode(500);
             }
 
+            return output;
+        }
+
+        [HttpGet("/user/{userId}/list")]
+        public ActionResult<List<ShoppingList>> GetInvitedShoppingListsByUserID(int userId)
+        {
+            List<ShoppingList> output = new List<ShoppingList>();
+            try
+            {
+                output = shoppingListDao.GetInvitedShoppingListsByUserID(userId);
+            }
+            catch (System.Exception)
+            {
+
+                return StatusCode(500);
+            }
             return output;
         }
     }
