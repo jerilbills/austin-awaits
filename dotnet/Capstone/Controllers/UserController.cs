@@ -1,4 +1,5 @@
 using Capstone.DAO;
+using Capstone.Exceptions;
 using Capstone.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
@@ -16,23 +17,6 @@ namespace Capstone.Controllers
         {
             this.userDao = userDao;
             this.shoppingListDao = shoppingListDao;
-        }
-
-        [HttpGet("{userId}/list")]
-
-        public ActionResult<List<ShoppingList>> GetInvitedShoppingListsByUserID(int userId)
-        {
-            List<ShoppingList> output = new List<ShoppingList>();
-            try
-            {
-                output = shoppingListDao.GetInvitedShoppingListsByUserID(userId);
-            }
-            catch (System.Exception)
-            {
-
-                return StatusCode(500);
-            }
-            return output;
         }
 
         [HttpGet]
