@@ -45,6 +45,7 @@
         <div id="snackbar-purchased">Items cannot be removed from Purchased.</div>
         <div id="snackbar-claimed">You are not the owner of this item.</div>
         <div id="snackbar-needed">Items must be claimed before they can be purchased.</div>
+        <div id="snackbar-completed">All items on the list have been purchased. Well done, partner!</div>
         <!-- ITEM DETAILS MODAL -->
         <ItemDetailsModal v-if="showModal" :item="selectedItem" @close="closeModal" />
       </div>
@@ -85,6 +86,10 @@ export default {
     dueDate() {
       let dueDate = new Date(this.$store.state.activeList.dueDate);
       return dueDate.toLocaleDateString();
+    },
+    areAllItemsComplete() {
+      const unfinishedItems = this.myItems.filter((item) => { return (item.listItemStatusId === 1 || item.listItemStatusId === 2)});
+      return unfinishedItems.length === 0;
     }
   },
   methods: {
@@ -118,6 +123,12 @@ export default {
         } else {
           this.updateItemStatus(columnStatusId);
         }
+      }
+
+      // All items are complete so we need to let the user know, update the list_status_id, and adjust the sidebar (if we can)
+      if (this.areAllItemsComplete) {
+          this.showListCompletedSnackbar();
+          return;
       }
     },
     updateItemStatus(columnStatusId) {
@@ -180,6 +191,13 @@ export default {
     },
     showNeededSnackbar() {
       let x = document.getElementById("snackbar-needed");
+      x.className = "show";
+      setTimeout(function () {
+        x.className = x.className.replace("show", "");
+      }, 4000);
+    },
+    showListCompletedSnackbar() {
+      let x = document.getElementById("snackbar-completed");
       x.className = "show";
       setTimeout(function () {
         x.className = x.className.replace("show", "");
@@ -326,7 +344,7 @@ h6 {
   color: hsl(27.3, 100%, 37.5%);
 }
 
-#snackbar-purchased {
+#snackbar-purchased, #snackbar-claimed, #snackbar-needed, #snackbar-completed {
   visibility: hidden;
   min-width: 250px;
   margin-left: -125px;
@@ -342,57 +360,7 @@ h6 {
   bottom: 30px;
 }
 
-#snackbar-purchased.show {
-  visibility: visible;
-  /* Show the snackbar */
-  /* Add animation: Take 0.5 seconds to fade in and out the snackbar.
-  Delay the fade out process for 3.5 seconds */
-  -webkit-animation: fadein 0.5s, fadeout 0.5s 3.5s;
-  animation: fadein 0.5s, fadeout 0.5s 3.5s;
-}
-
-#snackbar-claimed {
-  visibility: hidden;
-  min-width: 250px;
-  margin-left: -125px;
-  /* Divide value of min-width by 2 */
-  background-color: #333;
-  color: #fff;
-  text-align: center;
-  border-radius: 2px;
-  padding: 16px;
-  position: fixed;
-  z-index: 1;
-  left: 50%;
-  bottom: 30px;
-}
-
-#snackbar-claimed.show {
-  visibility: visible;
-  /* Show the snackbar */
-  /* Add animation: Take 0.5 seconds to fade in and out the snackbar.
-  Delay the fade out process for 3.5 seconds */
-  -webkit-animation: fadein 0.5s, fadeout 0.5s 3.5s;
-  animation: fadein 0.5s, fadeout 0.5s 3.5s;
-}
-
-#snackbar-needed {
-  visibility: hidden;
-  min-width: 250px;
-  margin-left: -125px;
-  /* Divide value of min-width by 2 */
-  background-color: #333;
-  color: #fff;
-  text-align: center;
-  border-radius: 2px;
-  padding: 16px;
-  position: fixed;
-  z-index: 1;
-  left: 50%;
-  bottom: 30px;
-}
-
-#snackbar-needed.show {
+#snackbar-purchased.show, #snackbar-claimed.show, #snackbar-needed.show, #snackbar-completed.show {
   visibility: visible;
   /* Show the snackbar */
   /* Add animation: Take 0.5 seconds to fade in and out the snackbar.
