@@ -25,7 +25,7 @@ namespace Capstone.Controllers
             List<ShoppingList> output = new List<ShoppingList>();
             try
             {
-                output = shoppingListDao.GetShoppingListsByDepartmentID(departmentId);
+                output = shoppingListDao.GetActiveShoppingListsByDepartmentID(departmentId);
             }
             catch (System.Exception)
             {
@@ -58,7 +58,7 @@ namespace Capstone.Controllers
             List<ShoppingList> output = new List<ShoppingList>();
             try
             {
-                output = shoppingListDao.GetInvitedShoppingListsByUserID(userId);
+                output = shoppingListDao.GetActiveInvitedShoppingListsByUserID(userId);
             }
             catch (System.Exception)
             {
