@@ -258,6 +258,8 @@ h6 {
   font-size: larger;
   flex-grow: 1;
   flex-shrink: 2;
+  font-family: Rye, Cutive, Georgia, 'Times New Roman', Times, serif;
+  font-size: 1.5rem;
 }
 
 .column {
