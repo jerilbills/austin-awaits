@@ -2,8 +2,8 @@ import axios from 'axios';
 
 export default {
 
-  getUsersByDepartmentId(departmentId) {
-    return axios.get('/department')
+    getActiveUsersByDepartmentId(departmentIdToSearch) {
+    return axios.get(`/department/${departmentIdToSearch}/user`)
   },
 
 }

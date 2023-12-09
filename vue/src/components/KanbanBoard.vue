@@ -16,7 +16,7 @@
       <div>
         <i class="fa fa-user-plus fa-lg" @click="toggleDropdown"></i>
         <div v-if="showDropdown" class="select" >
-          <select id="department" name="department" v-model="departmentId" required>
+          <select id="department" name="department" v-model="departmentIdToSearch" required>
           <option v-for="dept in departments" :key="dept.departmentId" :value="dept.departmentId">
           {{ dept.departmentName }}
           </option>
@@ -26,7 +26,7 @@
       <div v-if="departmentId">
         <div class="select">
           <select id="user" name="user" v-model="selectedUser" required>
-            <option value="">Select User</option>
+            <!-- <option value="">Select User</option> -->
             <option v-for="user in departmentUsers" :key="user.userId" :value="user.userId">
               {{user.firstName}} {{user.lastName}}
             </option>
@@ -109,6 +109,7 @@
 <script>
 import ShoppingListService from '../services/ShoppingListService';
 import DepartmentService from '../services/DepartmentService';
+import UserService from '../services/UserService';
 
 import ItemDetailsModal from './ItemDetailsModal.vue';
 
@@ -120,8 +121,16 @@ export default {
   },
   data() {
     return {
+      showModal: false,
+      selectedItem: null,
       dragCounter: 0,
 
+      showDropdown: false,
+      departments:[],
+      departmentIdToSearch: null,
+      selectedUser: null,
+      departmentUsers: []
+      
     };
   },
   computed: {
@@ -258,7 +267,7 @@ export default {
     },
     loadDepartmentUsersList() {
       UserService
-        .getUsersByDepartmentId(this.departmentId)
+        .getActiveUsersByDepartmentId(this.departmentIdToSearch)
         .then((response) => {
           response.data.forEach((person) => {
             this.departmentUsers.push(person);
@@ -273,7 +282,7 @@ export default {
   },
   created() {
     this.loadDepartmentList();
-    this.loadDDepartmentUserList();
+    this.loadDepartmentUsersList();
   },
 
 
