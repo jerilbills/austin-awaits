@@ -2,13 +2,13 @@
   <div class="sidebar is-dark">
     <span class="sidebar-header"><span class="icon"><i class="fa fa-home"></i></span>My Department</span>
     <ul>
-      <li v-for="list in lists" :key="list.listId" @click="navigateTo(this.$store.state.user.departmentId, list.listId)">
+      <li v-for="list in lists.sort((a, b) => (a.name > b.name) ? 1 : -1)" :key="list.listId" @click="navigateTo(this.$store.state.user.departmentId, list.listId)">
         {{ list.name }}
       </li>
     </ul>
     <span class="sidebar-header"><span class="icon"><i class="fa fa-envelope"></i></span>Invited Lists</span>
     <ul>
-      <li v-for="list in invitedLists" :key="list.listId" @click="navigateTo(list.departmentId, list.listId)">
+      <li v-for="list in invitedLists.sort((a, b) => (a.name > b.name) ? 1 : -1)" :key="list.listId" @click="navigateTo(list.departmentId, list.listId)">
         {{ list.name }}
       </li>
     </ul>
