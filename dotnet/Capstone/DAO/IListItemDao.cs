@@ -12,6 +12,8 @@ namespace Capstone.DAO
         public ListItem GetActiveListItemById(int itemId, int listId);
 
         public List<ListItem> GetActiveListItemsByListId(int listID);
+        public List<ListItem> FilterListByClaimant(int listId, int userId);
+        public List<ListItem> FilterListByUnassigned(int listId);
 
 
     }
