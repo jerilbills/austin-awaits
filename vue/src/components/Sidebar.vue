@@ -25,9 +25,9 @@
 
     <span class="sidebar-header"><span class="icon"><i class="fa fa-filter"></i></span>Filters</span>
     <ul>
-      <li>All Items</li>
-      <li>Unassigned Items</li>
-      <li @click="filterByClaimed">My Claimed Items</li>
+      <li @click="navigateTo(this.$store.state.activeList.departmentId, this.$store.state.activeList.listId)">All Items</li>
+      <li @click="filterByUnassigned()">Unassigned Items</li>
+      <li @click="filterByClaimed()">My Claimed Items</li>
     </ul>
     <div>&nbsp;</div>
     <ul>
@@ -103,13 +103,21 @@ export default {
         .catch(error => {
           console.error('Error filtering list:', error);
         })
-    }
-  },
-  listsByDepartment(department) {
-    return this.invitedLists.filter(list => list.departmentName === department);
+    },
+    filterByUnassigned() {
+      ShoppingListService.getListFilteredByUnassigned(this.$store.state.activeList.listId, this.$store.state.activeList.departmentId)
+        .then(response => {
+          this.$store.commit('SET_ITEMS', response.data);
+        })
+        .catch(error => {
+          console.error('Error filtering list:', error);
+        })
+    },
+    listsByDepartment(department) {
+      return this.invitedLists.filter(list => list.departmentName === department);
+    },
   }
 }
-
 </script>
   
 <style scoped>

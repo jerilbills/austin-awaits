@@ -167,6 +167,39 @@ namespace Capstone.DAO
             return output;
         }
 
+        public List<ListItem> FilterListByUnassigned(int listId)
+        {
+            List<ListItem> output = new List<ListItem>();
+
+            string sql = "SELECT li.list_id, li.item_id, li.is_active, li.last_modified_by_user_id, li.quantity, li.created_date_utc, " +
+                "li.list_item_claimed_by_user_id, li.list_item_status_id, li.last_modified_date_utc, i.item_name, i.item_description, i.item_image_url " +
+                "FROM list_items AS li JOIN ITEMS AS i ON i.item_id = li.item_id " +
+                "WHERE li.list_item_claimed_by_user_id IS NULL AND li.list_id = @listId;";
+
+            try
+            {
+                using (SqlConnection conn = new SqlConnection(connectionString))
+                {
+                    conn.Open();
+                    SqlCommand cmd = new SqlCommand(sql, conn);
+
+                    cmd.Parameters.AddWithValue("@listId", listId);
+
+                    SqlDataReader reader = cmd.ExecuteReader();
+                    while (reader.Read())
+                    {
+                        output.Add(MapRowToListItem(reader));
+                    }
+                }
+            }
+            catch (Exception)
+            {
+
+                throw new DaoException();
+            }
+            return output;
+        }
+
         private ListItem MapRowToListItem(SqlDataReader reader)
         {
 

@@ -20,7 +20,10 @@ export default {
 
     getListFilteredByClaimed(listId, userId, departmentId) {
         return axios.get('/department/' + departmentId + '/list/' + listId + '/listitem/claimed/' + userId)
-    }
+    },
+    getListFilteredByUnassigned(listId, departmentId) {
+        return axios.get('/department/' + departmentId + '/list/' + listId + '/listitem/unassigned')
+    },
 
 
   
