@@ -1,9 +1,9 @@
 <template>
-  <div>
+  <div id="page">
     <!-- Include the Navbar component -->
     <Navbar />
 
-    <div class="main-layout" style="background-color: red;">
+    <div class="main-layout">
       <!-- Include the Sidebar component -->
       <Sidebar />
 
@@ -31,6 +31,14 @@ export default {
 <style scoped>
 .main-layout {
   display: flex;
+}
+
+#page {
+  height:100vh;
+  background-image: url('../assets/austin-background.png');
+  background-color: #FFFFFF;
+  background-position: right bottom;
+  background-repeat: no-repeat;
 }
 
 /* Adjust the styles based on your specific design requirements */
