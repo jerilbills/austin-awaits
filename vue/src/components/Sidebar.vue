@@ -2,7 +2,7 @@
   <div class="sidebar is-dark">
     <span class="sidebar-header"><span class="icon"><i class="fa fa-home"></i></span>My Department</span>
     <ul>
-      <li v-for="list in lists" :key="list.listId" @click="navigateTo(this.$store.state.user.departmentId, list.listId)">
+      <li v-for="list in inProgressLists" :key="list.listId" @click="navigateTo(this.$store.state.user.departmentId, list.listId)">
         {{ list.name }} ({{ list.numberOfItems }})
       </li>
     </ul>
@@ -11,7 +11,7 @@
       <div v-for="(department, index) in departments" :key="index">
         <p><em>{{ department }}</em></p>
         <ul>
-          <li v-for="(list, innerIndex) in listsByDepartment(department)" :key="innerIndex"
+          <li v-for="(list, innerIndex) in inProgressListsByDepartment(department)" :key="innerIndex"
             @click="navigateTo(list.departmentId, list.listId)">
             &nbsp;&nbsp;{{ list.name }} ({{ list.numberOfItems }})
           </li>
@@ -57,7 +57,10 @@ export default {
       const departments = new Set();
       this.invitedLists.forEach(dept => departments.add(dept.departmentName));
       return Array.from(departments).sort((a, b) => (a.departmentName > b.departmentName) ? 1 : -1);
-    }
+    },
+    inProgressLists() {
+      return this.lists.filter(list => list.status == 2);
+    },
   },
 
   created() {
@@ -119,8 +122,8 @@ export default {
         })
         this.selectedOption = 'unassigned';
     },
-    listsByDepartment(department) {
-      return this.invitedLists.filter(list => list.departmentName === department);
+    inProgressListsByDepartment(department) {
+      return this.invitedLists.filter(list => list.departmentName === department && list.status == 2);
     },
   }
 }
