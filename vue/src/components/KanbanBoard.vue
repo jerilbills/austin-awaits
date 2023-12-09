@@ -366,13 +366,27 @@ h6 {
   bottom: 30px;
 }
 
-#snackbar-purchased.show, #snackbar-claimed.show, #snackbar-needed.show, #snackbar-completed.show {
+#snackbar-completed {
+  background-color: #4C8077;
+  bottom: 450px;
+}
+
+#snackbar-purchased.show, #snackbar-claimed.show, #snackbar-needed.show {
   visibility: visible;
   /* Show the snackbar */
   /* Add animation: Take 0.5 seconds to fade in and out the snackbar.
   Delay the fade out process for 3.5 seconds */
-  -webkit-animation: fadein 0.5s, fadeout 0.5s 3.5s;
-  animation: fadein 0.5s, fadeout 0.5s 3.5s;
+  -webkit-animation: fadein 1.5s, fadeout 1.5s 3.5s;
+  animation: fadein 1.5s, fadeout 1.5s 3.5s;
+}
+
+#snackbar-completed.show {
+  visibility: visible;
+  /* Show the snackbar */
+  /* Add animation: Take 0.5 seconds to fade in and out the snackbar.
+  Delay the fade out process for 3.5 seconds */
+  -webkit-animation: fadeintall 0.5s, fadeouttall 0.5s 3.5s;
+  animation: fadeintall 0.5s, fadeouttall 0.5s 3.5s;
 }
 
 /* Animations to fade the snackbar in and out */
@@ -415,6 +429,56 @@ h6 {
 @keyframes fadeout {
   from {
     bottom: 30px;
+    opacity: 1;
+  }
+
+  to {
+    bottom: 0;
+    opacity: 0;
+  }
+}
+
+/* animations for a tall snackbar */
+
+@-webkit-keyframes fadeintall {
+  from {
+    bottom: 0;
+    opacity: 0;
+  }
+
+  to {
+    bottom: 450px;
+    opacity: 1;
+  }
+}
+
+@keyframes fadeintall {
+  from {
+    bottom: 0;
+    opacity: 0;
+  }
+
+  to {
+    bottom: 450px;
+    opacity: 1;
+  }
+}
+
+@-webkit-keyframes fadeouttall {
+  from {
+    bottom: 450px;
+    opacity: 1;
+  }
+
+  to {
+    bottom: 0;
+    opacity: 0;
+  }
+}
+
+@keyframes fadeouttall {
+  from {
+    bottom: 450px;
     opacity: 1;
   }
 
