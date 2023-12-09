@@ -9,6 +9,8 @@ namespace Capstone.Models
         public int OwnerId { get; set; }
         public string Name { get; set; }
         public int DepartmentId { get; set; }
+        public string DepartmentName {  get; set; }
+        public int NumberOfItems { get; set; }
         public DateTime DueDate { get; set; }
         public int Status { get; set; }
         public bool IsActive { get; set; }

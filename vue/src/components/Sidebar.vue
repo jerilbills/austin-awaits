@@ -2,16 +2,19 @@
   <div class="sidebar is-dark">
     <span class="sidebar-header"><span class="icon"><i class="fa fa-home"></i></span>My Department</span>
     <ul>
-      <li v-for="list in lists.sort((a, b) => (a.name > b.name) ? 1 : -1)" :key="list.listId" @click="navigateTo(this.$store.state.user.departmentId, list.listId)">
-        {{ list.name }}
+      <li v-for="list in lists" :key="list.listId" @click="navigateTo(this.$store.state.user.departmentId, list.listId)">
+        {{ list.name }} ({{ list.numberOfItems }})
       </li>
     </ul>
     <span class="sidebar-header"><span class="icon"><i class="fa fa-envelope"></i></span>Invited Lists</span>
+    <div v-for="(department, index) in departments" :key="index">
+    <p><em>{{ department }}</em></p>
     <ul>
-      <li v-for="list in invitedLists.sort((a, b) => (a.name > b.name) ? 1 : -1)" :key="list.listId" @click="navigateTo(list.departmentId, list.listId)">
-        {{ list.name }}
-      </li>
+        <li v-for="(list, innerIndex) in listsByDepartment(department)" :key="innerIndex" @click="navigateTo(list.departmentId, list.listId)">
+          &nbsp;&nbsp;{{ list.name }} ({{ list.numberOfItems }})
+        </li>
     </ul>
+    </div>
 
     <span class="sidebar-header"><span class="icon"><i class="fa fa-filter"></i></span>Filters</span>
     <ul>
@@ -23,7 +26,6 @@
     <ul>
       <li>Completed Lists</li>
     </ul>
-
   </div>
 </template>
   
@@ -40,11 +42,20 @@ export default {
       ]
     };
   },
+
+  computed: {
+    departments() {
+        const departments = new Set();
+        this.invitedLists.forEach(dept => departments.add(dept.departmentName));
+        return Array.from(departments).sort((a, b) => (a.departmentName > b.departmentName) ? 1 : -1); 
+    }
+  },
+
   created() {
     ShoppingListService.getLists(this.$store.state.user.departmentId)
       .then(response => {
         // API response data will need to contain array of shopping lists
-        this.lists = response.data;
+        this.lists = response.data.sort((a, b) => (a.name > b.name) ? 1 : -1);
       })
       .catch(error => {
         console.error('Error fetching lists:', error);
@@ -52,14 +63,13 @@ export default {
 
     ShoppingListService.getInvitedLists(this.$store.state.user)
       .then(response => {
-        this.invitedLists = response.data;
+        this.invitedLists = response.data.sort((a, b) => (a.name > b.name) ? 1 : -1);       
       })
       .catch(error => {
         console.error('Error fetching invited lists:', error);
       })
 
   },
-
 
   methods: {
     navigateTo(departmentId, listId) {
@@ -77,9 +87,11 @@ export default {
         .catch(error => {
           console.error('Error fetching list:', error);
         });
-
     },
-  },
+    listsByDepartment(department) {
+        return this.invitedLists.filter(list => list.departmentName === department);
+    }
+  }
 };
 </script>
   
