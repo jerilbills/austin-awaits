@@ -23,7 +23,7 @@
       <div class="box custom-box" style="width: 350px; height: auto;" @dragstart="dragStart(column.title)"
         draggable="true">
         <h6 class="title is-6">
-          <i v-if="column.title == 'Items Needed'" class="fal fa-square"></i>
+          <i v-if="column.title == 'Items Needed'" class="fa fa-star"></i>
           <i v-if="column.title == 'Claimed'" class="fa fa-arrow-right"></i>
           <i v-if="column.title == 'Purchased'" class="fa fa-check"></i>
           {{ column.title }}
@@ -33,7 +33,9 @@
             draggable="true" @click="openModal(item)">
             <div class="header">
               <h3>{{ item.name }}</h3>
-              <img v-if="item.claimedBy" :src="this.$store.state.user.avatarUrl" class="avatar" />
+              <span v-if="item.claimedBy && item.claimedByUser" class="has-tooltip-above has-tooltip-primary" :data-tooltip="claimedByUserTooltip(item)">
+                <img :src="item.claimedByUser.avatarUrl" class="avatar" />
+              </span>
             </div>
           </div>
         </div>
@@ -77,7 +79,7 @@ export default {
         { statusId: 2, title: "Claimed", items: this.myItems.filter((item) => item.listItemStatusId === 2) },
         { statusId: 3, title: "Purchased", items: this.myItems.filter((item) => item.listItemStatusId === 3) },
       ]
-    }
+    },
   },
   methods: {
     dragStart(columnTitle) {
@@ -118,6 +120,7 @@ export default {
       switch (columnStatusId) {
         case 1:
           this.draggedItem.claimedBy = null;
+          this.draggedItem.claimedByUser = null;
           this.draggedItem.listItemStatusId = 1;
           this.draggedItem.lastModifiedDate = formattedDate;
           this.draggedItem.lastModifiedBy = this.$store.state.user.userId;
@@ -129,6 +132,9 @@ export default {
           this.draggedItem.lastModifiedDate = formattedDate;
           this.draggedItem.lastModifiedBy = this.$store.state.user.userId;
           ShoppingListService.updateItem(this.draggedItem);
+          // need to update the item's claimed by user info here (mainly for avatar but doing everything)
+          // since we're not getting the item back from the server following the change
+          this.setClaimedByUserToCurrentUser()
           break;
         case 3:
           if (this.draggedColumn === "Items Needed") {
@@ -139,6 +145,17 @@ export default {
           this.draggedItem.lastModifiedBy = this.$store.state.user.userId;
           ShoppingListService.updateItem(this.draggedItem);
           break;
+      }
+    },
+    setClaimedByUserToCurrentUser() {
+      this.draggedItem.claimedByUser = {
+        userId: this.$store.state.user.userId,
+        username: this.$store.state.user.username,
+        role: this.$store.state.user.role,
+        firstName: this.$store.state.user.firstName,
+        lastName: this.$store.state.user.lastName,
+        avatarUrl: this.$store.state.user.avatarUrl,
+        departmentId: this.$store.state.user.departmentId
       }
     },
     showPurchasedSnackbar() {
@@ -179,7 +196,9 @@ export default {
     filteredItems(statusId) {
       return this.myItems.filter(item => item.itemListStatusId === statusId);
     },
-
+    claimedByUserTooltip(item) {
+      return item.claimedByUser.firstName + " " + item.claimedByUser.lastName;
+    }
   }
 }
 
