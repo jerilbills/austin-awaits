@@ -79,6 +79,18 @@ export default {
         });
 
     },
+    navigateToInvited(user) {
+      let activeList = null;
+      ShoppingListService.getInvitedLists(user)
+        .then(response => {
+          this.$store.commit('SET_ITEMS', response.data);
+          activeList = this.lists.find((element) => element.user == user)
+          this.$store.commit('SET_ACTIVE_LIST', activeList)
+        })
+        .catch(error => {
+          console.error('Error fetching list:', error);
+        });
+    }
   },
 };
 </script>
