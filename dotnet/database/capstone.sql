@@ -133,9 +133,9 @@ VALUES ('user', 'Regular', 'User', 1, 'Jg45HuwT7PZkfuKTz6IB90CtWY4=','LHxP4Xh7bN
 INSERT INTO users (username, first_name, last_name, department_id, password_hash, salt, user_role, avatar_url)
 VALUES ('admin', 'Admin', 'User', 1, 'YhyGVQ+Ch69n4JMBncM4lNF/i9s=', 'Ar/aB2thQTI=','admin', 'https://api.dicebear.com/7.x/personas/svg?seed=AdminUser');
 
-INSERT INTO lists (list_name, department_id, list_status_id, list_owner_user_id) VALUES ('Mimi Malone', 1, 1, 1);
-INSERT INTO lists (list_name, department_id, list_status_id, list_owner_user_id) VALUES ('Henry Edwards', 1, 1, 1);
-INSERT INTO lists (list_name, department_id, list_status_id, list_owner_user_id) VALUES ('Douglas Adams', 1, 1, 1);
+INSERT INTO lists (list_name, department_id, list_status_id, list_owner_user_id) VALUES ('Mimi Malone', 1, 2, 1);
+INSERT INTO lists (list_name, department_id, list_status_id, list_owner_user_id) VALUES ('Henry Edwards', 1, 2, 1);
+INSERT INTO lists (list_name, department_id, list_status_id, list_owner_user_id) VALUES ('Douglas Adams', 1, 2, 1);
 
 INSERT INTO items (item_name, item_description, item_image_url, created_by_user_id, last_modified_by_user_id)
 VALUES ('Keep Austin Weird T-Shirt', 'Any kind of Keep Austin Weird T-shirt - be sure to check with user for size/style preferences', 

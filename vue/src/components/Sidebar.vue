@@ -61,7 +61,7 @@ export default {
   },
 
   created() {
-    ShoppingListService.getLists(this.$store.state.user.departmentId)
+    ShoppingListService.getListsInProgress(this.$store.state.user.departmentId)
       .then(response => {
         // API response data will need to contain array of shopping lists
         this.lists = response.data.sort((a, b) => (a.name > b.name) ? 1 : -1);
@@ -70,7 +70,7 @@ export default {
         console.error('Error fetching lists:', error);
       })
 
-    ShoppingListService.getInvitedLists(this.$store.state.user)
+    ShoppingListService.getInvitedListsInProgress(this.$store.state.user)
       .then(response => {
         this.invitedLists = response.data.sort((a, b) => (a.name > b.name) ? 1 : -1);
       })

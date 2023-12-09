@@ -2,8 +2,8 @@ import axios from 'axios';
 
 export default {
 
-    getLists(departmentId) {
-        return axios.get('/department/'+departmentId+'/list')
+    getListsInProgress(departmentId) {
+        return axios.get('/department/'+departmentId+'/list?status=2')
     },
 
     getSpecificList(departmentId, listId){
@@ -14,8 +14,8 @@ export default {
         return axios.put('/department/'+item.departmentId+'/list/' + item.listId + '/listitem/' + item.itemId, item);
     },
 
-    getInvitedLists(user) {
-        return axios.get('/user/' + user.userId + '/list')
+    getInvitedListsInProgress(user) {
+        return axios.get('/user/' + user.userId + '/list?status=2')
     },
 
     getListFilteredByClaimed(listId, userId, departmentId) {
