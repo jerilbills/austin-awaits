@@ -23,9 +23,9 @@
       <div class="box custom-box" style="width: 350px; height: auto;" @dragstart="dragStart(column.title)"
         draggable="true">
         <h6 class="title is-6">
-          <i v-if="column.title == 'Items Needed'" class="fa fa-star"></i>
-          <i v-if="column.title == 'Claimed'" class="fa fa-arrow-right"></i>
-          <i v-if="column.title == 'Purchased'" class="fa fa-check"></i>
+          <i v-if="column.title == 'Items Needed'" class="fa fa-hat-cowboy fa-lg"></i>
+          <i v-if="column.title == 'Claimed'" class="fa fa-horse-head fa-lg"></i>
+          <i v-if="column.title == 'Purchased'" class="fa fa-star fa-lg"></i>
           {{ column.title }}
         </h6>
         <div class="items">
