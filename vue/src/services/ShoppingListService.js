@@ -16,6 +16,10 @@ export default {
 
     getInvitedLists(user) {
         return axios.get('/user/' + user.userId + '/list')
+    },
+
+    getListFilteredByClaimed(listId, userId, departmentId) {
+        return axios.get('/department/' + departmentId + '/list/' + listId + '/listitem/claimed/' + userId)
     }
 
 

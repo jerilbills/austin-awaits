@@ -92,5 +92,23 @@ namespace Capstone.Controllers
 
             return output;
         }
+
+        [HttpGet("claimed/{userId}")]
+        public ActionResult<List<ListItem>> FilterListByClaimed(int listId, int userId)
+        {
+            List<ListItem> output = new List<ListItem>();
+            try
+            {
+                output = listItemDao.FilterListByClaimant(listId, userId);
+            }
+            catch (System.Exception)
+            {
+
+                return StatusCode(500);
+            }
+
+            return output;
+        }
+
     }
 }

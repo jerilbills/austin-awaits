@@ -17,7 +17,7 @@
     <ul>
       <li>All Items</li>
       <li>Unassigned Items</li>
-      <li>My Claimed Items</li>
+      <li @click="filterByClaimed">My Claimed Items</li>
     </ul>
     <div>&nbsp;</div>
     <ul>
@@ -77,8 +77,16 @@ export default {
         .catch(error => {
           console.error('Error fetching list:', error);
         });
-
     },
+    filterByClaimed() {
+          ShoppingListService.getListFilteredByClaimed(this.$store.state.activeList.listId, this.$store.state.user.userId, this.$store.state.activeList.departmentId)
+          .then(response => {
+            this.$store.commit('SET_ITEMS', response.data);
+          })
+          .catch(error => {
+            console.error('Error filtering list:', error);
+          })
+        }
   },
 };
 </script>

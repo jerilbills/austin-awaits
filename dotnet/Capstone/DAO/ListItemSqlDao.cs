@@ -130,6 +130,43 @@ namespace Capstone.DAO
             return output;
         }
 
+        public List<ListItem> FilterListByClaimant(int listId, int userId)
+        {
+            List<ListItem> output = new List<ListItem>();
+
+            string sql = "SELECT li.list_id, li.item_id, li.is_active, li.last_modified_by_user_id, li.quantity, " +
+                "li.created_date_utc, li.list_item_claimed_by_user_id, u.username, u.user_role, u.first_name, " +
+                "u.last_name, u.avatar_url, u.department_id, li.list_item_status_id, li.last_modified_date_utc, " +
+                "i.item_name, i.item_description, i.item_image_url " +
+                "FROM list_items AS li " +
+                "JOIN ITEMS AS i ON i.item_id = li.item_id JOIN users AS u ON u.user_id = li.list_item_claimed_by_user_id " +
+                "WHERE li.list_item_claimed_by_user_id = @userId AND li.list_id = @listId;";
+
+            try
+            {
+                using (SqlConnection conn = new SqlConnection(connectionString))
+                {
+                    conn.Open();
+                    SqlCommand cmd = new SqlCommand(sql, conn);
+
+                    cmd.Parameters.AddWithValue("@listId", listId);
+                    cmd.Parameters.AddWithValue("@userId", userId);
+
+                    SqlDataReader reader = cmd.ExecuteReader();
+                    while (reader.Read())
+                    {
+                        output.Add(MapRowToListItem(reader));
+                    }
+                }
+            }
+            catch (Exception)
+            {
+
+                throw new DaoException();
+            }
+            return output;
+        }
+
         private ListItem MapRowToListItem(SqlDataReader reader)
         {
 
@@ -186,6 +223,7 @@ namespace Capstone.DAO
            
             return listItem;
         }
+
 
     }
 
