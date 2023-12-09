@@ -120,7 +120,6 @@ INSERT INTO departments (department_name) VALUES ('Product/Marketing');
 INSERT INTO departments (department_name) VALUES ('Admin/Finance');
 
 INSERT INTO list_statuses (list_status_name) VALUES('Draft');
-INSERT INTO list_statuses (list_status_name) VALUES('Ready');
 INSERT INTO list_statuses (list_status_name) VALUES('In Progress');
 INSERT INTO list_statuses (list_status_name) VALUES('Complete');
 
