@@ -20,12 +20,12 @@ namespace Capstone.Controllers
         }
 
         [HttpGet]
-        public ActionResult<List<ShoppingList>> GetShoppingListsByDepartmentID(int departmentId)
+        public ActionResult<List<ShoppingList>> GetShoppingListsByDepartmentID(int departmentId, int status = 0)
         {
             List<ShoppingList> output = new List<ShoppingList>();
             try
             {
-                output = shoppingListDao.GetActiveShoppingListsByDepartmentID(departmentId);
+                output = shoppingListDao.GetActiveShoppingListsByDepartmentID(departmentId, status);
             }
             catch (System.Exception)
             {
@@ -53,12 +53,12 @@ namespace Capstone.Controllers
         }
 
         [HttpGet("/user/{userId}/list")]
-        public ActionResult<List<ShoppingList>> GetInvitedShoppingListsByUserID(int userId)
+        public ActionResult<List<ShoppingList>> GetInvitedShoppingListsByUserID(int userId, int status = 0)
         {
             List<ShoppingList> output = new List<ShoppingList>();
             try
             {
-                output = shoppingListDao.GetActiveInvitedShoppingListsByUserID(userId);
+                output = shoppingListDao.GetActiveInvitedShoppingListsByUserID(userId, status);
             }
             catch (System.Exception)
             {
