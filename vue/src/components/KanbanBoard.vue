@@ -128,6 +128,12 @@ export default {
       // All items are complete so we need to let the user know, update the list_status_id, and adjust the sidebar (if we can)
       if (this.areAllItemsComplete) {
           this.showListCompletedSnackbar();
+          this.$store.state.activeList.listItemStatusId = 3;
+          // TODO - send to API endpoint TBD
+
+          this.$store.commit('CLEAR_ACTIVE_LIST');
+          this.$store.commit('CLEAR_ITEMS');
+          this.$store.commit('REFRESH_SIDE_BAR');       
           return;
       }
     },
