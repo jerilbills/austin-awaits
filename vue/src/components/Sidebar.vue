@@ -7,13 +7,20 @@
       </li>
     </ul>
     <span class="sidebar-header"><span class="icon"><i class="fa fa-envelope"></i></span>Invited Lists</span>
-    <div v-for="(department, index) in departments" :key="index">
-    <p><em>{{ department }}</em></p>
-    <ul>
-        <li v-for="(list, innerIndex) in listsByDepartment(department)" :key="innerIndex" @click="navigateTo(list.departmentId, list.listId)">
-          &nbsp;&nbsp;{{ list.name }} ({{ list.numberOfItems }})
-        </li>
-    </ul>
+    <div v-if="invitedLists.length > 0">
+      <div v-for="(department, index) in departments" :key="index">
+        <p><em>{{ department }}</em></p>
+        <ul>
+          <li v-for="(list, innerIndex) in listsByDepartment(department)" :key="innerIndex"
+            @click="navigateTo(list.departmentId, list.listId)">
+            &nbsp;&nbsp;{{ list.name }} ({{ list.numberOfItems }})
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <div v-else>
+      No lists to work on
     </div>
 
     <span class="sidebar-header"><span class="icon"><i class="fa fa-filter"></i></span>Filters</span>
@@ -45,9 +52,9 @@ export default {
 
   computed: {
     departments() {
-        const departments = new Set();
-        this.invitedLists.forEach(dept => departments.add(dept.departmentName));
-        return Array.from(departments).sort((a, b) => (a.departmentName > b.departmentName) ? 1 : -1); 
+      const departments = new Set();
+      this.invitedLists.forEach(dept => departments.add(dept.departmentName));
+      return Array.from(departments).sort((a, b) => (a.departmentName > b.departmentName) ? 1 : -1);
     }
   },
 
@@ -63,7 +70,7 @@ export default {
 
     ShoppingListService.getInvitedLists(this.$store.state.user)
       .then(response => {
-        this.invitedLists = response.data.sort((a, b) => (a.name > b.name) ? 1 : -1);       
+        this.invitedLists = response.data.sort((a, b) => (a.name > b.name) ? 1 : -1);
       })
       .catch(error => {
         console.error('Error fetching invited lists:', error);
@@ -89,7 +96,7 @@ export default {
         });
     },
     listsByDepartment(department) {
-        return this.invitedLists.filter(list => list.departmentName === department);
+      return this.invitedLists.filter(list => list.departmentName === department);
     }
   }
 };
