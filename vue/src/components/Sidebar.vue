@@ -97,7 +97,7 @@ export default {
         .catch(error => {
           console.error('Error fetching list:', error);
         });
-        this.selectedOption = null;
+        this.selectedOption = 'all';
     },
     filterByClaimed() {
       ShoppingListService.getListFilteredByClaimed(this.$store.state.activeList.listId, this.$store.state.user.userId, this.$store.state.activeList.departmentId)
