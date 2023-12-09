@@ -1,7 +1,8 @@
 <template>
   <div class="kanban-board-header">
-    <div class="page-title">{{ $store.state.activeList.name }}<span v-if="!$store.state.activeList.name">Please select a
-        list to work on. Austin Awaits!</span></div>
+    <div class="page-title" v-if="$store.state.activeList.name">{{ $store.state.activeList.name }} (Due {{ dueDate }})
+    </div>
+    <div class="page-title" v-else>Please select a list to work on. Austin Awaits!</div>
     <div class="invites">
       <div class="is-size-7">List Owner</div>
       <div><img src="https://api.dicebear.com/7.x/initials/svg?seed=JB" class="avatar"></div>
@@ -33,7 +34,8 @@
             draggable="true" @click="openModal(item)">
             <div class="header">
               <h3>{{ item.name }}</h3>
-              <span v-if="item.claimedBy && item.claimedByUser" class="has-tooltip-above has-tooltip-primary" :data-tooltip="claimedByUserTooltip(item)">
+              <span v-if="item.claimedBy && item.claimedByUser" class="has-tooltip-above has-tooltip-primary"
+                :data-tooltip="claimedByUserTooltip(item)">
                 <img :src="item.claimedByUser.avatarUrl" class="avatar" />
               </span>
             </div>
@@ -80,6 +82,10 @@ export default {
         { statusId: 3, title: "Purchased", items: this.myItems.filter((item) => item.listItemStatusId === 3) },
       ]
     },
+    dueDate() {
+      let dueDate = new Date(this.$store.state.activeList.dueDate);
+      return dueDate.toLocaleDateString();
+    }
   },
   methods: {
     dragStart(columnTitle) {
