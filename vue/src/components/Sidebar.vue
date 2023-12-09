@@ -25,9 +25,11 @@
 
     <span class="sidebar-header"><span class="icon"><i class="fa fa-filter"></i></span>Filters</span>
     <ul>
-      <li>All Items</li>
-      <li>Unassigned Items</li>
-      <li>My Claimed Items</li>
+      <li :class="{ 'active': selectedOption === 'all' }"
+        @click="navigateTo(this.$store.state.activeList.departmentId, this.$store.state.activeList.listId, 'all')">All
+        Items</li>
+      <li :class="{ 'active': selectedOption === 'unassigned' }" @click="filterByUnassigned()">Unassigned Items</li>
+      <li :class="{ 'active': selectedOption === 'claimed' }" @click="filterByClaimed()">My Claimed Items</li>
     </ul>
     <div>&nbsp;</div>
     <ul>
@@ -45,8 +47,8 @@ export default {
       lists: [
       ],
       invitedLists: [
-
-      ]
+      ],
+      selectedOption: null,
     };
   },
 
@@ -90,16 +92,38 @@ export default {
             activeList = this.invitedLists.find((element) => element.listId == listId)
           }
           this.$store.commit('SET_ACTIVE_LIST', activeList)
+          
         })
         .catch(error => {
           console.error('Error fetching list:', error);
         });
+        this.selectedOption = 'all';
+    },
+    filterByClaimed() {
+      ShoppingListService.getListFilteredByClaimed(this.$store.state.activeList.listId, this.$store.state.user.userId, this.$store.state.activeList.departmentId)
+        .then(response => {
+          this.$store.commit('SET_ITEMS', response.data);
+        })
+        .catch(error => {
+          console.error('Error filtering list:', error);
+        })
+        this.selectedOption = 'claimed';
+    },
+    filterByUnassigned() {
+      ShoppingListService.getListFilteredByUnassigned(this.$store.state.activeList.listId, this.$store.state.activeList.departmentId)
+        .then(response => {
+          this.$store.commit('SET_ITEMS', response.data);
+        })
+        .catch(error => {
+          console.error('Error filtering list:', error);
+        })
+        this.selectedOption = 'unassigned';
     },
     listsByDepartment(department) {
       return this.invitedLists.filter(list => list.departmentName === department);
-    }
+    },
   }
-};
+}
 </script>
   
 <style scoped>
@@ -136,9 +160,13 @@ li {
 li:hover {
   background-color: #C4FCF0;
   color: hsl(27.3, 100%, 37.5%);
-  ;
   font-weight: bold;
 
+}
+.active {
+  background-color: #C4FCF0;
+  color: hsl(27.3, 100%, 37.5%);
+  font-weight: bold;
 }
 
 .sidebar-header {
