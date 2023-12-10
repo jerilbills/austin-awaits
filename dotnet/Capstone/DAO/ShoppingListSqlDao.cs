@@ -222,7 +222,7 @@ namespace Capstone.DAO
                         JOIN lists AS L ON L.list_id = UL.list_id
                         JOIN departments AS D ON D.department_id = L.department_id
                         LEFT JOIN list_items AS LI ON LI.list_id = L.list_id
-						JOIN users ON D.department_id = users.department_id
+						JOIN users JOIN users ON UL.user_id = users.user_id
                         WHERE users.user_id = @user_id AND L.is_active = 1 AND LI.is_active = 1" +
 
                         ((status != 0) ? " AND L.list_status_id = @status " : "")
