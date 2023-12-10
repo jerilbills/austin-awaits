@@ -16,6 +16,9 @@
             <div><i class="fa fa-user-plus fa-lg"></i></div>
         </div>
     </div>
+    <div>
+        <h6>Items Purchased</h6>
+    </div>
 </template>
 
 <script>
