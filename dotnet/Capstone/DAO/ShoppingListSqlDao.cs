@@ -220,21 +220,33 @@ namespace Capstone.DAO
 
         public ShoppingList MapRowToShoppingList(SqlDataReader reader)
         {
-            ShoppingList ShoppingList = new ShoppingList();
+            ShoppingList shoppingList = new ShoppingList();
 
-            ShoppingList.ListId = Convert.ToInt32(reader["list_id"]);
-            ShoppingList.OwnerId = Convert.ToInt32(reader["list_owner_user_id"]);
-            ShoppingList.Name = Convert.ToString(reader["list_name"]);
-            ShoppingList.DueDate = Convert.ToDateTime(reader["due_date_utc"]);
-            ShoppingList.Status = Convert.ToInt32(reader["list_status_id"]);
-            ShoppingList.IsActive = Convert.ToBoolean(reader["is_active"]);
-            ShoppingList.CreatedDate = Convert.ToDateTime(reader["created_date_utc"]);
-            ShoppingList.LastModified = Convert.ToDateTime(reader["last_modified_date_utc"]);
-            ShoppingList.DepartmentId = Convert.ToInt32(reader["department_id"]);
-            ShoppingList.DepartmentName = Convert.ToString(reader["department_name"]);
-            ShoppingList.NumberOfItems = Convert.ToInt32(reader["number_of_items"]);
+            shoppingList.ListId = Convert.ToInt32(reader["list_id"]);
+            shoppingList.OwnerId = Convert.ToInt32(reader["list_owner_user_id"]);
 
-            return ShoppingList;
+            // map ListOwner id to ListOwner object
+            shoppingList.ListOwner = new User();
+            shoppingList.ListOwner.UserId = shoppingList.OwnerId;
+            shoppingList.ListOwner.Username = Convert.ToString(reader["username"]);
+            shoppingList.ListOwner.Role = Convert.ToString(reader["user_role"]);
+            shoppingList.ListOwner.FirstName = Convert.ToString(reader["first_name"]);
+            shoppingList.ListOwner.LastName = Convert.ToString(reader["last_name"]);
+            shoppingList.ListOwner.AvatarUrl = Convert.ToString(reader["avatar_url"]);
+            shoppingList.ListOwner.DepartmentId = Convert.ToInt32(reader["department_id"]);
+            
+            // resume normal mapping to ShoppingList
+            shoppingList.Name = Convert.ToString(reader["list_name"]);
+            shoppingList.DueDate = Convert.ToDateTime(reader["due_date_utc"]);
+            shoppingList.Status = Convert.ToInt32(reader["list_status_id"]);
+            shoppingList.IsActive = Convert.ToBoolean(reader["is_active"]);
+            shoppingList.CreatedDate = Convert.ToDateTime(reader["created_date_utc"]);
+            shoppingList.LastModified = Convert.ToDateTime(reader["last_modified_date_utc"]);
+            shoppingList.DepartmentId = Convert.ToInt32(reader["department_id"]);
+            shoppingList.DepartmentName = Convert.ToString(reader["department_name"]);
+            shoppingList.NumberOfItems = Convert.ToInt32(reader["number_of_items"]);
+
+            return shoppingList;
         }
     }
 }
