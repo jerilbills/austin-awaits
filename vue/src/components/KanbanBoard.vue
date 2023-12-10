@@ -103,6 +103,7 @@
         <div id="snackbar-purchased">Items cannot be removed from Purchased.</div>
         <div id="snackbar-claimed">You are not the owner of this item.</div>
         <div id="snackbar-needed">Items must be claimed before they can be purchased.</div>
+        <div id="snackbar-completed">All items on the list have been purchased. Well done, partner!</div>
         <!-- ITEM DETAILS MODAL -->
         <ItemDetailsModal v-if="showModal" :item="selectedItem" @close="closeModal" />
       </div>
@@ -154,6 +155,10 @@ export default {
     dueDate() {
       let dueDate = new Date(this.$store.state.activeList.dueDate);
       return dueDate.toLocaleDateString();
+    },
+    areAllItemsComplete() {
+      const unfinishedItems = this.myItems.filter((item) => { return (item.listItemStatusId === 1 || item.listItemStatusId === 2)});
+      return unfinishedItems.length === 0;
     }
   },
   methods: {
@@ -188,6 +193,23 @@ export default {
           this.updateItemStatus(columnStatusId);
         }
       }
+      if (this.areAllItemsComplete) {
+        this.completeList();
+      }
+    },
+    completeList() {
+      this.showListCompletedSnackbar();
+          this.$store.state.activeList.status = 3;
+          ShoppingListService
+            .updateList(this.$store.state.activeList)
+            .then(response => {
+              this.$store.commit('CLEAR_ACTIVE_LIST');
+              this.$store.commit('CLEAR_ITEMS');
+              this.$store.commit('REFRESH_SIDE_BAR');       
+            })
+            .catch(error => {
+              console.error('Error updating list:', error);
+            })
     },
     updateItemStatus(columnStatusId) {
       const formattedDate = new Date().toISOString();
@@ -249,6 +271,13 @@ export default {
     },
     showNeededSnackbar() {
       let x = document.getElementById("snackbar-needed");
+      x.className = "show";
+      setTimeout(function () {
+        x.className = x.className.replace("show", "");
+      }, 4000);
+    },
+    showListCompletedSnackbar() {
+      let x = document.getElementById("snackbar-completed");
       x.className = "show";
       setTimeout(function () {
         x.className = x.className.replace("show", "");
@@ -433,7 +462,7 @@ h6 {
   color: hsl(27.3, 100%, 37.5%);
 }
 
-#snackbar-purchased {
+#snackbar-purchased, #snackbar-claimed, #snackbar-needed, #snackbar-completed {
   visibility: hidden;
   min-width: 250px;
   margin-left: -125px;
@@ -449,7 +478,12 @@ h6 {
   bottom: 30px;
 }
 
-#snackbar-purchased.show {
+#snackbar-completed {
+  background-color: #4C8077;
+  bottom: 450px;
+}
+
+#snackbar-purchased.show, #snackbar-claimed.show, #snackbar-needed.show {
   visibility: visible;
   /* Show the snackbar */
   /* Add animation: Take 0.5 seconds to fade in and out the snackbar.
@@ -458,54 +492,13 @@ h6 {
   animation: fadein 0.5s, fadeout 0.5s 3.5s;
 }
 
-#snackbar-claimed {
-  visibility: hidden;
-  min-width: 250px;
-  margin-left: -125px;
-  /* Divide value of min-width by 2 */
-  background-color: #333;
-  color: #fff;
-  text-align: center;
-  border-radius: 2px;
-  padding: 16px;
-  position: fixed;
-  z-index: 1;
-  left: 50%;
-  bottom: 30px;
-}
-
-#snackbar-claimed.show {
+#snackbar-completed.show {
   visibility: visible;
   /* Show the snackbar */
   /* Add animation: Take 0.5 seconds to fade in and out the snackbar.
   Delay the fade out process for 3.5 seconds */
-  -webkit-animation: fadein 0.5s, fadeout 0.5s 3.5s;
-  animation: fadein 0.5s, fadeout 0.5s 3.5s;
-}
-
-#snackbar-needed {
-  visibility: hidden;
-  min-width: 250px;
-  margin-left: -125px;
-  /* Divide value of min-width by 2 */
-  background-color: #333;
-  color: #fff;
-  text-align: center;
-  border-radius: 2px;
-  padding: 16px;
-  position: fixed;
-  z-index: 1;
-  left: 50%;
-  bottom: 30px;
-}
-
-#snackbar-needed.show {
-  visibility: visible;
-  /* Show the snackbar */
-  /* Add animation: Take 0.5 seconds to fade in and out the snackbar.
-  Delay the fade out process for 3.5 seconds */
-  -webkit-animation: fadein 0.5s, fadeout 0.5s 3.5s;
-  animation: fadein 0.5s, fadeout 0.5s 3.5s;
+  -webkit-animation: fadeintall 0.5s, fadeouttall 0.5s 3.7s;
+  animation: fadeintall 0.5s, fadeouttall 0.5s 3.7s;
 }
 
 /* Animations to fade the snackbar in and out */
@@ -548,6 +541,56 @@ h6 {
 @keyframes fadeout {
   from {
     bottom: 30px;
+    opacity: 1;
+  }
+
+  to {
+    bottom: 0;
+    opacity: 0;
+  }
+}
+
+/* animations for a tall snackbar */
+
+@-webkit-keyframes fadeintall {
+  from {
+    bottom: 0;
+    opacity: 0;
+  }
+
+  to {
+    bottom: 450px;
+    opacity: 1;
+  }
+}
+
+@keyframes fadeintall {
+  from {
+    bottom: 0;
+    opacity: 0;
+  }
+
+  to {
+    bottom: 450px;
+    opacity: 1;
+  }
+}
+
+@-webkit-keyframes fadeouttall {
+  from {
+    bottom: 450px;
+    opacity: 1;
+  }
+
+  to {
+    bottom: 0;
+    opacity: 0;
+  }
+}
+
+@keyframes fadeouttall {
+  from {
+    bottom: 450px;
     opacity: 1;
   }
 
