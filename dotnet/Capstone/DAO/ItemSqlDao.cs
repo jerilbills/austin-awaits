@@ -37,12 +37,12 @@ namespace Capstone.DAO
                     cmd.Parameters.AddWithValue("@item_name", newItem.Name);
                     cmd.Parameters.AddWithValue("@item_description", newItem.Description);
                     cmd.Parameters.AddWithValue("@item_image_url", newItem.ImgUrl);
-                    cmd.Parameters.AddWithValue("@is_tracked", newItem.IsTrackedInventory);
+                    cmd.Parameters.AddWithValue("@is_tracked", true);
                     cmd.Parameters.AddWithValue("@created_by", newItem.CreatedBy);
-                    cmd.Parameters.AddWithValue("@created_date", newItem.CreatedDate);
-                    cmd.Parameters.AddWithValue("@last_modified_by", newItem.LastModifiedBy);
-                    cmd.Parameters.AddWithValue("@last_modified_date", newItem.LastModifiedDate);
-                    cmd.Parameters.AddWithValue("@is_active", newItem.IsActive);
+                    cmd.Parameters.AddWithValue("@created_date", DateTime.UtcNow);
+                    cmd.Parameters.AddWithValue("@last_modified_by", newItem.CreatedBy);
+                    cmd.Parameters.AddWithValue("@last_modified_date", DateTime.UtcNow);
+                    cmd.Parameters.AddWithValue("@is_active", true);
 
                     newItemId = Convert.ToInt32(cmd.ExecuteScalar());
                 }
@@ -133,9 +133,6 @@ namespace Capstone.DAO
         {
             string sql = "UPDATE items SET item_name = @item_name, " +
                 "item_description = @item_description, item_image_url = @item_image_url, " +
-                "is_tracked_inventory = @is_tracked, " +
-                "created_by_user_id = @created_by, " +
-                "created_date_utc = @created_date, " +
                 "last_modified_by_user_id = @last_modified_by, " +
                 "last_modified_date_utc = @last_modified_date, is_active = @is_active " +
                 "WHERE item_id = @item_id;";
@@ -144,7 +141,7 @@ namespace Capstone.DAO
 
             try
             {
-                using(SqlConnection conn = new SqlConnection(connectionString))
+                using (SqlConnection conn = new SqlConnection(connectionString))
                 {
                     conn.Open();
                     SqlCommand cmd = new SqlCommand(sql, conn);
@@ -153,11 +150,8 @@ namespace Capstone.DAO
                     cmd.Parameters.AddWithValue("@item_name", itemToUpdate.Name);
                     cmd.Parameters.AddWithValue("@item_description", itemToUpdate.Description);
                     cmd.Parameters.AddWithValue("@item_image_url", itemToUpdate.ImgUrl);
-                    cmd.Parameters.AddWithValue("@is_tracked", itemToUpdate.IsTrackedInventory);
-                    cmd.Parameters.AddWithValue("@created_by", itemToUpdate.CreatedBy);
-                    cmd.Parameters.AddWithValue("@created_date", itemToUpdate.CreatedDate);
                     cmd.Parameters.AddWithValue("@last_modified_by", itemToUpdate.LastModifiedBy);
-                    cmd.Parameters.AddWithValue("@last_modified_date", itemToUpdate.LastModifiedDate);
+                    cmd.Parameters.AddWithValue("@last_modified_date", DateTime.UtcNow);
                     cmd.Parameters.AddWithValue("@is_active", itemToUpdate.IsActive);
 
                     SqlDataReader reader = cmd.ExecuteReader();
