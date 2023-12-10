@@ -11,10 +11,10 @@ namespace Capstone.DAO
         public ShoppingList AddItem(Item itemToAdd);
         public int DeleteItem(Item itemToDelete);
         public ShoppingList PurchaseItem(Item itemToPurchase);
-        public ShoppingList GetShoppingListById(int id);
+        public ShoppingList GetActiveShoppingListById(int listId);
         public List<ShoppingList> GetShoppingLists();
-        public List<ShoppingList> GetActiveShoppingListsByDepartmentID(int departmentId);
-        public List<ShoppingList> GetActiveInvitedShoppingListsByUserID(int userId);
+        public List<ShoppingList> GetActiveShoppingListsByDepartmentID(int departmentId, int status);
+        public List<ShoppingList> GetActiveInvitedShoppingListsByUserID(int userId, int status);
         public int AddUserToList(UserList userList);
 
     }

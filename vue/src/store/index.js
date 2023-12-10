@@ -10,7 +10,8 @@ export function createStore(currentToken, currentUser) {
       activeItems: [
         
       ],
-      activeList: {}
+      activeList: {},
+      sideBarRefreshKey: 0
     },
     mutations: {
       SET_AUTH_TOKEN(state, token) {
@@ -63,6 +64,16 @@ export function createStore(currentToken, currentUser) {
       SET_ACTIVE_LIST(state, list) {
         state.activeList = list;
       },
+      CLEAR_ACTIVE_LIST(state) {
+        state.activeList = {};
+      },
+      CLEAR_ITEMS(state) {
+        state.activeItems = [];
+      },
+      REFRESH_SIDE_BAR(state) {
+        state.sideBarRefreshKey += 1;
+      }
+
     },
     getters:{
       getItems() {

@@ -5,7 +5,7 @@
 
     <div class="main-layout">
       <!-- Include the Sidebar component -->
-      <Sidebar />
+      <Sidebar :key="$store.state.sideBarRefreshKey"/>
 
       <!-- KanbanBoard component goes here -->
       <KanbanBoard />

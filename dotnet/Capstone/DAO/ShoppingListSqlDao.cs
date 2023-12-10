@@ -3,6 +3,7 @@ using Capstone.Models;
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
+using System.Net.NetworkInformation;
 
 namespace Capstone.DAO
 {
@@ -34,11 +35,6 @@ namespace Capstone.DAO
             throw new System.NotImplementedException();
         }
 
-        public ShoppingList GetShoppingListById(int id)
-        {
-            throw new System.NotImplementedException();
-        }
-
         public List<ShoppingList> GetShoppingLists()
         {
             throw new System.NotImplementedException();
@@ -49,12 +45,9 @@ namespace Capstone.DAO
             throw new System.NotImplementedException();
         }
 
-        public ShoppingList UpdateShoppingList(ShoppingList listToUpdate)
-        {
-            throw new System.NotImplementedException();
-        }
 
-        public List<ShoppingList> GetActiveShoppingListsByDepartmentID(int departmentId)
+
+        public ShoppingList GetActiveShoppingListById(int listId)
         {
             string sql = @"SELECT L.list_id, L.list_name, L.department_id, D.department_name,
                         COUNT(LI.item_id) AS number_of_items,
@@ -63,10 +56,98 @@ namespace Capstone.DAO
                         FROM lists AS L
                         JOIN departments AS D ON D.department_id = L.department_id
                         LEFT JOIN list_items AS LI ON LI.list_id = L.list_id
-                        WHERE L.department_id = @departmentId AND L.is_active = 1 AND LI.is_active = 1
+                        WHERE L.list_id = @listId AND L.is_active = 1 AND LI.is_active = 1 
                         GROUP BY L.list_id, L.list_name, L.department_id, D.department_name,
                         L.list_status_id, L.list_owner_user_id, L.due_date_utc,
                         L.created_date_utc, L.last_modified_date_utc, L.is_active;";
+
+            ShoppingList output = null;
+
+            try
+            {
+                using (SqlConnection conn = new SqlConnection(connectionString))
+                {
+                    conn.Open();
+                    SqlCommand cmd = new SqlCommand(sql, conn);
+                    cmd.Parameters.AddWithValue("@listId", listId);
+
+                    SqlDataReader reader = cmd.ExecuteReader();
+                    if (reader.Read())
+                    {
+                        output = new ShoppingList();
+                        output = MapRowToShoppingList(reader);
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                throw new DaoException();
+            }
+            return output;
+        }
+
+        public ShoppingList UpdateShoppingList(ShoppingList listToUpdate)
+        {
+            string sql = @"UPDATE lists
+                        SET list_name = @listName, department_id = @departmentId, list_status_id = @listStatusId,
+                        list_owner_user_id = @listOwnerId, due_date_utc = @dueDate, 
+                        last_modified_date_utc = @lastModifiedDate
+                        WHERE list_id = @list_id";
+
+            ShoppingList output = null;
+
+            int rowsAffected = 0;
+
+            try
+            {
+                using (SqlConnection conn = new SqlConnection(connectionString))
+                {
+                    conn.Open();
+                    SqlCommand cmd = new SqlCommand(sql, conn);
+                    cmd.Parameters.AddWithValue("@list_id", listToUpdate.ListId);
+                    cmd.Parameters.AddWithValue("@listName", listToUpdate.Name);
+                    cmd.Parameters.AddWithValue("@departmentId", listToUpdate.DepartmentId);
+                    cmd.Parameters.AddWithValue("@listStatusId", listToUpdate.Status);
+                    cmd.Parameters.AddWithValue("@listOwnerId", listToUpdate.OwnerId);
+                    cmd.Parameters.AddWithValue("@dueDate", listToUpdate.DueDate);
+                    cmd.Parameters.AddWithValue("@lastModifiedDate", listToUpdate.LastModified);
+
+                    rowsAffected = cmd.ExecuteNonQuery();
+                }
+                if (rowsAffected == 0)
+                {
+                    return output;
+                }
+                else
+                {
+                    output = GetActiveShoppingListById(listToUpdate.ListId);
+                }
+            }
+            catch (Exception)
+            {
+                throw new DaoException();
+            }
+            return output;
+        }
+
+        public List<ShoppingList> GetActiveShoppingListsByDepartmentID(int departmentId, int status)
+        {
+            string sql = @"SELECT L.list_id, L.list_name, L.department_id, D.department_name,
+                        COUNT(LI.item_id) AS number_of_items,
+                        L.list_status_id, L.list_owner_user_id, L.due_date_utc,
+                        L.created_date_utc, L.last_modified_date_utc, L.is_active
+                        FROM lists AS L
+                        JOIN departments AS D ON D.department_id = L.department_id
+                        LEFT JOIN list_items AS LI ON LI.list_id = L.list_id
+                        WHERE L.department_id = @departmentId AND L.is_active = 1 AND LI.is_active = 1 " +
+
+                        ((status != 0) ? " AND L.list_status_id = @status " : "")
+
+                        + @"GROUP BY L.list_id, L.list_name, L.department_id, D.department_name,
+                        L.list_status_id, L.list_owner_user_id, L.due_date_utc,
+                        L.created_date_utc, L.last_modified_date_utc, L.is_active;";
+
+
             List<ShoppingList> output = new List<ShoppingList>();
             try
             {
@@ -75,7 +156,8 @@ namespace Capstone.DAO
                     conn.Open();
                     SqlCommand cmd = new SqlCommand(sql, conn);
                     cmd.Parameters.AddWithValue("@departmentId", departmentId);
-                    
+                    cmd.Parameters.AddWithValue("@status", status);
+
                     SqlDataReader reader = cmd.ExecuteReader();
                     while (reader.Read())
                     {
@@ -89,10 +171,9 @@ namespace Capstone.DAO
                 throw new DaoException();
             }
             return output;
-
         }
 
-        public List<ShoppingList> GetActiveInvitedShoppingListsByUserID(int userId)
+        public List<ShoppingList> GetActiveInvitedShoppingListsByUserID(int userId, int status)
         {
             List<ShoppingList> output = new List<ShoppingList>();
             string sql = @"SELECT L.list_id, L.list_name, L.department_id, D.department_name,
@@ -103,18 +184,22 @@ namespace Capstone.DAO
                         JOIN lists AS L ON L.list_id = UL.list_id
                         JOIN departments AS D ON D.department_id = L.department_id
                         LEFT JOIN list_items AS LI ON LI.list_id = L.list_id
-                        WHERE user_id = @userId AND L.is_active = 1 AND LI.is_active = 1
-                        GROUP BY L.list_id, L.list_name, L.department_id, D.department_name,
+                        WHERE user_id = @userId AND L.is_active = 1 AND LI.is_active = 1 " +
+
+                        ((status != 0) ? " AND L.list_status_id = @status " : "")
+
+                        + @"GROUP BY L.list_id, L.list_name, L.department_id, D.department_name,
                         L.list_status_id, L.list_owner_user_id, L.due_date_utc,
                         L.created_date_utc, L.last_modified_date_utc, L.is_active;";
 
             try
             {
-                using(SqlConnection conn = new SqlConnection(connectionString))
+                using (SqlConnection conn = new SqlConnection(connectionString))
                 {
                     conn.Open();
                     SqlCommand cmd = new SqlCommand(sql, conn);
                     cmd.Parameters.AddWithValue("@userId", userId);
+                    cmd.Parameters.AddWithValue("@status", status);
 
                     SqlDataReader reader = cmd.ExecuteReader();
 
