@@ -68,6 +68,7 @@ namespace Capstone
             services.AddTransient<IShoppingListDao>(sl => new ShoppingListSqlDao(connectionString));
             services.AddTransient<IDepartmentDao>(dept => new DepartmentSqlDao(connectionString));
             services.AddTransient<IListItemDao>(li => new ListItemSqlDao(connectionString));
+            services.AddTransient<IInviteDao>(inv => new InviteSqlDao(connectionString));
 
             // Swagger set up
             services.AddSwaggerGen(s => {
