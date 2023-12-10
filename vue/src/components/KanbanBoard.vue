@@ -124,18 +124,23 @@ export default {
           this.updateItemStatus(columnStatusId);
         }
       }
-
-      // All items are complete so we need to let the user know, update the list_status_id, and adjust the sidebar (if we can)
       if (this.areAllItemsComplete) {
-          this.showListCompletedSnackbar();
-          this.$store.state.activeList.listItemStatusId = 3;
-          // TODO - send to API endpoint TBD
-
-          this.$store.commit('CLEAR_ACTIVE_LIST');
-          this.$store.commit('CLEAR_ITEMS');
-          this.$store.commit('REFRESH_SIDE_BAR');       
-          return;
+        this.completeList();
       }
+    },
+    completeList() {
+      this.showListCompletedSnackbar();
+          this.$store.state.activeList.status = 3;
+          ShoppingListService
+            .updateList(this.$store.state.activeList)
+            .then(response => {
+              this.$store.commit('CLEAR_ACTIVE_LIST');
+              this.$store.commit('CLEAR_ITEMS');
+              this.$store.commit('REFRESH_SIDE_BAR');       
+            })
+            .catch(error => {
+              console.error('Error updating list:', error);
+            })
     },
     updateItemStatus(columnStatusId) {
       const formattedDate = new Date().toISOString();

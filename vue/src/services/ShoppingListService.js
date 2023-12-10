@@ -25,6 +25,8 @@ export default {
         return axios.get('/department/' + departmentId + '/list/' + listId + '/listitem/unassigned')
     },
 
-
+    updateList(list) {
+        return axios.put('/department/'+list.departmentId+'/list/' + list.listId, list);
+    }
   
   }

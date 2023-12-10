@@ -1,11 +1,16 @@
 <template>
   <div class="sidebar is-dark">
     <span class="sidebar-header"><span class="icon"><i class="fa fa-home"></i></span>My Department</span>
+    <div v-if="lists.length > 0">
     <ul>
       <li v-for="list in inProgressLists" :key="list.listId" @click="navigateTo(this.$store.state.user.departmentId, list.listId)">
         {{ list.name }} ({{ list.numberOfItems }})
       </li>
     </ul>
+    </div>
+    <div v-else>
+      No lists to work on
+    </div>
     <span class="sidebar-header"><span class="icon"><i class="fa fa-envelope"></i></span>Invited Lists</span>
     <div v-if="invitedLists.length > 0">
       <div v-for="(department, index) in departments" :key="index">
@@ -18,11 +23,9 @@
         </ul>
       </div>
     </div>
-
     <div v-else>
       No lists to work on
     </div>
-
     <span class="sidebar-header"><span class="icon"><i class="fa fa-filter"></i></span>Filters</span>
     <ul>
       <li :class="{ 'active': selectedOption === 'all' }"
