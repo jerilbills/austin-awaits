@@ -44,7 +44,7 @@ namespace Capstone.Controllers
             try
             {
                 output = itemDao.CreateItem(itemToAdd);
-                return Created($"/item/{itemToAdd.ItemId}", itemToAdd);
+                return Created($"/item/{output.ItemId}", output);
             }
             catch (System.Exception)
             {

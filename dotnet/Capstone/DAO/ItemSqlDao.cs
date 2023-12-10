@@ -134,7 +134,7 @@ namespace Capstone.DAO
             string sql = "UPDATE items SET item_name = @item_name, " +
                 "item_description = @item_description, item_image_url = @item_image_url, " +
                 "last_modified_by_user_id = @last_modified_by, " +
-                "last_modified_date_utc = @last_modified_date, is_active = @is_active " +
+                "last_modified_date_utc = @last_modified_date, " +
                 "WHERE item_id = @item_id;";
 
             Item output = null;
@@ -152,7 +152,6 @@ namespace Capstone.DAO
                     cmd.Parameters.AddWithValue("@item_image_url", itemToUpdate.ImgUrl);
                     cmd.Parameters.AddWithValue("@last_modified_by", itemToUpdate.LastModifiedBy);
                     cmd.Parameters.AddWithValue("@last_modified_date", DateTime.UtcNow);
-                    cmd.Parameters.AddWithValue("@is_active", itemToUpdate.IsActive);
 
                     SqlDataReader reader = cmd.ExecuteReader();
 
