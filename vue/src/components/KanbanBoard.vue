@@ -54,7 +54,7 @@
         <div id="snackbar-completed">All items on the list have been purchased. Well done, partner!</div>
 
         <!-- ITEM DETAILS MODAL -->
-        <ItemDetailsModal v-if="showItemModal" :item="selectedItem" @close="closeItemModal" />
+        <ItemDetailsModal v-if="showItemModal" :item="selectedItem" @close="closeItemModal"  />
         <InviteUserToListModal v-if="showInviteUserToListModal" @close="closeInviteUserToListModal" />
       </div>
     </div>
