@@ -13,7 +13,6 @@ namespace Capstone.Models
         public bool IsActive { get; set; }
         public DateTime CreatedDate { get; set; }
         public int CreatedBy { get; set; }
-        public User ListOwner { get; set; }
         public int LastModifiedBy { get; set; }
         public int Quantity { get; set; }
         public int? ClaimedBy { get; set; }
