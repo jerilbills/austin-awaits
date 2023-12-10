@@ -23,12 +23,12 @@ namespace Capstone.Controllers
 
         
         [HttpPost]
-        public ActionResult<int> AddUserToList(Invite userListToAdd)
+        public ActionResult<int> AddUserToList(Invite inviteToMake)
         {
             int output;
             try
             {
-                output = invitetDao.AddUserToList(userListToAdd);
+                output = invitetDao.AddUserToList(inviteToMake);
             }
             catch (System.Exception)
             {

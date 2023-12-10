@@ -27,7 +27,7 @@ namespace Capstone.DAO
                     conn.Open();
 
                     SqlCommand cmd = new SqlCommand(sql, conn);
-                    cmd.Parameters.AddWithValue("@user_id", userListToAdd.UserId);
+                    cmd.Parameters.AddWithValue("@user_id", userListToAdd.InvitedUser.UserId);
                     cmd.Parameters.AddWithValue("@list_id", userListToAdd.ListId);
 
                     rowsAffected = cmd.ExecuteNonQuery();
