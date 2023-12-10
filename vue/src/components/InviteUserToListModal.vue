@@ -76,6 +76,7 @@
 <script>
 import DepartmentService from '../services/DepartmentService';
 import UserService from '../services/UserService';
+import InviteService from '../services/InviteService';
 
   export default {
     data() {
@@ -125,7 +126,19 @@ import UserService from '../services/UserService';
         })
     },
     addUser() {
-      alert(`adding user ${this.selectedUser.userId} ${this.selectedUser.firstName} to list ${this.$store.state.activeList.name}`)
+      const inviteToAdd = {
+        listId: this.$store.state.activeList.listId,
+        invitedUser: this.selectedUser
+      }
+      console.log(JSON.stringify(inviteToAdd));
+      InviteService
+        .addInvite(this.$store.state.activeList.departmentId, this.$store.state.activeList.listId, inviteToAdd)
+        .then((response) => {
+          this.closeInviteUserToListModal();
+        })
+        .catch((error) => {
+          console.log("There were problems adding this user invite: " + JSON.stringify(inviteToAdd));
+        })
     }
   },
         
