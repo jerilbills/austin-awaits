@@ -488,8 +488,8 @@ h6 {
   /* Show the snackbar */
   /* Add animation: Take 0.5 seconds to fade in and out the snackbar.
   Delay the fade out process for 3.5 seconds */
-  -webkit-animation: fadein 1.5s, fadeout 1.5s 3.5s;
-  animation: fadein 1.5s, fadeout 1.5s 3.5s;
+  -webkit-animation: fadein 0.5s, fadeout 0.5s 3.5s;
+  animation: fadein 0.5s, fadeout 0.5s 3.5s;
 }
 
 #snackbar-completed.show {
@@ -497,8 +497,8 @@ h6 {
   /* Show the snackbar */
   /* Add animation: Take 0.5 seconds to fade in and out the snackbar.
   Delay the fade out process for 3.5 seconds */
-  -webkit-animation: fadeintall 0.5s, fadeouttall 0.5s 3.5s;
-  animation: fadeintall 0.5s, fadeouttall 0.5s 3.5s;
+  -webkit-animation: fadeintall 0.5s, fadeouttall 0.5s 3.7s;
+  animation: fadeintall 0.5s, fadeouttall 0.5s 3.7s;
 }
 
 /* Animations to fade the snackbar in and out */
