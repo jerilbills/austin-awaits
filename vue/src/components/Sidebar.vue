@@ -1,6 +1,6 @@
 <template>
   <div class="sidebar is-dark">
-    <span class="sidebar-header"><span class="icon"><i class="fa fa-home"></i></span>My Department</span>
+    <span class="sidebar-header"><span class="icon"><i class="fa fa-home"></i></span>Department Lists</span>
     <div v-if="lists.length > 0">
     <ul>
       <li v-for="list in inProgressLists" :key="list.listId" @click="navigateTo(this.$store.state.user.departmentId, list.listId)">

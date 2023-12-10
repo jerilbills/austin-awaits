@@ -4,11 +4,11 @@
     </div>
     <div class="page-title" v-else>Please select a list to work on. Austin Awaits!</div>
         
-    <div class="invites" v-if="$store.state.activeList.name">
+    <div class="invites" v-if="showInvites">
       <div class="is-size-7">List Owner</div>
       <div><img src="https://api.dicebear.com/7.x/initials/svg?seed=JB" class="avatar"></div>
       <div>&nbsp;&nbsp;</div>
-      <div class="is-size-7">List Members</div>
+      <div class="is-size-7">List Invites</div>
       <div>
         <img src="https://api.dicebear.com/7.x/initials/svg?seed=JB" class="avatar">
         <img src="https://api.dicebear.com/7.x/initials/svg?seed=DM" class="avatar">
@@ -22,7 +22,7 @@
 
   </div>
 
-  <div class="kanban-board"  v-if="$store.state.activeList.name">
+  <div class="kanban-board"  v-if="$store.state.activeList.name" @mounted="getListInvites">
     <div class="column is-4" v-for="(column, index) in columns" :key="index" :class="{ over: isDraggedOver }"
       @drop.prevent="drop(column)" @dragover.prevent="dragOver" @dragenter.prevent="dragEnter" @dragleave="dragLeave">
 
@@ -63,8 +63,10 @@
 
 <script>
 import ShoppingListService from '../services/ShoppingListService';
+import InviteService from '../services/InviteService';
 import ItemDetailsModal from './ItemDetailsModal.vue';
 import InviteUserToListModal from './InviteUserToListModal.vue';
+import { storeKey } from 'vuex';
 
 export default {
   name: 'KanbanBaord',
@@ -78,6 +80,7 @@ export default {
       showInviteUserToListModal: false,
       selectedItem: null,
       dragCounter: 0,
+      invitedUsers: null
     };
   },
   computed: {
@@ -102,8 +105,31 @@ export default {
       const unfinishedItems = this.myItems.filter((item) => { return (item.listItemStatusId === 1 || item.listItemStatusId === 2)});
       return unfinishedItems.length === 0;
     },
+    showInvites() {
+      if (this.$store.state.activeList.name != null && this.invitedUsers != null) {
+        return true;
+      }
+      else if (this.$store.state.activeList.name != null) {
+        this.getListInvites();
+        return false;
+      }
+      return false;
+    },
   },
   methods: {
+    getListInvites() {
+      console.log("getting invites");
+      InviteService
+        .getListInvites(this.$store.state.activeList.departmentId, this.$store.state.activeList.listId)
+        .then(response => {
+          console.log(response.data);
+          this.invitedUsers = response.data.sort((a, b) => ((a.lastName + ", " + a.firstName) > (a.lastName + ", " + a.firstName)) ? 1 : -1);
+          return true;
+        })
+        .catch(error => {
+          console.error('Error fetching list invites:', error);
+        })
+    },
     dragStart(columnTitle) {
       this.draggedColumn = columnTitle;
       console.log(this.draggedColumn);
@@ -249,6 +275,7 @@ export default {
       return item.claimedByUser.firstName + " " + item.claimedByUser.lastName;
     },    
   },
+  
 }
 </script>
 
