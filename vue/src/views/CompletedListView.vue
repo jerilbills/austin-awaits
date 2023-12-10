@@ -4,7 +4,10 @@
         <SidebarCompletedList />
         <div class="content">
             <h1>Completed Lists for the {{ userDepartmentName }} Department</h1>
-            <div class="table-container">
+            <!-- Display loading overlay when loading is true -->
+            <LoadingOverlay :loading="loading"/>
+
+            <div class="table-container" v-if="!loading">
                 <input class="input" type="text" v-model="searchTerm" placeholder="Search..." />
                 <table class="table">
                     <thead>
@@ -19,7 +22,7 @@
                     </thead>
                     <tbody>
                         <tr v-for="(item, index) in filteredData" :key="index">
-                            <td @click="navigateTo()">{{ item.name }}</td>
+                            <td @click="navigateTo(item.listId)">{{ item.name }}</td>
                             <td>{{ item.ownerId }}</td>
                             <td>{{ item.numberOfItems }}</td>
                             <td>{{ formatDate(item.dueDate) }}</td>
@@ -32,24 +35,26 @@
         </div>
     </div>
 </template>
-  
+
 <script>
 import Navbar from "../components/Navbar.vue";
 import SidebarCompletedList from "../components/SidebarCompletedList.vue";
 import departmentService from '../services/DepartmentService';
 import ShoppingListService from '../services/ShoppingListService';
+import LoadingOverlay from "../components/LoadingOverlay.vue";
 
 export default {
     components: {
         Navbar,
         SidebarCompletedList,
+        LoadingOverlay,
     },
     data() {
         return {
-            data: [
-            ],
+            data: [],
             searchTerm: "",
             userDepartmentName: "",
+            loading: true, // Initially set to true
         };
     },
     computed: {
@@ -78,7 +83,6 @@ export default {
                     .getDepartments()
                     .then((response) => {
                         response.data.forEach((dept) => {
-                            console.log(dept.departmentId);
                             if (dept.departmentId == this.$store.state.user.departmentId) {
                                 this.userDepartmentName = dept.departmentName;
                             }
@@ -86,7 +90,7 @@ export default {
                     })
                     .catch((error) => {
                         console.log("Could not retrieve departments");
-                    })
+                    });
             }
         },
         formatDate(dateString) {
@@ -96,17 +100,25 @@ export default {
     },
     created() {
         this.getUserDepartment();
-        ShoppingListService.getCompletedListsByDepartment(this.$store.state.user.departmentId)
-            .then((response) => {
-                this.data = response.data;
-            })
-            .catch((error) => {
-                console.log("Could not retrieve completed lists");
-            });
+
+        this.loading = true;
+
+        setTimeout(() => {
+            ShoppingListService.getCompletedListsByDepartment(this.$store.state.user.departmentId)
+                .then((response) => {
+                    this.data = response.data;
+                })
+                .catch((error) => {
+                    console.error('Error fetching completed lists:', error);
+                })
+                .finally(() => {
+                    this.loading = false;
+                });
+        }, 500); 
     }
 };
 </script>
-  
+
 <style>
 #page {
     height: 100vh;
@@ -139,7 +151,6 @@ export default {
     white-space: nowrap;
 }
 
-
 .table tbody tr:nth-child(odd) {
     background-color: #f4f4f4;
 }
@@ -147,5 +158,5 @@ export default {
 .table tbody tr:nth-child(even) {
     background-color: #ffffff;
 }
+
 </style>
-  
