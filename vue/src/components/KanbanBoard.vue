@@ -3,7 +3,8 @@
     <div class="page-title" v-if="$store.state.activeList.name">{{ $store.state.activeList.name }} (Due {{ dueDate }})
     </div>
     <div class="page-title" v-else>Please select a list to work on. Austin Awaits!</div>
-    <div class="invites">
+        
+    <div class="invites" v-if="$store.state.activeList.name">
       <div class="is-size-7">List Owner</div>
       <div><img src="https://api.dicebear.com/7.x/initials/svg?seed=JB" class="avatar"></div>
       <div>&nbsp;&nbsp;</div>
@@ -15,67 +16,13 @@
         <img src="https://api.dicebear.com/7.x/initials/svg?seed=JF" class="avatar">
       </div>
       <div>
-        <i class="fa fa-user-plus fa-lg" @click="toggleDropdown"></i>
-        <div v-if="showDropdown" class="select" >
-          <select id="department" name="department" v-model="departmentIdToSearch" required>
-          <option v-for="dept in departments" :key="dept.departmentId" :value="dept.departmentId">
-          {{ dept.departmentName }}
-          </option>
-           </select>
-        </div>
-        
-      <div v-if="departmentId">
-        <div class="select">
-          <select id="user" name="user" v-model="selectedUser" required>
-            <!-- <option value="">Select User</option> -->
-            <option v-for="user in departmentUsers" :key="user.userId" :value="user.userId">
-              {{user.firstName}} {{user.lastName}}
-            </option>
-          </select>
-        </div>
+        <i class="fa fa-user-plus fa-lg" @click="openInviteUserToListModal()"></i>
       </div>
-
-
-
-
-
-
-
-
-<!-- 
-
-        <div>
-  <div class="select">
-    <select id="department" name="department" v-model="selectedDepartment" @change="departmentChanged" required>
-      <option value="">Select Department</option>
-      <option v-for="dept in departments" :key="dept.departmentId" :value="dept.departmentId">
-        {{ dept.departmentName }}
-      </option>
-    </select>
-  </div>
-
-  <div v-if="selectedDepartment">
-    <div class="select">
-      <select id="subDepartment" name="subDepartment" v-model="selectedSubDepartment" required>
-        <option value="">Select Sub-Department</option>
-        <option v-for="subDept in subDepartments" :key="subDept.subDepartmentId" :value="subDept.subDepartmentId">
-          {{ subDept.subDepartmentName }}
-        </option>
-      </select>
     </div>
+
   </div>
-</div> -->
 
-
-
-
-      </div>
-
-
-
-    </div>
-  </div>
-  <div class="kanban-board">
+  <div class="kanban-board"  v-if="$store.state.activeList.name">
     <div class="column is-4" v-for="(column, index) in columns" :key="index" :class="{ over: isDraggedOver }"
       @drop.prevent="drop(column)" @dragover.prevent="dragOver" @dragenter.prevent="dragEnter" @dragleave="dragLeave">
 
@@ -89,7 +36,7 @@
         </h6>
         <div class="items">
           <div class="item" v-for="item in column.items" :key="item.itemId" @dragstart="dragStartItem(item)"
-            draggable="true" @click="openModal(item)">
+            draggable="true" @click="openItemModal(item)">
             <div class="header">
               <h3>{{ item.name }}</h3>
               <span v-if="item.claimedBy && item.claimedByUser" class="has-tooltip-above has-tooltip-primary"
@@ -99,13 +46,16 @@
             </div>
           </div>
         </div>
+
         <!-- SNACKBAR ALERTS-->
         <div id="snackbar-purchased">Items cannot be removed from Purchased.</div>
         <div id="snackbar-claimed">You are not the owner of this item.</div>
         <div id="snackbar-needed">Items must be claimed before they can be purchased.</div>
         <div id="snackbar-completed">All items on the list have been purchased. Well done, partner!</div>
+
         <!-- ITEM DETAILS MODAL -->
-        <ItemDetailsModal v-if="showModal" :item="selectedItem" @close="closeModal" />
+        <ItemDetailsModal v-if="showItemModal" :item="selectedItem" @close="closeItemModal"  />
+        <InviteUserToListModal v-if="showInviteUserToListModal" @close="closeInviteUserToListModal" />
       </div>
     </div>
   </div>
@@ -113,29 +63,21 @@
 
 <script>
 import ShoppingListService from '../services/ShoppingListService';
-import DepartmentService from '../services/DepartmentService';
-import UserService from '../services/UserService';
-
 import ItemDetailsModal from './ItemDetailsModal.vue';
+import InviteUserToListModal from './InviteUserToListModal.vue';
 
 export default {
-  name: 'HTMLDraggable',
-  props: ['title', 'cards', 'boardId'],
+  name: 'KanbanBaord',
   components: {
     ItemDetailsModal,
+    InviteUserToListModal
   },
   data() {
     return {
-      showModal: false,
+      showItemModal: false,
+      showInviteUserToListModal: false,
       selectedItem: null,
       dragCounter: 0,
-
-      showDropdown: false,
-      departments:[],
-      departmentIdToSearch: null,
-      selectedUser: null,
-      departmentUsers: []
-      
     };
   },
   computed: {
@@ -159,7 +101,7 @@ export default {
     areAllItemsComplete() {
       const unfinishedItems = this.myItems.filter((item) => { return (item.listItemStatusId === 1 || item.listItemStatusId === 2)});
       return unfinishedItems.length === 0;
-    }
+    },
   },
   methods: {
     dragStart(columnTitle) {
@@ -283,17 +225,20 @@ export default {
         x.className = x.className.replace("show", "");
       }, 4000);
     },
-
-    openModal(item) {
+    openItemModal(item) {
       this.selectedItem = item;
-      this.showModal = true;
+      this.showItemModal = true;
     },
-    closeModal() {
-      this.showModal = false;
+    closeItemModal() {
+      this.showItemModal = false;
       this.selectedItem = null;
     },
-
-
+    openInviteUserToListModal(item) {
+      this.showInviteUserToListModal = true;
+    },
+    closeInviteUserToListModal() {
+      this.showInviteUserToListModal = false;
+    },
     dragLeave(columnTitle) {
 
     },
@@ -303,47 +248,8 @@ export default {
     claimedByUserTooltip(item) {
       return item.claimedByUser.firstName + " " + item.claimedByUser.lastName;
     },    
-    //loadDepartments should call a new method that gets only the other departments-
-    //update this method and the DepartmentService once we write that backend method 
-    loadDepartmentList() {
-      DepartmentService
-        .getDepartments()
-        .then((response) => {
-          response.data.forEach((dept) => {
-            this.departments.push(dept);
-          });
-        })
-        .catch((error) => {          
-          this.registrationErrorMsg = 'There were problems registering this user.';
-        })
-    },
-    toggleDropdown() {
-      this.showDropdown = !this.showDropdown;
-    },
-    loadDepartmentUsersList() {
-      UserService
-        .getActiveUsersByDepartmentId(this.departmentIdToSearch)
-        .then((response) => {
-          response.data.forEach((person) => {
-            this.departmentUsers.push(person);
-          });
-        })
-        .catch((error) => {          
-          this.registrationErrorMsg = 'There were problems registering this user.';
-        })
-    },
-
-
   },
-  created() {
-    this.loadDepartmentList();
-    this.loadDepartmentUsersList();
-  },
-
-
- 
 }
-
 </script>
 
 <style scoped>

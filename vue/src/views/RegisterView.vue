@@ -210,9 +210,7 @@ export default {
       departmentService
         .getDepartments()
         .then((response) => {
-          response.data.forEach((dept) => {
-            this.departments.push(dept);
-          });
+          this.departments = response.data.sort((a, b) => (a.departmentName > b.departmentName) ? 1 : -1);
         })
         .catch((error) => {          
           this.registrationErrorMsg = 'There were problems registering this user.';
