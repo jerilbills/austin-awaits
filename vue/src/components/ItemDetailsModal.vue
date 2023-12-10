@@ -13,7 +13,7 @@
         </div>
   
         <div class="button-container">
-          <button type="button" class="close-button" @click="closeModal">
+          <button type="button" class="close-button" @click="closeItemModal">
             <span aria-hidden="true">&times;</span>
           </button>
         </div>
@@ -28,7 +28,7 @@
       return {};
     },
     methods: {
-      closeModal() {
+      closeItemModal() {
         this.$emit('close');
       },
       showItemStatus(item) {

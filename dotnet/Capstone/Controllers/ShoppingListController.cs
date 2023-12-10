@@ -39,23 +39,6 @@ namespace Capstone.Controllers
             return output;
         }
 
-        [HttpPost("{listId}/user/{userId}")]
-        public ActionResult<int> AddUserToList(UserList userListToAdd)
-        {
-            int output;
-            try
-            {
-                output = shoppingListDao.AddUserToList(userListToAdd);
-            }
-            catch (System.Exception)
-            {
-
-                return StatusCode(500);
-            }
-
-            return output;
-        }
-
         [HttpPut("{listId}/")]
         public ActionResult UpdateList(int departmentId, int listId, ShoppingList inboundShoppingList)
         {
