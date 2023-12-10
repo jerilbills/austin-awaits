@@ -2,11 +2,12 @@
   <div class="sidebar is-dark">
     <span class="sidebar-header"><span class="icon"><i class="fa fa-home"></i></span>My Department</span>
     <div v-if="lists.length > 0">
-    <ul>
-      <li v-for="list in inProgressLists" :key="list.listId" @click="navigateTo(this.$store.state.user.departmentId, list.listId)">
-        {{ list.name }} ({{ list.numberOfItems }})
-      </li>
-    </ul>
+      <ul>
+        <li v-for="list in inProgressLists" :key="list.listId"
+          @click="navigateTo(this.$store.state.user.departmentId, list.listId)">
+          {{ list.name }} ({{ list.numberOfItems }})
+        </li>
+      </ul>
     </div>
     <div v-else>
       No lists to work on
@@ -36,7 +37,9 @@
     </ul>
     <div>&nbsp;</div>
     <ul>
-      <li>Completed Lists</li>
+      <router-link to="completedlists">
+        <li class="completed">Completed Lists</li>
+      </router-link>
     </ul>
   </div>
 </template>
@@ -98,12 +101,12 @@ export default {
             activeList = this.invitedLists.find((element) => element.listId == listId)
           }
           this.$store.commit('SET_ACTIVE_LIST', activeList)
-          
+
         })
         .catch(error => {
           console.error('Error fetching list:', error);
         });
-        this.selectedOption = 'all';
+      this.selectedOption = 'all';
     },
     filterByClaimed() {
       ShoppingListService.getListFilteredByClaimed(this.$store.state.activeList.listId, this.$store.state.user.userId, this.$store.state.activeList.departmentId)
@@ -113,7 +116,7 @@ export default {
         .catch(error => {
           console.error('Error filtering list:', error);
         })
-        this.selectedOption = 'claimed';
+      this.selectedOption = 'claimed';
     },
     filterByUnassigned() {
       ShoppingListService.getListFilteredByUnassigned(this.$store.state.activeList.listId, this.$store.state.activeList.departmentId)
@@ -123,7 +126,7 @@ export default {
         .catch(error => {
           console.error('Error filtering list:', error);
         })
-        this.selectedOption = 'unassigned';
+      this.selectedOption = 'unassigned';
     },
     inProgressListsByDepartment(department) {
       return this.invitedLists.filter(list => list.departmentName === department && list.status == 2);
@@ -169,6 +172,7 @@ li:hover {
   font-weight: bold;
 
 }
+
 .active {
   background-color: #C4FCF0;
   color: hsl(27.3, 100%, 37.5%);
@@ -180,5 +184,10 @@ li:hover {
   padding: 15px 0px 0px 0px;
   display: block;
 }
+
+.completed {
+  color: #fff
+}
+
 </style>
   
