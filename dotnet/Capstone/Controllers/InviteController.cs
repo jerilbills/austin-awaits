@@ -21,22 +21,42 @@ namespace Capstone.Controllers
             this.invitetDao = invitetDao;
         }
 
+        [HttpGet]
+        public ActionResult<List<Invite>> GetListOfInvitedUsers(int listId)
+        {
+            List<Invite> invites = new List<Invite>();
+            ActionResult result = NoContent();
+
+            try
+            {
+                invites = invitetDao.GetListOfInvitedActiveUsers(listId);
+                if (invites.Count > 0)
+                {
+                    result = Ok(invites);
+                }
+            }
+            catch (Exception)
+            {
+                result = StatusCode(500);
+            }
+            return result;
+        }
         
         [HttpPost]
         public ActionResult<int> AddUserToList(Invite inviteToMake)
         {
-            int output;
+            int result;
             try
             {
-                output = invitetDao.AddUserToList(inviteToMake);
+                result = invitetDao.AddUserToList(inviteToMake);
             }
-            catch (System.Exception)
+            catch (Exception)
             {
 
                 return StatusCode(500);
             }
 
-            return output;
+            return result;
         }
     }
 }

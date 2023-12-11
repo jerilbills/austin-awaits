@@ -11,7 +11,8 @@ export function createStore(currentToken, currentUser) {
         
       ],
       activeList: {},
-      sideBarRefreshKey: 0
+      sideBarRefreshKey: 0,
+      listInvitesRefreshKey: 0
     },
     mutations: {
       SET_AUTH_TOKEN(state, token) {
@@ -72,6 +73,9 @@ export function createStore(currentToken, currentUser) {
       },
       REFRESH_SIDE_BAR(state) {
         state.sideBarRefreshKey += 1;
+      },
+      REFRESH_LIST_INVITES(state) {
+        state.listInvitesRefreshKey += 1;
       }
 
     },

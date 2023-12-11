@@ -92,6 +92,7 @@ CREATE TABLE list_items (
 CREATE TABLE users_lists (
 	user_id int NOT NULL,
 	list_id int NOT NULL
+	CONSTRAINT PK_users_lists PRIMARY KEY (user_id, list_id)
 )
 
 --add FKs

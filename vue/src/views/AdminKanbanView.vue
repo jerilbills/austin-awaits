@@ -16,16 +16,12 @@
   
 <script>
 import Navbar from "../components/Navbar.vue";
-import KanbanBoard from "../components/KanbanBoard.vue";
-import Sidebar from "../components/Sidebar.vue";
 import AdminKanbanBoard from "../components/AdminKanbanBoard.vue";
 import AdminSidebar from "../components/AdminSidebar.vue";
 
 export default {
     components: {
         Navbar,
-        KanbanBoard,
-        Sidebar,
         AdminKanbanBoard,
         AdminSidebar
     },

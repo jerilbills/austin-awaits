@@ -1,20 +1,21 @@
 <template>
   <div class="kanban-board-header">
-    <div class="page-title" v-if="$store.state.activeList.name">{{ $store.state.activeList.name }} (Due {{ dueDate }})
+    <div class="page-title" v-if="activeList.name">{{ activeList.name }} (Due {{ dueDate }})
     </div>
     <div class="page-title" v-else>Please select a list to work on. Austin Awaits!</div>
         
-    <div class="invites" v-if="$store.state.activeList.name">
+    <div class="invites" v-if="activeList.name">
       <div class="is-size-7">List Owner</div>
-      <div><img src="https://api.dicebear.com/7.x/initials/svg?seed=JB" class="avatar"></div>
+      <div class="has-tooltip-above has-tooltip-primary" :data-tooltip="listOwnerTooltip()"><img :src="activeList.listOwner.avatarUrl" class="avatar"></div>
       <div>&nbsp;&nbsp;</div>
-      <div class="is-size-7">List Members</div>
-      <div>
-        <img src="https://api.dicebear.com/7.x/initials/svg?seed=JB" class="avatar">
-        <img src="https://api.dicebear.com/7.x/initials/svg?seed=DM" class="avatar">
-        <img src="https://api.dicebear.com/7.x/initials/svg?seed=NH" class="avatar">
-        <img src="https://api.dicebear.com/7.x/initials/svg?seed=JF" class="avatar">
+      
+      <div v-if="invitedUsers" class="is-size-7" :key="$store.state.listInvitesRefreshKey">
+        <span class="invite-title">List Invites</span>
+          <span v-for="user in invitedUsers" :key="user.userId" class="has-tooltip-above has-tooltip-primary" :data-tooltip="inviteeTooltip(user)">
+            <img  :src="user.invitedUser.avatarUrl" class="avatar">
+          </span >
       </div>
+      
       <div>
         <i class="fa fa-user-plus fa-lg" @click="openInviteUserToListModal()"></i>
       </div>
@@ -22,7 +23,7 @@
 
   </div>
 
-  <div class="kanban-board"  v-if="$store.state.activeList.name">
+  <div class="kanban-board"  v-if="activeList.name">
     <div class="column is-4" v-for="(column, index) in columns" :key="index" :class="{ over: isDraggedOver }"
       @drop.prevent="drop(column)" @dragover.prevent="dragOver" @dragenter.prevent="dragEnter" @dragleave="dragLeave">
 
@@ -52,10 +53,11 @@
         <div id="snackbar-claimed">You are not the owner of this item.</div>
         <div id="snackbar-needed">Items must be claimed before they can be purchased.</div>
         <div id="snackbar-completed">All items on the list have been purchased. Well done, partner!</div>
+        <div id="snackbar-user-invited">User successfully added to list.</div>
 
-        <!-- ITEM DETAILS MODAL -->
+        <!-- MODALS -->
         <ItemDetailsModal v-if="showItemModal" :item="selectedItem" @close="closeItemModal"  />
-        <InviteUserToListModal v-if="showInviteUserToListModal" @close="closeInviteUserToListModal" />
+        <InviteUserToListModal v-if="showInviteUserToListModal" @close="closeInviteUserToListModal" :invitedUsers="Array.from(invitedUsers)" />
       </div>
     </div>
   </div>
@@ -63,8 +65,10 @@
 
 <script>
 import ShoppingListService from '../services/ShoppingListService';
+import InviteService from '../services/InviteService';
 import ItemDetailsModal from './ItemDetailsModal.vue';
 import InviteUserToListModal from './InviteUserToListModal.vue';
+import { storeKey } from 'vuex';
 
 export default {
   name: 'KanbanBaord',
@@ -78,6 +82,7 @@ export default {
       showInviteUserToListModal: false,
       selectedItem: null,
       dragCounter: 0,
+      invitedUsers: {}
     };
   },
   computed: {
@@ -102,8 +107,43 @@ export default {
       const unfinishedItems = this.myItems.filter((item) => { return (item.listItemStatusId === 1 || item.listItemStatusId === 2)});
       return unfinishedItems.length === 0;
     },
+    activeList() {
+      return this.$store.state.activeList;
+    },
+    isInviteUsersChanged() {
+      return this.$store.state.listInvitesRefreshKey;
+    }
+  },
+  watch: {
+    activeList(newVal,oldVal){
+      if (newVal != oldVal && newVal.name != null) {
+        this.getListInvites();
+    }
+    },
+    isInviteUsersChanged(newVal,oldVal){
+      if (newVal != oldVal) {
+        this.showUserInvitedSnackbar();
+        this.getListInvites();
+      }
+    },
   },
   methods: {
+    getListInvites() {
+      this.invitedUsers = {};
+      if (this.activeList) {
+      InviteService
+        .getListInvites(this.$store.state.activeList.departmentId, this.$store.state.activeList.listId)
+        .then(response => {
+          if (response.data.constructor != Array) {
+            return;
+          }
+          this.invitedUsers = response.data.sort((a, b) => ((a.lastName + ", " + a.firstName) > (a.lastName + ", " + a.firstName)) ? 1 : -1);
+        })
+        .catch(error => {
+          console.error('Error fetching list invites:', error);
+        })
+      }
+    },
     dragStart(columnTitle) {
       this.draggedColumn = columnTitle;
       console.log(this.draggedColumn);
@@ -140,18 +180,18 @@ export default {
       }
     },
     completeList() {
-      this.showListCompletedSnackbar();
-          this.$store.state.activeList.status = 3;
-          ShoppingListService
-            .updateList(this.$store.state.activeList)
-            .then(response => {
-              this.$store.commit('CLEAR_ACTIVE_LIST');
-              this.$store.commit('CLEAR_ITEMS');
-              this.$store.commit('REFRESH_SIDE_BAR');       
-            })
-            .catch(error => {
-              console.error('Error updating list:', error);
-            })
+      this.$store.state.activeList.status = 3;
+      ShoppingListService
+        .updateList(this.$store.state.activeList)
+        .then(response => {
+          this.showListCompletedSnackbar();
+          this.invitedUsers = null;
+          this.$store.commit('REFRESH_SIDE_BAR'); 
+          setTimeout(() => {  this.$store.commit('CLEAR_ACTIVE_LIST'); }, 4000);
+        })
+        .catch(error => {
+          console.error('Error updating list:', error);
+        })
     },
     updateItemStatus(columnStatusId) {
       const formattedDate = new Date().toISOString();
@@ -225,6 +265,14 @@ export default {
         x.className = x.className.replace("show", "");
       }, 4000);
     },
+    showUserInvitedSnackbar() {
+      let x = document.getElementById("snackbar-user-invited");
+      x.className = "show";
+      setTimeout(function () {
+        x.className = x.className.replace("show", "");
+      }, 4000);
+    },
+    
     openItemModal(item) {
       this.selectedItem = item;
       this.showItemModal = true;
@@ -247,8 +295,15 @@ export default {
     },
     claimedByUserTooltip(item) {
       return item.claimedByUser.firstName + " " + item.claimedByUser.lastName;
-    },    
+    },  
+    inviteeTooltip(user) {
+      return user.invitedUser.firstName + " " + user.invitedUser.lastName;
+    },
+    listOwnerTooltip() {
+      return this.$store.state.activeList.listOwner.firstName + " " + this.$store.state.activeList.listOwner.lastName;
+    }   
   },
+  
 }
 </script>
 
@@ -258,6 +313,12 @@ export default {
   height: 25px;
   border-radius: 50%;
   margin-left: 3px;
+}
+
+.invite-title {
+  display: inline-block; 
+  padding-top: 6px; 
+  vertical-align: top;
 }
 
 .custom-box {
@@ -366,12 +427,14 @@ h6 {
 
 .fa-user-plus {
   color: hsl(27.3, 100%, 37.5%);
+  margin-left: 10px;
+  cursor: pointer;
 }
 
 .fa-user-plus:hover {
   cursor: pointer;
 }
-#snackbar-purchased, #snackbar-claimed, #snackbar-needed, #snackbar-completed {
+#snackbar-purchased, #snackbar-claimed, #snackbar-needed, #snackbar-completed, #snackbar-user-invited {
   visibility: hidden;
   min-width: 250px;
   margin-left: -125px;
@@ -392,7 +455,7 @@ h6 {
   bottom: 450px;
 }
 
-#snackbar-purchased.show, #snackbar-claimed.show, #snackbar-needed.show {
+#snackbar-purchased.show, #snackbar-claimed.show, #snackbar-needed.show, #snackbar-user-invited.show, #snackbar-completed.show {
   visibility: visible;
   /* Show the snackbar */
   /* Add animation: Take 0.5 seconds to fade in and out the snackbar.
