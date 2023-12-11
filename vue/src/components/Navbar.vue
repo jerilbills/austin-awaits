@@ -46,7 +46,6 @@ export default {
           .getDepartments()
           .then((response) => {
             response.data.forEach((dept) => {
-              console.log(dept.departmentId);
               if (dept.departmentId == this.$store.state.user.departmentId) {
                 this.userDepartmentName = dept.departmentName;
               }

@@ -53,7 +53,7 @@
           </div>
         </div>
       </div>
-      <div v-else class="has-text-link"><BR />{{ errorMessage }}</div>
+      <div v-else class="has-text-link"><div>&nbsp;</div>{{ errorMessage }}</div>
       </div>
       <div class="field">
           <p class="control">
@@ -119,7 +119,6 @@ import InviteService from '../services/InviteService';
       this.departmentUsers = [];
       this.selectedUserId = {};
       this.errorMessage = null;
-      console.log(this.departmentToSearch.departmentId);
       UserService
         .getActiveUsersByDepartmentId(this.departmentToSearch.departmentId)
         .then((response) => {
@@ -138,10 +137,10 @@ import InviteService from '../services/InviteService';
         listId: this.$store.state.activeList.listId,
         invitedUser: this.selectedUser
       }
-      console.log(JSON.stringify(inviteToAdd));
       InviteService
         .addInvite(this.$store.state.activeList.departmentId, this.$store.state.activeList.listId, inviteToAdd)
         .then((response) => {
+          this.$store.commit('REFRESH_LIST_INVITES');
           this.closeInviteUserToListModal();
         })
         .catch((error) => {

@@ -9,9 +9,11 @@
       <div><img src="https://api.dicebear.com/7.x/initials/svg?seed=JB" class="avatar"></div>
       <div>&nbsp;&nbsp;</div>
       
-      <div v-if="invitedUsers" class="is-size-7">
+      <div v-if="invitedUsers" class="is-size-7" :key="$store.state.listInvitesRefreshKey">
         <span class="invite-title">List Invites</span>
-          <img v-for="user in invitedUsers" :key="user.userId" :src="user.invitedUser.avatarUrl" class="avatar">
+          <span v-for="user in invitedUsers" :key="user.userId" class="has-tooltip-above has-tooltip-primary" :data-tooltip="inviteeTooltip(user)">
+            <img  :src="user.invitedUser.avatarUrl" class="avatar">
+          </span >
       </div>
       
       <div>
@@ -51,8 +53,9 @@
         <div id="snackbar-claimed">You are not the owner of this item.</div>
         <div id="snackbar-needed">Items must be claimed before they can be purchased.</div>
         <div id="snackbar-completed">All items on the list have been purchased. Well done, partner!</div>
+        <div id="snackbar-user-invited">User successfully added to list.</div>
 
-        <!-- ITEM DETAILS MODAL -->
+        <!-- MODALS -->
         <ItemDetailsModal v-if="showItemModal" :item="selectedItem" @close="closeItemModal"  />
         <InviteUserToListModal v-if="showInviteUserToListModal" @close="closeInviteUserToListModal" />
       </div>
@@ -106,18 +109,28 @@ export default {
     },
     activeList() {
       return this.$store.state.activeList;
+    },
+    isInviteUsersChanged() {
+      return this.$store.state.listInvitesRefreshKey;
     }
   },
   watch: {
     activeList(newVal,oldVal){
-      if (newVal != oldVal && newVal) {
+      if (newVal != oldVal && newVal.name != null) {
         this.getListInvites();
     }
+    },
+    isInviteUsersChanged(newVal,oldVal){
+      if (newVal != oldVal) {
+        this.showUserInvitedSnackbar();
+        this.getListInvites();
+      }
     },
   },
   methods: {
     getListInvites() {
       this.invitedUsers = null;
+      if (this.activeList) {
       InviteService
         .getListInvites(this.$store.state.activeList.departmentId, this.$store.state.activeList.listId)
         .then(response => {
@@ -129,6 +142,7 @@ export default {
         .catch(error => {
           console.error('Error fetching list invites:', error);
         })
+      }
     },
     dragStart(columnTitle) {
       this.draggedColumn = columnTitle;
@@ -166,18 +180,18 @@ export default {
       }
     },
     completeList() {
-      this.showListCompletedSnackbar();
-          this.$store.state.activeList.status = 3;
-          ShoppingListService
-            .updateList(this.$store.state.activeList)
-            .then(response => {
-              this.$store.commit('CLEAR_ACTIVE_LIST');
-              this.$store.commit('CLEAR_ITEMS');
-              this.$store.commit('REFRESH_SIDE_BAR');       
-            })
-            .catch(error => {
-              console.error('Error updating list:', error);
-            })
+      this.$store.state.activeList.status = 3;
+      ShoppingListService
+        .updateList(this.$store.state.activeList)
+        .then(response => {
+          this.showListCompletedSnackbar();
+          this.invitedUsers = null;
+          this.$store.commit('REFRESH_SIDE_BAR'); 
+          setTimeout(() => {  this.$store.commit('CLEAR_ACTIVE_LIST'); }, 4000);
+        })
+        .catch(error => {
+          console.error('Error updating list:', error);
+        })
     },
     updateItemStatus(columnStatusId) {
       const formattedDate = new Date().toISOString();
@@ -251,6 +265,14 @@ export default {
         x.className = x.className.replace("show", "");
       }, 4000);
     },
+    showUserInvitedSnackbar() {
+      let x = document.getElementById("snackbar-user-invited");
+      x.className = "show";
+      setTimeout(function () {
+        x.className = x.className.replace("show", "");
+      }, 4000);
+    },
+    
     openItemModal(item) {
       this.selectedItem = item;
       this.showItemModal = true;
@@ -273,7 +295,10 @@ export default {
     },
     claimedByUserTooltip(item) {
       return item.claimedByUser.firstName + " " + item.claimedByUser.lastName;
-    },    
+    },  
+    inviteeTooltip(user) {
+      return user.invitedUser.firstName + " " + user.invitedUser.lastName;
+    },   
   },
   
 }
@@ -402,7 +427,7 @@ h6 {
   margin-left: 10px;
 }
 
-#snackbar-purchased, #snackbar-claimed, #snackbar-needed, #snackbar-completed {
+#snackbar-purchased, #snackbar-claimed, #snackbar-needed, #snackbar-completed, #snackbar-user-invited {
   visibility: hidden;
   min-width: 250px;
   margin-left: -125px;
@@ -423,7 +448,7 @@ h6 {
   bottom: 450px;
 }
 
-#snackbar-purchased.show, #snackbar-claimed.show, #snackbar-needed.show {
+#snackbar-purchased.show, #snackbar-claimed.show, #snackbar-needed.show, #snackbar-user-invited.show {
   visibility: visible;
   /* Show the snackbar */
   /* Add animation: Take 0.5 seconds to fade in and out the snackbar.
