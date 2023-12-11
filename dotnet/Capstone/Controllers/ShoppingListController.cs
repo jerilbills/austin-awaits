@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Net.NetworkInformation;
 using System;
 using System.Globalization;
+using Capstone.Exceptions;
 
 namespace Capstone.Controllers
 {
@@ -108,7 +109,7 @@ namespace Capstone.Controllers
             return output;
         }
 
-        [HttpGet("/list")]
+        [HttpGet("/list/active")]
 
         public ActionResult<List<ShoppingList>> GetAllActiveShoppingLists()
         {
@@ -116,6 +117,23 @@ namespace Capstone.Controllers
             try
             {
                 output = shoppingListDao.GetAllActiveShoppingLists();
+            }
+            catch (Exception)
+            {
+                return StatusCode(500);
+            }
+
+            return output;
+        }
+
+        [HttpGet("/list/completed")]
+
+        public ActionResult<List<ShoppingList>> GetAllCompletedShoppingLists()
+        {
+            List<ShoppingList> output = new List<ShoppingList>();
+            try
+            {
+                output = shoppingListDao.GetAllCompletedLists();
             }
             catch (Exception)
             {
