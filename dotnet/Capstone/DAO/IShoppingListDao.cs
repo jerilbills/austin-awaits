@@ -5,7 +5,7 @@ namespace Capstone.DAO
 {
     public interface IShoppingListDao
     {
-        public ShoppingList CreateShoppingList();
+        public ShoppingList CreateShoppingList(ShoppingList newShoppingList);
         public ShoppingList UpdateShoppingList(ShoppingList listToUpdate);
         public int DeleteShoppingList(ShoppingList listToDelete);
         public ShoppingList AddItem(Item itemToAdd);

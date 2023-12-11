@@ -228,7 +228,7 @@ namespace Capstone.DAO
                     listItem.ClaimedByUser.FirstName = Convert.ToString(reader["first_name"]);
                     listItem.ClaimedByUser.LastName = Convert.ToString(reader["last_name"]);
                     listItem.ClaimedByUser.AvatarUrl = Convert.ToString(reader["avatar_url"]);
-                    listItem.ClaimedByUser.UserId = Convert.ToInt32(reader["department_id"]);
+                    listItem.ClaimedByUser.DepartmentId = Convert.ToInt32(reader["department_id"]);
                 }
             }
 
