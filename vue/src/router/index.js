@@ -6,7 +6,6 @@ import HomeView from '../views/HomeView.vue';
 import LoginView from '../views/LoginView.vue';
 import LogoutView from '../views/LogoutView.vue';
 import RegisterView from '../views/RegisterView.vue';
-import CreateGroupView from '../views/CreateGroupView.vue';
 import DepartmentListView from '../views/DepartmentListView.vue';
 import ListView from '../views/ListView.vue';
 /**
@@ -51,17 +50,12 @@ const routes = [
     }
   },
   {
-    path: "/groups/create",
-    name: "CreateGroup",
-    component: CreateGroupView,
-    meta: {
-      requiresAuth: true
-    }
-  },
-  {
     path:"/testing",
     name:"testing",
     component: ListView
+  },
+  {
+    
   }
 ];
 
