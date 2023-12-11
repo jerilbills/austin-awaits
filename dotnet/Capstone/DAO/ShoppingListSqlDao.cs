@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Net.NetworkInformation;
+using System.Text.RegularExpressions;
 
 namespace Capstone.DAO
 {
@@ -81,19 +82,21 @@ namespace Capstone.DAO
                 "lists.last_modified_date_utc, lists.is_active, username, " +
                 "user_role, first_name, last_name, avatar_url, " +
                 "lists.department_id, department_name, " +
-                "COUNT(list_items.item_id) AS number_of_items FROM lists " +
-                "LEFT JOIN users_lists ON lists.list_id = users_lists.list_id " +
-                "LEFT JOIN users ON users_lists.user_id = users.user_id " +
-                "LEFT JOIN departments ON lists.department_id = departments.department_id " +
-                "LEFT JOIN list_items ON lists.list_id = list_items.list_id " +
+                "COUNT(list_items.item_id) AS number_of_items " +
+                "FROM lists LEFT JOIN users " +
+                "ON lists.list_owner_user_id = users.user_id " +
+                "LEFT JOIN departments " +
+                "ON lists.department_id = departments.department_id " +
+                "LEFT JOIN list_items " +
+                "ON lists.list_id = list_items.list_id " +
                 "WHERE list_status_id = 1 " +
                 "GROUP BY lists.list_id, lists.list_name, lists.department_id, " +
                 "departments.department_id, departments.department_name, " +
                 "lists.list_status_id, lists.list_owner_user_id, " +
                 "lists.due_date_utc, lists.created_date_utc, " +
-                "lists.last_modified_date_utc, lists.is_active, " +
-                "users.username, users.user_role, users.first_name, " +
-                "users.last_name, users.avatar_url;";
+                "lists.last_modified_date_utc, lists.is_active, users.username, " +
+                "users.user_role, users.first_name, users.last_name, " +
+                "users.avatar_url; ";
 
             List<ShoppingList> output = new List<ShoppingList>();
 
