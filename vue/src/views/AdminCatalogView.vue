@@ -16,7 +16,7 @@
                 <div class="table-container">
                     <div class="table-buttons">
                         <input class="input" type="text" v-model="searchTerm" placeholder="Search..." />
-                        <button class="button is-primary" @click="addNewItem">Add New Item</button>
+                        <button class="button is-primary" @click="showModal">Add New Item</button>
                     </div>
                     <table class="table">
                         <thead>
@@ -44,6 +44,13 @@
                         <span>{{ currentPage }} of {{ totalPages }}</span>
                         <button @click="nextPage" :disabled="currentPage === totalPages" class="button is-primary is-small">Next</button>
                     </div>
+
+                    <div>
+                        <AddItemModal 
+                        :showModal="modalVisible"
+                        :hideModal="hideModal"
+                        :addNewItem="addNewItem"/>
+                    </div>
                 </div>
             </div>
         </div>
@@ -56,6 +63,7 @@ import Sidebar from "../components/Sidebar.vue";
 import AdminKanbanBoard from "../components/AdminKanbanBoard.vue";
 import AdminSidebar from "../components/AdminSidebar.vue";
 import LoadingOverlay from "../components/LoadingOverlay.vue";
+import AddItemModal from "../components/AddItemModal.vue";
 
 
 export default {
@@ -65,10 +73,16 @@ export default {
         // Sidebar,
         // AdminKanbanBoard,
         AdminSidebar,
-        LoadingOverlay
+        LoadingOverlay,
+        AddItemModal
     },
     data() {
         return {
+            searchTerm: '',
+            loading: false,
+            itemsPerPage: 10,
+            currentPage: 1,
+            modalVisible: false,
             items: [
                 {
                     name: 'Item 1',
@@ -159,10 +173,6 @@ export default {
 
                 },
             ],
-            searchTerm: '',
-            loading: false,
-            itemsPerPage: 10,
-            currentPage: 1,
         }
     },
     computed: {
@@ -193,6 +203,12 @@ export default {
             if (this.currentPage < this.totalPages) {
                 this.currentPage++;
             }
+        },
+        showModal() {
+            this.modalVisible = true;
+        },
+        hideModal() {
+            this.modalVisible = false;
         }
     },
     created() {

@@ -3,7 +3,7 @@
         <Navbar />
         <AdminSidebar />
         <div class="content">
-            <h1>Completed Lists for the {{ userDepartmentName }} Department</h1>
+            <h1>Completed Lists</h1>
             <!-- Display loading overlay when loading is true -->
             <LoadingOverlay :loading="loading"/>
 
@@ -119,7 +119,7 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 #page {
     height: 100vh;
     background-image: url('../assets/austin-background.png');
