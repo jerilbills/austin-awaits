@@ -148,7 +148,7 @@ VALUES ('Cowboy Hat', 'Our preferred vendor is American Hat Makers',
 
 INSERT INTO items (item_name, item_description, item_image_url, created_by_user_id, last_modified_by_user_id)
 VALUES ('Big Truck', 'Any model as long as it is American made', 
-'https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.motortrend.com%2Ffeatures%2Ftop-10-biggest-2017-ford-super-duty-trucks%2F&psig=AOvVaw0GSm5Qp_UDpNLgGnsn7M3Z&ust=1701886905523000&source=images&cd=vfe&ved=0CBIQjRxqFwoTCJit-Pb0-IIDFQAAAAAdAAAAABAE', 1, 1);
+'https://www.motortrend.com/uploads/sites/2/2020/08/002-2017-ford-f450-super-duty.jpg?fit=around%7C875:492', 1, 1);
 
 INSERT INTO items (item_name, item_description, item_image_url, created_by_user_id, last_modified_by_user_id)
 VALUES ('Engineering Grade Laptop (Dell)', 'Check with IT for the current specs and order direct from the Dell website', 

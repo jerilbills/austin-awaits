@@ -431,7 +431,10 @@ h6 {
   cursor: pointer;
 }
 
-#snackbar-purchased, #snackbar-claimed, #snackbar-needed, #snackbar-completed, #snackbar-user-invited {
+.fa-user-plus:hover {
+  cursor: pointer;
+}
+#snackbar-purchased, #snackbar-claimed, #snackbar-needed, #snackbar-completed {
   visibility: hidden;
   min-width: 250px;
   margin-left: -125px;
