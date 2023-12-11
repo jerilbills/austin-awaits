@@ -64,7 +64,6 @@ export default {
         showModal: Boolean,
         hideModal: Function,
         addNewItem: Function
-        // Add more props if needed for form fields
     },
     data() {
         return {
@@ -156,8 +155,7 @@ export default {
 }
 
 .image-option img.selected {
-    border: 2px solid blue;
-    /* Highlight the selected image */
+    border: 2px solid #bf5700;
 }
 </style>
   
