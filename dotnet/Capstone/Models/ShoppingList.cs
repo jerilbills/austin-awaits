@@ -7,6 +7,7 @@ namespace Capstone.Models
     {
         public int ListId { get; set; }
         public int OwnerId { get; set; }
+        public User ListOwner { get; set; }
         public string Name { get; set; }
         public int DepartmentId { get; set; }
         public string DepartmentName {  get; set; }
