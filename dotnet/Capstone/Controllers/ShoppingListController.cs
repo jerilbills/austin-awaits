@@ -6,6 +6,7 @@ using Capstone.Security;
 using System.Collections.Generic;
 using System.Net.NetworkInformation;
 using System;
+using System.Globalization;
 
 namespace Capstone.Controllers
 {
@@ -104,6 +105,23 @@ namespace Capstone.Controllers
             {
                 return StatusCode(500);
             }
+            return output;
+        }
+
+        [HttpGet("/list")]
+
+        public ActionResult<List<ShoppingList>> GetAllActiveShoppingLists()
+        {
+            List<ShoppingList> output = new List<ShoppingList>();
+            try
+            {
+                output = shoppingListDao.GetAllActiveShoppingLists();
+            }
+            catch (Exception)
+            {
+                return StatusCode(500);
+            }
+
             return output;
         }
     }
