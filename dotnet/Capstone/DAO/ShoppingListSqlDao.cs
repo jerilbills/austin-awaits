@@ -89,7 +89,6 @@ namespace Capstone.DAO
                         COUNT(LI.item_id) AS number_of_items,
                         L.list_status_id, L.list_owner_user_id, L.due_date_utc,
                         L.created_date_utc, L.last_modified_date_utc, L.is_active
-                        FROM lists AS L
                         JOIN departments AS D ON D.department_id = L.department_id
                         LEFT JOIN list_items AS LI ON LI.list_id = L.list_id
                         WHERE L.list_id = @listId AND L.is_active = 1 AND LI.is_active = 1 
