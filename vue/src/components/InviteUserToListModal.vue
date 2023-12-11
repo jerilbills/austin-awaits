@@ -53,8 +53,8 @@
           </div>
         </div>
       </div>
+      <div v-else class="has-text-link"><div>&nbsp;</div>{{ errorMessage }}</div>
       </div>
-      
       <div class="field">
           <p class="control">
             <button type="submit" class="button is-rounded is-primary" @click="addUser" :disabled="(!hasRequiredFields)">Invite User</button>
@@ -79,12 +79,14 @@ import UserService from '../services/UserService';
 import InviteService from '../services/InviteService';
 
   export default {
+    props: ['invitedUsers'],
     data() {
       return {
       departments:[],
       departmentToSearch: {},
       selectedUserId: {},
-      departmentUsers: []
+      departmentUsers: [],
+      errorMessage: null
       };
     },
     computed: {
@@ -115,25 +117,43 @@ import InviteService from '../services/InviteService';
           })
     },
     loadDepartmentUsersList() {
+      this.departmentUsers = [];
       this.selectedUserId = {};
+      this.errorMessage = null;
       UserService
         .getActiveUsersByDepartmentId(this.departmentToSearch.departmentId)
         .then((response) => {
+          if(response.data == "") {
+            this.errorMessage = "There are no users in this department";
+            return;
+          }
           this.departmentUsers = response.data.sort((a, b) => ((a.lastName + ", " + a.firstName) > (b.lastName + ", " + b.firstName)) ? 1 : -1);
-        })
+          this.filterOutAlreadyInvitedUsers();
+      })
         .catch((error) => {          
           console.log("There were problems loading the user list for department Id " + this.departmentToSearch.departmentId);
         })
+    },
+    filterOutAlreadyInvitedUsers() {
+      const alreadyInvitedUserIds = this.invitedUsers.map(user => user.invitedUser.userId);
+          console.log(this.invitedUsers);
+          console.log(alreadyInvitedUserIds);
+          console.log(alreadyInvitedUserIds.find((invitedId) => { return invitedId > 1 }));
+          this.departmentUsers = this.departmentUsers.filter((user) => user.userId != alreadyInvitedUserIds.find((invitedId) => { return invitedId == user.userId }));
+          if(this.departmentUsers == "") {
+            this.errorMessage = "There are no other users in this department to add to this list";
+            return;
+          }
     },
     addUser() {
       const inviteToAdd = {
         listId: this.$store.state.activeList.listId,
         invitedUser: this.selectedUser
       }
-      console.log(JSON.stringify(inviteToAdd));
       InviteService
         .addInvite(this.$store.state.activeList.departmentId, this.$store.state.activeList.listId, inviteToAdd)
         .then((response) => {
+          this.$store.commit('REFRESH_LIST_INVITES');
           this.closeInviteUserToListModal();
         })
         .catch((error) => {
@@ -148,7 +168,7 @@ import InviteService from '../services/InviteService';
   }
   </script>
   
-  <style>
+  <style scoped>
   .modal-container {
     position: fixed;
     top: 0;
