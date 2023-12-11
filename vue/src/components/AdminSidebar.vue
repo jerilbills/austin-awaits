@@ -27,7 +27,7 @@
                 </router-link>
             </ul>
             <ul>
-                <router-link to="testing">
+                <router-link to="catalog">
                     <li class="completed">View Item Catalog</li>
                 </router-link>
             </ul>

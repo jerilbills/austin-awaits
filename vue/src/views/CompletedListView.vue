@@ -17,7 +17,6 @@
                             <th>Number of Items</th>
                             <th>Due Date</th>
                             <th>Completed Date</th>
-                            <!-- Add more columns as needed -->
                         </tr>
                     </thead>
                     <tbody>
@@ -27,7 +26,6 @@
                             <td>{{ item.numberOfItems }}</td>
                             <td>{{ formatDate(item.dueDate) }}</td>
                             <td>{{ formatDate(item.lastModified) }}</td>
-                            <!-- Add more columns as needed -->
                         </tr>
                     </tbody>
                 </table>
