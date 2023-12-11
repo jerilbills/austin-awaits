@@ -27,6 +27,10 @@ export default {
 
     updateList(list) {
         return axios.put('/department/'+list.departmentId+'/list/' + list.listId, list);
+    },
+
+    getCompletedListsByDepartment(departmentId) {
+        return axios.get('/department/' + departmentId + '/list?status=3')
     }
   
   }

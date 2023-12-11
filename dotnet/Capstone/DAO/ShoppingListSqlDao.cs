@@ -20,49 +20,47 @@ namespace Capstone.DAO
             throw new System.NotImplementedException();
         }
 
-        public ShoppingList CreateShoppingList(ShoppingList newList)
+        public ShoppingList CreateShoppingList(ShoppingList newShoppingList)
         {
-            string sql = "INSERT INTO lists (list_name, department_id, list_status_id, list_owner_user_id, " +
-                "due_date_utc, created_date_utc, last_modified_date_utc, is_active) " +
-                "OUTPUT INSERTED.list_id VALUES (@listName, @departmentId, @listStatusId, " +
-                "@listOwnerId, @dueDate, @createdDate, @lastModifiedDate, @isActive);";
+            string sql = "INSERT INTO lists (list_name, department_id, " +
+                "list_status_id, list_owner_user_id, due_date_utc, " +
+                "created_date_utc, last_modified_date_utc, is_active) " +
+                "VALUES (@list_name, @department_id, @list_status_id, " +
+                "@list_owner_user_id, @due_date, @created_date, " +
+                "@last_modified_date, @is_active)";
 
             ShoppingList output = null;
-
+            int newListId = 0;
 
             try
             {
-                int newListId;
-
-                using (SqlConnection conn = new SqlConnection(connectionString))
+                using(SqlConnection conn = new SqlConnection(connectionString))
                 {
                     conn.Open();
                     SqlCommand cmd = new SqlCommand(sql, conn);
-                 
-                    cmd.Parameters.AddWithValue("@listName", newList.Name);
-                    cmd.Parameters.AddWithValue("@departmentId", newList.DepartmentId);
-                    cmd.Parameters.AddWithValue("@listStatusId", newList.Status);
-                    cmd.Parameters.AddWithValue("@listOwnerId", newList.OwnerId);
-                    cmd.Parameters.AddWithValue("@dueDate", newList.DueDate);
-                    cmd.Parameters.AddWithValue("@createdDate", newList.CreatedDate);
-                    cmd.Parameters.AddWithValue("@lastModifiedDate", newList.LastModified);
-                    cmd.Parameters.AddWithValue("@isActive", newList.IsActive);
+                    cmd.Parameters.AddWithValue("@list_name", newShoppingList.Name);
+                    cmd.Parameters.AddWithValue("@department_id", newShoppingList.DepartmentId);
+                    cmd.Parameters.AddWithValue("@list_status_id", newShoppingList.Status);
+                    cmd.Parameters.AddWithValue("@list_owner_user_id", newShoppingList.OwnerId);
+                    cmd.Parameters.AddWithValue("@due_date", newShoppingList.DueDate);
+                    cmd.Parameters.AddWithValue("@created_date", DateTime.UtcNow);
+                    cmd.Parameters.AddWithValue("@last_modified_date", DateTime.UtcNow);
+                    cmd.Parameters.AddWithValue("@is_active", true);
 
-                    newListId = Convert.ToInt32(cmd.ExecuteNonQuery());
+                    newListId = Convert.ToInt32(cmd.ExecuteScalar());
                 }
-               
-                output = GetActiveShoppingListById(newListId);
-                
+
+                if (newListId != 0)
+                {
+                    output = GetActiveShoppingListById(newListId);
+                }
             }
             catch (Exception)
             {
                 throw new DaoException();
             }
+
             return output;
-
-
-
-
         }
 
         public int DeleteItem(Item itemToDelete)
@@ -90,14 +88,18 @@ namespace Capstone.DAO
             string sql = @"SELECT L.list_id, L.list_name, L.department_id, D.department_name,
                         COUNT(LI.item_id) AS number_of_items,
                         L.list_status_id, L.list_owner_user_id, L.due_date_utc,
-                        L.created_date_utc, L.last_modified_date_utc, L.is_active
-                        FROM lists AS L
+                        L.created_date_utc, L.last_modified_date_utc, L.is_active, 
+                         users.username, users.user_role, users.first_name, 
+                         users.last_name, users.avatar_url, users.department_id 
                         JOIN departments AS D ON D.department_id = L.department_id
+                        JOIN users ON L.list_owner_user_id = users.user_id
                         LEFT JOIN list_items AS LI ON LI.list_id = L.list_id
                         WHERE L.list_id = @listId AND L.is_active = 1 AND LI.is_active = 1 
                         GROUP BY L.list_id, L.list_name, L.department_id, D.department_name,
                         L.list_status_id, L.list_owner_user_id, L.due_date_utc,
-                        L.created_date_utc, L.last_modified_date_utc, L.is_active;";
+                        L.created_date_utc, L.last_modified_date_utc, L.is_active, 
+                         users.username, users.user_role, users.first_name, 
+                         users.last_name, users.avatar_url, users.department_id ;";
 
             ShoppingList output = null;
 
@@ -172,19 +174,24 @@ namespace Capstone.DAO
         public List<ShoppingList> GetActiveShoppingListsByDepartmentID(int departmentId, int status)
         {
             string sql = @"SELECT L.list_id, L.list_name, L.department_id, D.department_name,
-                        COUNT(LI.item_id) AS number_of_items,
-                        L.list_status_id, L.list_owner_user_id, L.due_date_utc,
-                        L.created_date_utc, L.last_modified_date_utc, L.is_active
-                        FROM lists AS L
-                        JOIN departments AS D ON D.department_id = L.department_id
-                        LEFT JOIN list_items AS LI ON LI.list_id = L.list_id
-                        WHERE L.department_id = @departmentId AND L.is_active = 1 AND LI.is_active = 1 " +
+                         COUNT(LI.item_id) AS number_of_items,
+                         L.list_status_id, L.list_owner_user_id, L.due_date_utc,
+                         L.created_date_utc, L.last_modified_date_utc, L.is_active, 
+                         users.username, users.user_role, users.first_name, 
+                         users.last_name, users.avatar_url, users.department_id
+                         FROM lists AS L
+                         JOIN departments AS D ON D.department_id = L.department_id
+                         JOIN users ON L.list_owner_user_id = users.user_id
+                         LEFT JOIN list_items AS LI ON LI.list_id = L.list_id
+                         WHERE L.department_id = @departmentId AND L.is_active = 1 AND LI.is_active = 1 " +
 
                         ((status != 0) ? " AND L.list_status_id = @status " : "")
 
                         + @"GROUP BY L.list_id, L.list_name, L.department_id, D.department_name,
                         L.list_status_id, L.list_owner_user_id, L.due_date_utc,
-                        L.created_date_utc, L.last_modified_date_utc, L.is_active;";
+                        L.created_date_utc, L.last_modified_date_utc, L.is_active, 
+                        users.username, users.user_role, users.first_name, 
+                        users.last_name, users.avatar_url, users.department_id;";
 
 
             List<ShoppingList> output = new List<ShoppingList>();
@@ -216,20 +223,25 @@ namespace Capstone.DAO
         {
             List<ShoppingList> output = new List<ShoppingList>();
             string sql = @"SELECT L.list_id, L.list_name, L.department_id, D.department_name,
-                        COUNT(LI.item_id) AS number_of_items,
-                        L.list_status_id, L.list_owner_user_id, L.due_date_utc,
-                        L.created_date_utc, L.last_modified_date_utc, L.is_active
-                        FROM users_lists AS UL 
-                        JOIN lists AS L ON L.list_id = UL.list_id
-                        JOIN departments AS D ON D.department_id = L.department_id
-                        LEFT JOIN list_items AS LI ON LI.list_id = L.list_id
-                        WHERE user_id = @userId AND L.is_active = 1 AND LI.is_active = 1 " +
+                         COUNT(LI.item_id) AS number_of_items,
+                         L.list_status_id, L.list_owner_user_id, L.due_date_utc,
+                         L.created_date_utc, L.last_modified_date_utc, L.is_active, 
+                         users.username, users.user_role, users.first_name, 
+                         users.last_name, users.avatar_url, users.department_id
+                         FROM users_lists AS UL 
+                         JOIN lists AS L ON L.list_id = UL.list_id
+                         JOIN departments AS D ON D.department_id = L.department_id
+                         LEFT JOIN list_items AS LI ON LI.list_id = L.list_id
+                                      JOIN users ON L.list_owner_user_id = users.user_id
+                         WHERE UL.user_id = @userId AND L.is_active = 1 AND LI.is_active = 1 " +
 
-                        ((status != 0) ? " AND L.list_status_id = @status " : "")
+                          ((status != 0) ? " AND L.list_status_id = @status " : "")
 
-                        + @"GROUP BY L.list_id, L.list_name, L.department_id, D.department_name,
-                        L.list_status_id, L.list_owner_user_id, L.due_date_utc,
-                        L.created_date_utc, L.last_modified_date_utc, L.is_active;";
+                           + @"GROUP BY L.list_id, L.list_name, L.department_id, D.department_name,
+                           L.list_status_id, L.list_owner_user_id, L.due_date_utc,
+                           L.created_date_utc, L.last_modified_date_utc, L.is_active, 
+                            users.username, users.user_role, users.first_name, 
+                            users.last_name, users.avatar_url, users.department_id;";
 
             try
             {
@@ -261,21 +273,33 @@ namespace Capstone.DAO
 
         public ShoppingList MapRowToShoppingList(SqlDataReader reader)
         {
-            ShoppingList ShoppingList = new ShoppingList();
+            ShoppingList shoppingList = new ShoppingList();
 
-            ShoppingList.ListId = Convert.ToInt32(reader["list_id"]);
-            ShoppingList.OwnerId = Convert.ToInt32(reader["list_owner_user_id"]);
-            ShoppingList.Name = Convert.ToString(reader["list_name"]);
-            ShoppingList.DueDate = Convert.ToDateTime(reader["due_date_utc"]);
-            ShoppingList.Status = Convert.ToInt32(reader["list_status_id"]);
-            ShoppingList.IsActive = Convert.ToBoolean(reader["is_active"]);
-            ShoppingList.CreatedDate = Convert.ToDateTime(reader["created_date_utc"]);
-            ShoppingList.LastModified = Convert.ToDateTime(reader["last_modified_date_utc"]);
-            ShoppingList.DepartmentId = Convert.ToInt32(reader["department_id"]);
-            ShoppingList.DepartmentName = Convert.ToString(reader["department_name"]);
-            ShoppingList.NumberOfItems = Convert.ToInt32(reader["number_of_items"]);
+            shoppingList.ListId = Convert.ToInt32(reader["list_id"]);
+            shoppingList.OwnerId = Convert.ToInt32(reader["list_owner_user_id"]);
 
-            return ShoppingList;
+            // map ListOwner id to ListOwner object
+            shoppingList.ListOwner = new User();
+            shoppingList.ListOwner.UserId = shoppingList.OwnerId;
+            shoppingList.ListOwner.Username = Convert.ToString(reader["username"]);
+            shoppingList.ListOwner.Role = Convert.ToString(reader["user_role"]);
+            shoppingList.ListOwner.FirstName = Convert.ToString(reader["first_name"]);
+            shoppingList.ListOwner.LastName = Convert.ToString(reader["last_name"]);
+            shoppingList.ListOwner.AvatarUrl = Convert.ToString(reader["avatar_url"]);
+            shoppingList.ListOwner.DepartmentId = Convert.ToInt32(reader["department_id"]);
+            
+            // resume normal mapping to ShoppingList
+            shoppingList.Name = Convert.ToString(reader["list_name"]);
+            shoppingList.DueDate = Convert.ToDateTime(reader["due_date_utc"]);
+            shoppingList.Status = Convert.ToInt32(reader["list_status_id"]);
+            shoppingList.IsActive = Convert.ToBoolean(reader["is_active"]);
+            shoppingList.CreatedDate = Convert.ToDateTime(reader["created_date_utc"]);
+            shoppingList.LastModified = Convert.ToDateTime(reader["last_modified_date_utc"]);
+            shoppingList.DepartmentId = Convert.ToInt32(reader["department_id"]);
+            shoppingList.DepartmentName = Convert.ToString(reader["department_name"]);
+            shoppingList.NumberOfItems = Convert.ToInt32(reader["number_of_items"]);
+
+            return shoppingList;
         }
     }
 }

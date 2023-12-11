@@ -41,5 +41,4 @@ export default {
   background-repeat: no-repeat;
 }
 
-/* Adjust the styles based on your specific design requirements */
 </style>
