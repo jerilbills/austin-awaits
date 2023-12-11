@@ -126,5 +126,27 @@ namespace Capstone.Controllers
 
             return output;
         }
+
+        [HttpPost]
+
+        public ActionResult<ListItem> AddListItemToShoppingList(ListItem itemToAdd)
+        {
+            ListItem added;
+            try
+            {
+                added = listItemDao.AddListItemToShoppingList(itemToAdd);
+                return Created($"{itemToAdd.ItemId}", added);
+            }
+            catch (System.Exception)
+            {
+
+                return StatusCode(500);
+            }
+
+        }
+
+
+
+
     }
 }

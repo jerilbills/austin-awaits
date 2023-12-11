@@ -200,6 +200,65 @@ namespace Capstone.DAO
             return output;
         }
 
+
+
+        public ListItem AddListItemToShoppingList(ListItem itemToAdd)
+        {
+            ListItem added = null;
+            ListItem output = null;
+
+            string sql = "INSERT INTO list_items(list_id, item_id, quantity, list_item_claimed_by_user_id, list_item_status_id, " +
+                "created_date_utc, last_modified_by_user_id, last_modified_date_utc, is_active)" +
+                "OUTPUT inserted.list_id, inserted.item_id " +
+                "VALUES(@listId, @itemId, @quantity, @claimedBy, @listItemStatusId, @createdDate , @lastModifiedById, @lastModifiedDate, @isActive);";
+
+            try
+            {
+                int addedListId;
+                int addedItemId;
+               
+
+                using (SqlConnection conn = new SqlConnection(connectionString))
+                {
+                    conn.Open();
+                    SqlCommand cmd = new SqlCommand(sql, conn);
+
+                    cmd.Parameters.AddWithValue("@listId", itemToAdd.ListId);
+                    cmd.Parameters.AddWithValue("@itemId", itemToAdd.ItemId);
+                    cmd.Parameters.AddWithValue("@quantity", itemToAdd.Quantity);
+                    cmd.Parameters.AddWithValue("@claimedBy", itemToAdd.ClaimedBy);
+                    cmd.Parameters.AddWithValue("@listItemStatusId", itemToAdd.ListItemStatusId);
+                    cmd.Parameters.AddWithValue("@createdDate", itemToAdd.CreatedDate);
+                    cmd.Parameters.AddWithValue("@lastModifiedById", itemToAdd.LastModifiedBy);
+                    cmd.Parameters.AddWithValue("@lastModifiedDate", itemToAdd.LastModifiedDate);
+                    cmd.Parameters.AddWithValue("@isActive", itemToAdd.IsActive);
+
+                    SqlDataReader reader = cmd.ExecuteReader();
+                    if (reader.Read())
+                    {
+                        added = MapRowToListItem(reader);
+                        
+                    }
+                    addedListId = added.ListId;
+                    addedItemId = added.ItemId;
+                }
+
+                output = GetActiveListItemById(addedItemId, addedListId);
+
+            }
+            catch (Exception)
+            {
+                throw new DaoException();
+            }
+            return output;
+
+
+
+
+
+        }
+
+
         private ListItem MapRowToListItem(SqlDataReader reader)
         {
 
@@ -257,7 +316,7 @@ namespace Capstone.DAO
             return listItem;
         }
 
-
+       
     }
 
 

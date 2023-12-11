@@ -115,7 +115,7 @@ namespace Capstone.Controllers
             try
             {
                 added = shoppingListDao.CreateShoppingList(newList);
-                return Created($"/list/{added.ListId}", added);
+                return Created($"/{added.ListId}", added);
             }
             catch (System.Exception)
             {

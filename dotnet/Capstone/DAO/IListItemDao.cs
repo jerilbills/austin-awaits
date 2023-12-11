@@ -15,6 +15,8 @@ namespace Capstone.DAO
         public List<ListItem> FilterListByClaimant(int listId, int userId);
         public List<ListItem> FilterListByUnassigned(int listId);
 
+        public ListItem AddListItemToShoppingList(ListItem itemToAdd);
+
 
     }
 }

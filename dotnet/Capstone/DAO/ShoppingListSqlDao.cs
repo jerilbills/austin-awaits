@@ -29,10 +29,11 @@ namespace Capstone.DAO
 
             ShoppingList output = null;
 
-            int rowsAffected = 0;
 
             try
             {
+                int newListId;
+
                 using (SqlConnection conn = new SqlConnection(connectionString))
                 {
                     conn.Open();
@@ -47,16 +48,11 @@ namespace Capstone.DAO
                     cmd.Parameters.AddWithValue("@lastModifiedDate", newList.LastModified);
                     cmd.Parameters.AddWithValue("@isActive", newList.IsActive);
 
-                    rowsAffected = cmd.ExecuteNonQuery();
+                    newListId = Convert.ToInt32(cmd.ExecuteNonQuery());
                 }
-                if (rowsAffected == 0)
-                {
-                    return output;
-                }
-                else
-                {
-                    output = GetActiveShoppingListById(newList.ListId);
-                }
+               
+                output = GetActiveShoppingListById(newListId);
+                
             }
             catch (Exception)
             {
@@ -162,6 +158,7 @@ namespace Capstone.DAO
                 }
                 else
                 {
+
                     output = GetActiveShoppingListById(listToUpdate.ListId);
                 }
             }
