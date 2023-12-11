@@ -22,12 +22,12 @@
         <div class="admin">
             <em>ADMIN</em>
             <ul>
-                <router-link to="testing">
+                <router-link to="">
                     <li class="completed">View Completed Lists</li>
                 </router-link>
             </ul>
             <ul>
-                <router-link to="catalog">
+                <router-link to="/testing/catalog">
                     <li class="completed">View Item Catalog</li>
                 </router-link>
             </ul>
