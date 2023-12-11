@@ -13,9 +13,11 @@
           <div class="buttons">
             <span class="is-size-7 welcome">Welcome, {{ $store.state.user.firstName }} {{ $store.state.user.lastName }} {{
               userDepartmentName ? "(" + userDepartmentName + ")" : "" }}</span>
-            <a class="navbar-item" href="/">
+            <!-- May add functionality in future 
+              <a class="navbar-item" href="/">
               My Account
-            </a>
+            </a> 
+            -->
             <router-link class="navbar-item" :to="{ name: 'logout' }">
               Logout
             </router-link>
