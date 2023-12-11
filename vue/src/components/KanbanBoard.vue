@@ -368,6 +368,9 @@ h6 {
   color: hsl(27.3, 100%, 37.5%);
 }
 
+.fa-user-plus:hover {
+  cursor: pointer;
+}
 #snackbar-purchased, #snackbar-claimed, #snackbar-needed, #snackbar-completed {
   visibility: hidden;
   min-width: 250px;
