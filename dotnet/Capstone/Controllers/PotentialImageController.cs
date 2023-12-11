@@ -9,6 +9,7 @@ namespace Capstone.Controllers
 {
     [ApiController]
     [Route("potentialimage")]
+    [Authorize]
     public class PotentialImageController : ControllerBase
     {
         public PotentialImageController()
