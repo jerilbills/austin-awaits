@@ -53,14 +53,6 @@ const routes = [
     }
   },
   {
-    path: "/groups/create",
-    name: "CreateGroup",
-    component: CreateGroupView,
-    meta: {
-      requiresAuth: true
-    }
-  },
-  {
     path:"/completedlists",
     name:"completedLists",
     component: CompletedListView

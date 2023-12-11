@@ -22,7 +22,7 @@
                     <tbody>
                         <tr v-for="(item, index) in filteredData" :key="index">
                             <td @click="navigateTo(item.listId)">{{ item.name }}</td>
-                            <td>{{ item.ownerId }}</td>
+                            <td>{{ item.ownerName }}</td>
                             <td>{{ item.numberOfItems }}</td>
                             <td>{{ formatDate(item.dueDate) }}</td>
                             <td>{{ formatDate(item.lastModified) }}</td>
@@ -60,7 +60,7 @@ export default {
             // Map the properties accordingly
             return this.data.map((item) => ({
                 name: item.name,
-                ownerId: item.ownerId,
+                ownerName: item.listOwner.firstName + " " + item.listOwner.lastName,
                 numberOfItems: item.numberOfItems,
                 dueDate: item.dueDate,
                 lastModified: item.lastModified,
