@@ -6,7 +6,7 @@
         
     <div class="invites" v-if="activeList.name">
       <div class="is-size-7">List Owner</div>
-      <div><img src="https://api.dicebear.com/7.x/initials/svg?seed=JB" class="avatar"></div>
+      <div class="has-tooltip-above has-tooltip-primary" :data-tooltip="listOwnerTooltip()"><img :src="activeList.listOwner.avatarUrl" class="avatar"></div>
       <div>&nbsp;&nbsp;</div>
       
       <div v-if="invitedUsers" class="is-size-7" :key="$store.state.listInvitesRefreshKey">
@@ -82,7 +82,7 @@ export default {
       showInviteUserToListModal: false,
       selectedItem: null,
       dragCounter: 0,
-      invitedUsers: null
+      invitedUsers: {}
     };
   },
   computed: {
@@ -129,7 +129,7 @@ export default {
   },
   methods: {
     getListInvites() {
-      this.invitedUsers = null;
+      this.invitedUsers = {};
       if (this.activeList) {
       InviteService
         .getListInvites(this.$store.state.activeList.departmentId, this.$store.state.activeList.listId)
@@ -298,7 +298,10 @@ export default {
     },  
     inviteeTooltip(user) {
       return user.invitedUser.firstName + " " + user.invitedUser.lastName;
-    },   
+    },
+    listOwnerTooltip() {
+      return this.$store.state.activeList.listOwner.firstName + " " + this.$store.state.activeList.listOwner.lastName;
+    }   
   },
   
 }
