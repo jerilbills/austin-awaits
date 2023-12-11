@@ -132,16 +132,19 @@ namespace Capstone.DAO
             string sql = @"SELECT L.list_id, L.list_name, L.department_id, D.department_name,
                         COUNT(LI.item_id) AS number_of_items,
                         L.list_status_id, L.list_owner_user_id, L.due_date_utc,
-                        L.created_date_utc, L.last_modified_date_utc, L.is_active,
-                        users.username, users.user_role, users.first_name, 
-                        users.last_name, users.avatar_url, users.department_id
-                        FROM users_lists AS UL
+                        L.created_date_utc, L.last_modified_date_utc, L.is_active, 
+                         users.username, users.user_role, users.first_name, 
+                         users.last_name, users.avatar_url, users.department_id 
+                        FROM lists AS L
                         JOIN departments AS D ON D.department_id = L.department_id
+                        JOIN users ON L.list_owner_user_id = users.user_id
                         LEFT JOIN list_items AS LI ON LI.list_id = L.list_id
                         WHERE L.list_id = @listId AND L.is_active = 1 AND LI.is_active = 1 
                         GROUP BY L.list_id, L.list_name, L.department_id, D.department_name,
                         L.list_status_id, L.list_owner_user_id, L.due_date_utc,
-                        L.created_date_utc, L.last_modified_date_utc, L.is_active;";
+                        L.created_date_utc, L.last_modified_date_utc, L.is_active, 
+                         users.username, users.user_role, users.first_name, 
+                         users.last_name, users.avatar_url, users.department_id ;";
 
             ShoppingList output = null;
 
@@ -215,25 +218,24 @@ namespace Capstone.DAO
         public List<ShoppingList> GetActiveShoppingListsByDepartmentID(int departmentId, int status)
         {
             string sql = @"SELECT L.list_id, L.list_name, L.department_id, D.department_name,
-             COUNT(LI.item_id) AS number_of_items,
-             L.list_status_id, L.list_owner_user_id, L.due_date_utc,
-             L.created_date_utc, L.last_modified_date_utc, L.is_active, 
-             users.username, users.user_role, users.first_name, 
-             users.last_name, users.avatar_url, users.department_id
-             FROM users_lists AS UL 
-             JOIN lists AS L ON L.list_id = UL.list_id
-             JOIN departments AS D ON D.department_id = L.department_id
-             LEFT JOIN list_items AS LI ON LI.list_id = L.list_id
-             JOIN users ON UL.user_id = users.user_id
-             WHERE users.user_id = 1 AND L.is_active = 1 AND LI.is_active = 1" +
+                         COUNT(LI.item_id) AS number_of_items,
+                         L.list_status_id, L.list_owner_user_id, L.due_date_utc,
+                         L.created_date_utc, L.last_modified_date_utc, L.is_active, 
+                         users.username, users.user_role, users.first_name, 
+                         users.last_name, users.avatar_url, users.department_id
+                         FROM lists AS L
+                         JOIN departments AS D ON D.department_id = L.department_id
+                         JOIN users ON L.list_owner_user_id = users.user_id
+                         LEFT JOIN list_items AS LI ON LI.list_id = L.list_id
+                         WHERE L.department_id = @departmentId AND L.is_active = 1 AND LI.is_active = 1 " +
 
-              ((status != 0) ? " AND L.list_status_id = @status " : "")
+                        ((status != 0) ? " AND L.list_status_id = @status " : "")
 
-               + @"GROUP BY L.list_id, L.list_name, L.department_id, D.department_name,
-               L.list_status_id, L.list_owner_user_id, L.due_date_utc,
-               L.created_date_utc, L.last_modified_date_utc, L.is_active, 
-                            users.username, users.user_role, users.first_name, 
-                            users.last_name, users.avatar_url, users.department_id;";
+                        + @"GROUP BY L.list_id, L.list_name, L.department_id, D.department_name,
+                        L.list_status_id, L.list_owner_user_id, L.due_date_utc,
+                        L.created_date_utc, L.last_modified_date_utc, L.is_active, 
+                        users.username, users.user_role, users.first_name, 
+                        users.last_name, users.avatar_url, users.department_id;";
 
 
             List<ShoppingList> output = new List<ShoppingList>();
@@ -265,25 +267,25 @@ namespace Capstone.DAO
         {
             List<ShoppingList> output = new List<ShoppingList>();
             string sql = @"SELECT L.list_id, L.list_name, L.department_id, D.department_name,
-                        COUNT(LI.item_id) AS number_of_items,
-                        L.list_status_id, L.list_owner_user_id, L.due_date_utc,
-                        L.created_date_utc, L.last_modified_date_utc, L.is_active, 
-						users.username, users.user_role, users.first_name, 
-						users.last_name, users.avatar_url, users.department_id
-                        FROM users_lists AS UL 
-                        JOIN lists AS L ON L.list_id = UL.list_id
-                        JOIN departments AS D ON D.department_id = L.department_id
-                        LEFT JOIN list_items AS LI ON LI.list_id = L.list_id
-						JOIN users ON UL.user_id = users.user_id 
-                        WHERE users.user_id = @userId AND L.is_active = 1 AND LI.is_active = 1 " +
+                         COUNT(LI.item_id) AS number_of_items,
+                         L.list_status_id, L.list_owner_user_id, L.due_date_utc,
+                         L.created_date_utc, L.last_modified_date_utc, L.is_active, 
+                         users.username, users.user_role, users.first_name, 
+                         users.last_name, users.avatar_url, users.department_id
+                         FROM users_lists AS UL 
+                         JOIN lists AS L ON L.list_id = UL.list_id
+                         JOIN departments AS D ON D.department_id = L.department_id
+                         LEFT JOIN list_items AS LI ON LI.list_id = L.list_id
+                                      JOIN users ON L.list_owner_user_id = users.user_id
+                         WHERE UL.user_id = @userId AND L.is_active = 1 AND LI.is_active = 1 " +
 
-                        ((status != 0) ? " AND L.list_status_id = @status " : "")
+                          ((status != 0) ? " AND L.list_status_id = @status " : "")
 
-                        + @"GROUP BY L.list_id, L.list_name, L.department_id, D.department_name,
-                        L.list_status_id, L.list_owner_user_id, L.due_date_utc,
-                        L.created_date_utc, L.last_modified_date_utc, L.is_active,
-                        users.username, users.user_role, users.first_name, 
-						users.last_name, users.avatar_url, users.department_id;";
+                           + @"GROUP BY L.list_id, L.list_name, L.department_id, D.department_name,
+                           L.list_status_id, L.list_owner_user_id, L.due_date_utc,
+                           L.created_date_utc, L.last_modified_date_utc, L.is_active, 
+                            users.username, users.user_role, users.first_name, 
+                            users.last_name, users.avatar_url, users.department_id;";
 
             try
             {

@@ -13,9 +13,11 @@
           <div class="buttons">
             <span class="is-size-7 welcome">Welcome, {{ $store.state.user.firstName }} {{ $store.state.user.lastName }} {{
               userDepartmentName ? "(" + userDepartmentName + ")" : "" }}</span>
-            <a class="navbar-item" href="/">
+            <!-- May add functionality in future 
+              <a class="navbar-item" href="/">
               My Account
-            </a>
+            </a> 
+            -->
             <router-link class="navbar-item" :to="{ name: 'logout' }">
               Logout
             </router-link>
@@ -46,7 +48,7 @@ export default {
           .getDepartments()
           .then((response) => {
             response.data.forEach((dept) => {
-              console.log(dept.departmentId);
+              // console.log(dept.departmentId);
               if (dept.departmentId == this.$store.state.user.departmentId) {
                 this.userDepartmentName = dept.departmentName;
               }
