@@ -20,9 +20,53 @@ namespace Capstone.DAO
             throw new System.NotImplementedException();
         }
 
-        public ShoppingList CreateShoppingList()
+        public ShoppingList CreateShoppingList(ShoppingList newList)
         {
-            throw new System.NotImplementedException();
+            string sql = "INSERT INTO lists (list_name, department_id, list_status_id, list_owner_user_id, " +
+                "due_date_utc, created_date_utc, last_modified_date_utc, is_active) " +
+                "OUTPUT INSERTED.list_id VALUES (@listName, @departmentId, @listStatusId, " +
+                "@listOwnerId, @dueDate, @createdDate, @lastModifiedDate, @isActive);";
+
+            ShoppingList output = null;
+
+            int rowsAffected = 0;
+
+            try
+            {
+                using (SqlConnection conn = new SqlConnection(connectionString))
+                {
+                    conn.Open();
+                    SqlCommand cmd = new SqlCommand(sql, conn);
+                 
+                    cmd.Parameters.AddWithValue("@listName", newList.Name);
+                    cmd.Parameters.AddWithValue("@departmentId", newList.DepartmentId);
+                    cmd.Parameters.AddWithValue("@listStatusId", newList.Status);
+                    cmd.Parameters.AddWithValue("@listOwnerId", newList.OwnerId);
+                    cmd.Parameters.AddWithValue("@dueDate", newList.DueDate);
+                    cmd.Parameters.AddWithValue("@createdDate", newList.CreatedDate);
+                    cmd.Parameters.AddWithValue("@lastModifiedDate", newList.LastModified);
+                    cmd.Parameters.AddWithValue("@isActive", newList.IsActive);
+
+                    rowsAffected = cmd.ExecuteNonQuery();
+                }
+                if (rowsAffected == 0)
+                {
+                    return output;
+                }
+                else
+                {
+                    output = GetActiveShoppingListById(newList.ListId);
+                }
+            }
+            catch (Exception)
+            {
+                throw new DaoException();
+            }
+            return output;
+
+
+
+
         }
 
         public int DeleteItem(Item itemToDelete)
