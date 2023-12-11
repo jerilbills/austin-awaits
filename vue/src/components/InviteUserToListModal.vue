@@ -53,8 +53,8 @@
           </div>
         </div>
       </div>
+      <div v-else class="has-text-link"><BR />{{ errorMessage }}</div>
       </div>
-      
       <div class="field">
           <p class="control">
             <button type="submit" class="button is-rounded is-primary" @click="addUser" :disabled="(!hasRequiredFields)">Invite User</button>
@@ -84,7 +84,8 @@ import InviteService from '../services/InviteService';
       departments:[],
       departmentToSearch: {},
       selectedUserId: {},
-      departmentUsers: []
+      departmentUsers: [],
+      errorMessage: null
       };
     },
     computed: {
@@ -115,10 +116,17 @@ import InviteService from '../services/InviteService';
           })
     },
     loadDepartmentUsersList() {
+      this.departmentUsers = [];
       this.selectedUserId = {};
+      this.errorMessage = null;
+      console.log(this.departmentToSearch.departmentId);
       UserService
         .getActiveUsersByDepartmentId(this.departmentToSearch.departmentId)
         .then((response) => {
+          if(response.data == "") {
+            this.errorMessage = "There are no users in this department";
+            return;
+          }
           this.departmentUsers = response.data.sort((a, b) => ((a.lastName + ", " + a.firstName) > (b.lastName + ", " + b.firstName)) ? 1 : -1);
         })
         .catch((error) => {          

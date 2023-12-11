@@ -1,20 +1,19 @@
 <template>
   <div class="kanban-board-header">
-    <div class="page-title" v-if="$store.state.activeList.name">{{ $store.state.activeList.name }} (Due {{ dueDate }})
+    <div class="page-title" v-if="activeList.name">{{ activeList.name }} (Due {{ dueDate }})
     </div>
     <div class="page-title" v-else>Please select a list to work on. Austin Awaits!</div>
         
-    <div class="invites" v-if="showInvites">
+    <div class="invites" v-if="activeList.name">
       <div class="is-size-7">List Owner</div>
       <div><img src="https://api.dicebear.com/7.x/initials/svg?seed=JB" class="avatar"></div>
       <div>&nbsp;&nbsp;</div>
-      <div class="is-size-7">List Invites</div>
-      <div>
-        <img src="https://api.dicebear.com/7.x/initials/svg?seed=JB" class="avatar">
-        <img src="https://api.dicebear.com/7.x/initials/svg?seed=DM" class="avatar">
-        <img src="https://api.dicebear.com/7.x/initials/svg?seed=NH" class="avatar">
-        <img src="https://api.dicebear.com/7.x/initials/svg?seed=JF" class="avatar">
+      
+      <div v-if="invitedUsers" class="is-size-7">
+        <span class="invite-title">List Invites</span>
+          <img v-for="user in invitedUsers" :key="user.userId" :src="user.invitedUser.avatarUrl" class="avatar">
       </div>
+      
       <div>
         <i class="fa fa-user-plus fa-lg" @click="openInviteUserToListModal()"></i>
       </div>
@@ -22,7 +21,7 @@
 
   </div>
 
-  <div class="kanban-board"  v-if="$store.state.activeList.name" @mounted="getListInvites">
+  <div class="kanban-board"  v-if="activeList.name">
     <div class="column is-4" v-for="(column, index) in columns" :key="index" :class="{ over: isDraggedOver }"
       @drop.prevent="drop(column)" @dragover.prevent="dragOver" @dragenter.prevent="dragEnter" @dragleave="dragLeave">
 
@@ -105,26 +104,27 @@ export default {
       const unfinishedItems = this.myItems.filter((item) => { return (item.listItemStatusId === 1 || item.listItemStatusId === 2)});
       return unfinishedItems.length === 0;
     },
-    showInvites() {
-      if (this.$store.state.activeList.name != null && this.invitedUsers != null) {
-        return true;
-      }
-      else if (this.$store.state.activeList.name != null) {
+    activeList() {
+      return this.$store.state.activeList;
+    }
+  },
+  watch: {
+    activeList(newVal,oldVal){
+      if (newVal != oldVal && newVal) {
         this.getListInvites();
-        return false;
-      }
-      return false;
+    }
     },
   },
   methods: {
     getListInvites() {
-      console.log("getting invites");
+      this.invitedUsers = null;
       InviteService
         .getListInvites(this.$store.state.activeList.departmentId, this.$store.state.activeList.listId)
         .then(response => {
-          console.log(response.data);
+          if (response.data.constructor != Array) {
+            return;
+          }
           this.invitedUsers = response.data.sort((a, b) => ((a.lastName + ", " + a.firstName) > (a.lastName + ", " + a.firstName)) ? 1 : -1);
-          return true;
         })
         .catch(error => {
           console.error('Error fetching list invites:', error);
@@ -287,6 +287,12 @@ export default {
   margin-left: 3px;
 }
 
+.invite-title {
+  display: inline-block; 
+  padding-top: 6px; 
+  vertical-align: top;
+}
+
 .custom-box {
   width: 100%;
 }
@@ -393,6 +399,7 @@ h6 {
 
 .fa-user-plus {
   color: hsl(27.3, 100%, 37.5%);
+  margin-left: 10px;
 }
 
 #snackbar-purchased, #snackbar-claimed, #snackbar-needed, #snackbar-completed {
