@@ -44,7 +44,7 @@
   };
   </script>
   
-  <style>
+  <style scoped>
   .modal-container {
     position: fixed;
     top: 0;

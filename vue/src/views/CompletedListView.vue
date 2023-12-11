@@ -117,7 +117,7 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 #page {
     height: 100vh;
     background-image: url('../assets/austin-background.png');
