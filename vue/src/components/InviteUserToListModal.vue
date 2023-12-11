@@ -79,6 +79,7 @@ import UserService from '../services/UserService';
 import InviteService from '../services/InviteService';
 
   export default {
+    props: ['invitedUsers'],
     data() {
       return {
       departments:[],
@@ -127,10 +128,22 @@ import InviteService from '../services/InviteService';
             return;
           }
           this.departmentUsers = response.data.sort((a, b) => ((a.lastName + ", " + a.firstName) > (b.lastName + ", " + b.firstName)) ? 1 : -1);
-        })
+          this.filterOutAlreadyInvitedUsers();
+      })
         .catch((error) => {          
           console.log("There were problems loading the user list for department Id " + this.departmentToSearch.departmentId);
         })
+    },
+    filterOutAlreadyInvitedUsers() {
+      const alreadyInvitedUserIds = this.invitedUsers.map(user => user.invitedUser.userId);
+          console.log(this.invitedUsers);
+          console.log(alreadyInvitedUserIds);
+          console.log(alreadyInvitedUserIds.find((invitedId) => { return invitedId > 1 }));
+          this.departmentUsers = this.departmentUsers.filter((user) => user.userId != alreadyInvitedUserIds.find((invitedId) => { return invitedId == user.userId }));
+          if(this.departmentUsers == "") {
+            this.errorMessage = "There are no other users in this department to add to this list";
+            return;
+          }
     },
     addUser() {
       const inviteToAdd = {

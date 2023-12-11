@@ -57,7 +57,7 @@
 
         <!-- MODALS -->
         <ItemDetailsModal v-if="showItemModal" :item="selectedItem" @close="closeItemModal"  />
-        <InviteUserToListModal v-if="showInviteUserToListModal" @close="closeInviteUserToListModal" />
+        <InviteUserToListModal v-if="showInviteUserToListModal" @close="closeInviteUserToListModal" :invitedUsers="Array.from(invitedUsers)" />
       </div>
     </div>
   </div>
@@ -425,6 +425,7 @@ h6 {
 .fa-user-plus {
   color: hsl(27.3, 100%, 37.5%);
   margin-left: 10px;
+  cursor: pointer;
 }
 
 #snackbar-purchased, #snackbar-claimed, #snackbar-needed, #snackbar-completed, #snackbar-user-invited {
