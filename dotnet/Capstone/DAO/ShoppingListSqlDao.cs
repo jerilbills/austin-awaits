@@ -91,6 +91,7 @@ namespace Capstone.DAO
                         L.created_date_utc, L.last_modified_date_utc, L.is_active, 
                          users.username, users.user_role, users.first_name, 
                          users.last_name, users.avatar_url, users.department_id 
+                        FROM lists AS L
                         JOIN departments AS D ON D.department_id = L.department_id
                         JOIN users ON L.list_owner_user_id = users.user_id
                         LEFT JOIN list_items AS LI ON LI.list_id = L.list_id

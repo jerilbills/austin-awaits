@@ -434,7 +434,7 @@ h6 {
 .fa-user-plus:hover {
   cursor: pointer;
 }
-#snackbar-purchased, #snackbar-claimed, #snackbar-needed, #snackbar-completed {
+#snackbar-purchased, #snackbar-claimed, #snackbar-needed, #snackbar-completed, #snackbar-user-invited {
   visibility: hidden;
   min-width: 250px;
   margin-left: -125px;
@@ -455,7 +455,7 @@ h6 {
   bottom: 450px;
 }
 
-#snackbar-purchased.show, #snackbar-claimed.show, #snackbar-needed.show, #snackbar-user-invited.show {
+#snackbar-purchased.show, #snackbar-claimed.show, #snackbar-needed.show, #snackbar-user-invited.show, #snackbar-completed.show {
   visibility: visible;
   /* Show the snackbar */
   /* Add animation: Take 0.5 seconds to fade in and out the snackbar.
