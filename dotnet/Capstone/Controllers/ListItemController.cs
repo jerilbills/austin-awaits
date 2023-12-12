@@ -142,5 +142,27 @@ namespace Capstone.Controllers
                 return StatusCode(500);
             }
         }
+
+        [HttpDelete]
+        public ActionResult<List<ListItem>> ClearAllItemsFromListByListId(int listId)
+        {
+            int numberOfItemsDeleted = 0;
+            try
+            {
+                numberOfItemsDeleted = listItemDao.ClearAllItemsFromListByListId(listId);
+                if(numberOfItemsDeleted > 0)
+                {
+                    return GetListItemsByListId(listId);
+                }
+                else
+                {
+                    return NotFound();
+                }
+            }
+            catch (Exception)
+            {
+                return StatusCode(500);
+            }
+        }
     }
 }

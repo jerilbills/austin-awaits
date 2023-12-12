@@ -223,6 +223,31 @@ namespace Capstone.DAO
 
             return numberOfRows;
         }
+        public int ClearAllItemsFromListByListId(int listId)
+        {
+            string sql = "DELETE FROM list_items WHERE list_id = @list_id;";
+            int numberOfItemsDeleted = 0;
+
+            try
+            {
+                using (SqlConnection conn = new SqlConnection(connectionString))
+                {
+                    conn.Open();
+                    SqlCommand cmd = new SqlCommand(sql, conn);
+                    cmd.Parameters.AddWithValue("@list_id", listId);
+
+                    numberOfItemsDeleted = cmd.ExecuteNonQuery();
+                }
+            }
+            catch (Exception)
+            {
+
+                throw new DaoException();
+            }
+
+            return numberOfItemsDeleted;
+
+        }
 
         private ListItem MapRowToListItem(SqlDataReader reader)
         {

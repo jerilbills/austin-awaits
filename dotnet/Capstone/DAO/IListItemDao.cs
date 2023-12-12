@@ -15,5 +15,6 @@ namespace Capstone.DAO
         public List<ListItem> FilterListByClaimant(int listId, int userId);
         public List<ListItem> FilterListByUnassigned(int listId);
         public int DeleteItem(int listId, int itemId);
+        public int ClearAllItemsFromListByListId(int listId);
     }
 }
