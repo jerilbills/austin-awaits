@@ -263,8 +263,8 @@ namespace Capstone.DAO
 
             try
             {
-                int addedListId;
-                int addedItemId;
+                int addedListId = 0;
+                int addedItemId = 0;
                
 
                 using (SqlConnection conn = new SqlConnection(connectionString))
@@ -285,11 +285,10 @@ namespace Capstone.DAO
                     SqlDataReader reader = cmd.ExecuteReader();
                     if (reader.Read())
                     {
-                        added = MapRowToListItem(reader);
-                        
+                        addedItemId = Convert.ToInt32(reader["item_id"]);
+                        addedListId = Convert.ToInt32(reader["list_id"]);
                     }
-                    addedListId = added.ListId;
-                    addedItemId = added.ItemId;
+                    
                 }
 
                 output = GetActiveListItemById(addedItemId, addedListId);

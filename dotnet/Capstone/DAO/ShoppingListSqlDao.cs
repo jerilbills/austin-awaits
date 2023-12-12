@@ -24,7 +24,7 @@ namespace Capstone.DAO
         {
             string sql = "INSERT INTO lists (list_name, department_id, " +
                 "list_status_id, list_owner_user_id, due_date_utc, " +
-                "created_date_utc, last_modified_date_utc, is_active) " +
+                "created_date_utc, last_modified_date_utc, is_active) OUTPUT inserted.list_id " +
                 "VALUES (@list_name, @department_id, @list_status_id, " +
                 "@list_owner_user_id, @due_date, @created_date, " +
                 "@last_modified_date, @is_active)";
@@ -95,7 +95,7 @@ namespace Capstone.DAO
                         JOIN departments AS D ON D.department_id = L.department_id
                         JOIN users ON L.list_owner_user_id = users.user_id
                         LEFT JOIN list_items AS LI ON LI.list_id = L.list_id
-                        WHERE L.list_id = @listId AND L.is_active = 1 AND LI.is_active = 1 
+                        WHERE L.list_id = @listId AND L.is_active = 1 AND (LI.item_id IS NULL OR LI.is_active = 1) 
                         GROUP BY L.list_id, L.list_name, L.department_id, D.department_name,
                         L.list_status_id, L.list_owner_user_id, L.due_date_utc,
                         L.created_date_utc, L.last_modified_date_utc, L.is_active, 
