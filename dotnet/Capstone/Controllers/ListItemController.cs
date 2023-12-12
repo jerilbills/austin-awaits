@@ -9,6 +9,7 @@ using System.Net.Http.Headers;
 using System.Net.Http;
 using System.Security.Cryptography.Xml;
 using System.Security.Principal;
+using System.Net;
 
 
 namespace Capstone.Controllers
@@ -125,6 +126,21 @@ namespace Capstone.Controllers
             }
 
             return output;
+        }
+
+        [HttpDelete("{itemId}")]
+        public ActionResult<int> DeleteListItem(int listId, int itemId)
+        {
+            int numberOfRows = 0;
+            try
+            {
+                numberOfRows = listItemDao.DeleteItem(listId, itemId);
+                return numberOfRows == 1 ? NoContent() : NotFound();
+            }
+            catch (Exception)
+            {
+                return StatusCode(500);
+            }
         }
     }
 }

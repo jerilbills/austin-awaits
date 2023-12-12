@@ -200,6 +200,30 @@ namespace Capstone.DAO
             return output;
         }
 
+        public int DeleteItem(int listId, int itemId)
+        {
+            int numberOfRows = 0;
+            string sql = "DELETE FROM list_items WHERE list_id = @list_id AND item_id = @item_id;";
+            try
+            {
+                using (SqlConnection conn = new SqlConnection(connectionString))
+                {
+                    conn.Open();
+                    SqlCommand cmd = new SqlCommand(sql, conn);
+                    cmd.Parameters.AddWithValue("@list_id", listId);
+                    cmd.Parameters.AddWithValue("@item_id", itemId);
+
+                    numberOfRows = cmd.ExecuteNonQuery();
+                }
+            }
+            catch (Exception)
+            {
+                throw new DaoException();
+            }
+
+            return numberOfRows;
+        }
+
         private ListItem MapRowToListItem(SqlDataReader reader)
         {
 
@@ -256,7 +280,6 @@ namespace Capstone.DAO
            
             return listItem;
         }
-
 
     }
 
