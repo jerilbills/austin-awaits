@@ -109,6 +109,26 @@ namespace Capstone.Controllers
             return output;
         }
 
+
+        [HttpPost]
+        public ActionResult<ShoppingList> CreateShoppingList(ShoppingList newList)
+        {
+            ShoppingList added;
+            try
+            {
+                added = shoppingListDao.CreateShoppingList(newList);
+                return Created($"/{added.ListId}", added);
+            }
+            catch (System.Exception)
+            {
+
+                return StatusCode(500);
+            }
+            
+        }
+
+
+
         [HttpGet("/list/active")]
         [Authorize(Roles = "admin")]
 
