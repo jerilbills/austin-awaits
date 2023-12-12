@@ -23,9 +23,9 @@ namespace Capstone.Controllers
         public ActionResult<PotentialImage> GetPotentialImages(PotentialImage imageRequest)
         {
             // Use comments to tobble between using Bing for results and our static data for results (to save on API calls)
-            // return ReturnBingImages(imageRequest);
+            return ReturnBingImages(imageRequest);
 
-            return ReturnStaticImages(imageRequest);
+            // return ReturnStaticImages(imageRequest);
         }
 
         private ActionResult<PotentialImage> ReturnBingImages(PotentialImage imageRequest)
