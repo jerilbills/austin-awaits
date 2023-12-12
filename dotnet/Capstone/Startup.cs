@@ -10,6 +10,7 @@ using Microsoft.IdentityModel.Tokens;
 using Capstone.DAO;
 using Capstone.Security;
 using Microsoft.OpenApi.Models;
+using Capstone.Services;
 
 namespace Capstone
 {
@@ -69,6 +70,7 @@ namespace Capstone
             services.AddTransient<IDepartmentDao>(dept => new DepartmentSqlDao(connectionString));
             services.AddTransient<IListItemDao>(li => new ListItemSqlDao(connectionString));
             services.AddTransient<IInviteDao>(inv => new InviteSqlDao(connectionString));
+            services.AddTransient<IImageService>(img => new BingImageService(Configuration["BingSearchKey"], Configuration["BingImageSearchUrl"]));
 
             // Swagger set up
             services.AddSwaggerGen(s => {
