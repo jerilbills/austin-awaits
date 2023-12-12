@@ -110,6 +110,7 @@ namespace Capstone.Controllers
         }
 
         [HttpGet("/list/active")]
+        [Authorize(Roles = "admin")]
 
         public ActionResult<List<ShoppingList>> GetAllActiveShoppingLists()
         {
@@ -127,6 +128,7 @@ namespace Capstone.Controllers
         }
 
         [HttpGet("/list/completed")]
+        [Authorize(Roles = "admin")]
 
         public ActionResult<List<ShoppingList>> GetAllCompletedShoppingLists()
         {
@@ -144,6 +146,7 @@ namespace Capstone.Controllers
         }
 
         [HttpGet("/list/draft")]
+        [Authorize(Roles = "admin")]
 
         public ActionResult<List<ShoppingList>> GetAllDraftShoppingLists()
         {
@@ -161,7 +164,7 @@ namespace Capstone.Controllers
         }
 
         [HttpDelete("{listId}")]
-
+        [Authorize(Roles = "admin")]
         public ActionResult<int> DeleteShoppingListById(int listId)
         {
             int numberOfRows = 0;

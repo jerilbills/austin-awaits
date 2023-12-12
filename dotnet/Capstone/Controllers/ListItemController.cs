@@ -129,6 +129,7 @@ namespace Capstone.Controllers
         }
 
         [HttpDelete("{itemId}")]
+        [Authorize(Roles = "admin")]
         public ActionResult<int> DeleteListItem(int listId, int itemId)
         {
             int numberOfRows = 0;
@@ -144,6 +145,7 @@ namespace Capstone.Controllers
         }
 
         [HttpDelete]
+        [Authorize(Roles = "admin")]
         public ActionResult<List<ListItem>> ClearAllItemsFromListByListId(int listId)
         {
             int numberOfItemsDeleted = 0;
