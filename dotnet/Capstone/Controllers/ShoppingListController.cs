@@ -142,5 +142,38 @@ namespace Capstone.Controllers
 
             return output;
         }
+
+        [HttpDelete("{listId}")]
+
+        public ActionResult<int> DeleteShoppingListById(int listId)
+        {
+            int numberOfRows = 0;
+            try
+            {
+                numberOfRows = shoppingListDao.DeleteShoppingListByShoppingListId(listId);
+                return numberOfRows == 1 ? NoContent() : NotFound();
+            }
+            catch (Exception)
+            {
+                return StatusCode(500);
+            }
+        }
+
+        [HttpGet("{listId}")]
+
+        public ActionResult<ShoppingList> GetActiveShoppingListById(int listId)
+        {
+            ShoppingList output = new ShoppingList();
+            try
+            {
+                output = shoppingListDao.GetActiveShoppingListById(listId);
+            }
+            catch (Exception)
+            {
+                return StatusCode(500);
+            }
+
+            return output;
+        }
     }
 }

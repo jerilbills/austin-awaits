@@ -69,9 +69,34 @@ namespace Capstone.DAO
             throw new System.NotImplementedException();
         }
 
-        public int DeleteShoppingList(ShoppingList listToDelete)
+        public int DeleteShoppingListByShoppingListId(int shoppingListId)
         {
-            throw new System.NotImplementedException();
+            int numberOfRows = 0;
+            string listItemSql = "DELETE FROM list_items WHERE list_id = @list_id;";
+            string listSql = "DELETE FROM lists WHERE list_id = @list_id;";
+
+            try
+            {
+                using(SqlConnection conn = new SqlConnection(connectionString))
+                {
+                    conn.Open();
+                    SqlCommand cmd = new SqlCommand(listItemSql, conn);
+                    cmd.Parameters.AddWithValue("@list_id", shoppingListId);
+                    cmd.ExecuteNonQuery();
+
+                    cmd = new SqlCommand(listSql, conn);
+                    cmd.Parameters.AddWithValue("@list_id", shoppingListId);
+                    numberOfRows = cmd.ExecuteNonQuery();
+                }
+            }
+            catch (Exception)
+            {
+
+                throw new DaoException();
+            }
+
+            return numberOfRows;
+
         }
 
         public List<ShoppingList> GetAllActiveShoppingLists()
