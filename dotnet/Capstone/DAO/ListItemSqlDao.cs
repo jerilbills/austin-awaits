@@ -16,12 +16,59 @@ namespace Capstone.DAO
         }
 
 
-        public ListItem UpdateListItemStatusAndClaimant(int listId, int itemId, int updatingUserId, ListItem itemToUpdate)
+        //public ListItem UpdateListItemStatusAndClaimant(int listId, int itemId, int updatingUserId, ListItem itemToUpdate)
+        //{
+
+        //    //edit sql to change the userID as well
+        //    string sql = "UPDATE list_items SET list_item_status_id = @status, list_item_claimed_by_user_id = @userId, " +
+        //        "last_modified_date_utc = GETUTCDATE(), last_modified_by_user_id = @updatinguserid WHERE list_id = @ListId AND item_id = @ItemId;";
+
+        //    ListItem output = null;
+
+        //    int rowsAffected = 0;
+
+        //    try
+        //    {
+        //        using (SqlConnection conn = new SqlConnection(connectionString))
+        //        {
+        //            conn.Open();
+        //            SqlCommand cmd = new SqlCommand(sql, conn);
+        //            cmd.Parameters.AddWithValue("@status", itemToUpdate.ListItemStatusId);
+        //            cmd.Parameters.AddWithValue("@ListId", listId);
+        //            cmd.Parameters.AddWithValue("@ItemId", itemId);
+        //            cmd.Parameters.AddWithValue("@userId", (itemToUpdate.ClaimedBy == null) ? DBNull.Value : itemToUpdate.ClaimedBy);
+        //            cmd.Parameters.AddWithValue("@updatinguserid", updatingUserId);
+
+        //            rowsAffected = cmd.ExecuteNonQuery();
+
+        //        }
+        //        if (rowsAffected == 0)
+        //        {
+        //            return output;
+        //        }
+        //        else
+        //        {
+        //            output = GetActiveListItemById(itemId, listId);
+                    
+
+        //        }
+        //    }
+        //    catch (Exception)
+        //    {
+        //        throw new DaoException();
+        //    }
+        //    return output;
+        //}
+
+
+
+        //this method can update status, claimed by, and quantity
+        public ListItem UpdateListItem(int updatingUserId, ListItem itemToUpdate)
         {
 
-            //edit sql to change the userID as well
-            string sql = "UPDATE list_items SET list_item_status_id = @status, list_item_claimed_by_user_id = @userId, " +
-                "last_modified_date_utc = GETUTCDATE(), last_modified_by_user_id = @updatinguserid WHERE list_id = @ListId AND item_id = @ItemId;";
+            string sql = "UPDATE list_items SET quantity = @quantity, list_item_claimed_by_user_id = @claimedById, " +
+                "list_item_status_id = @statusId, last_modified_date_utc = GETUTCDATE(), " +
+                "last_modified_by_user_id = @lastModifiedByUserId WHERE list_id = @listId AND item_id = @itemId;";
 
             ListItem output = null;
 
@@ -33,11 +80,12 @@ namespace Capstone.DAO
                 {
                     conn.Open();
                     SqlCommand cmd = new SqlCommand(sql, conn);
-                    cmd.Parameters.AddWithValue("@status", itemToUpdate.ListItemStatusId);
-                    cmd.Parameters.AddWithValue("@ListId", listId);
-                    cmd.Parameters.AddWithValue("@ItemId", itemId);
-                    cmd.Parameters.AddWithValue("@userId", (itemToUpdate.ClaimedBy == null) ? DBNull.Value : itemToUpdate.ClaimedBy);
-                    cmd.Parameters.AddWithValue("@updatinguserid", updatingUserId);
+                    cmd.Parameters.AddWithValue("@quantity", itemToUpdate.Quantity);
+                    cmd.Parameters.AddWithValue("@claimedById", (itemToUpdate.ClaimedBy == null) ? DBNull.Value : itemToUpdate.ClaimedBy);
+                    cmd.Parameters.AddWithValue("@statusId", itemToUpdate.ListItemStatusId);
+                    cmd.Parameters.AddWithValue("@lastModifiedByUserId", updatingUserId);
+                    cmd.Parameters.AddWithValue("@listId", itemToUpdate.ListId);
+                    cmd.Parameters.AddWithValue("@itemId", itemToUpdate.ItemId);
 
                     rowsAffected = cmd.ExecuteNonQuery();
 
@@ -48,8 +96,8 @@ namespace Capstone.DAO
                 }
                 else
                 {
-                    output = GetActiveListItemById(itemId, listId);
-                    
+                    output = GetActiveListItemById(itemToUpdate.ItemId, itemToUpdate.ListId);
+
 
                 }
             }
@@ -59,6 +107,7 @@ namespace Capstone.DAO
             }
             return output;
         }
+
 
         public ListItem GetActiveListItemById(int itemId, int listId)
         {
@@ -200,6 +249,64 @@ namespace Capstone.DAO
             return output;
         }
 
+
+
+        public ListItem AddListItemToShoppingList(ListItem itemToAdd)
+        {
+            ListItem added = null;
+            ListItem output = null;
+
+            string sql = "INSERT INTO list_items(list_id, item_id, quantity, list_item_claimed_by_user_id, list_item_status_id, " +
+                "created_date_utc, last_modified_by_user_id, last_modified_date_utc, is_active)" +
+                "OUTPUT inserted.list_id, inserted.item_id " +
+                "VALUES(@listId, @itemId, @quantity, @claimedBy, @listItemStatusId, @createdDate , @lastModifiedById, @lastModifiedDate, @isActive);";
+
+            try
+            {
+                int addedListId = 0;
+                int addedItemId = 0;
+               
+
+                using (SqlConnection conn = new SqlConnection(connectionString))
+                {
+                    conn.Open();
+                    SqlCommand cmd = new SqlCommand(sql, conn);
+
+                    cmd.Parameters.AddWithValue("@listId", itemToAdd.ListId);
+                    cmd.Parameters.AddWithValue("@itemId", itemToAdd.ItemId);
+                    cmd.Parameters.AddWithValue("@quantity", itemToAdd.Quantity);
+                    cmd.Parameters.AddWithValue("@claimedBy", itemToAdd.ClaimedBy);
+                    cmd.Parameters.AddWithValue("@listItemStatusId", itemToAdd.ListItemStatusId);
+                    cmd.Parameters.AddWithValue("@createdDate", itemToAdd.CreatedDate);
+                    cmd.Parameters.AddWithValue("@lastModifiedById", itemToAdd.LastModifiedBy);
+                    cmd.Parameters.AddWithValue("@lastModifiedDate", itemToAdd.LastModifiedDate);
+                    cmd.Parameters.AddWithValue("@isActive", itemToAdd.IsActive);
+
+                    SqlDataReader reader = cmd.ExecuteReader();
+                    if (reader.Read())
+                    {
+                        addedItemId = Convert.ToInt32(reader["item_id"]);
+                        addedListId = Convert.ToInt32(reader["list_id"]);
+                    }
+                    
+                }
+
+                output = GetActiveListItemById(addedItemId, addedListId);
+
+            }
+            catch (Exception)
+            {
+                throw new DaoException();
+            }
+            return output;
+
+
+
+
+
+        }
+
+
         private ListItem MapRowToListItem(SqlDataReader reader)
         {
 
@@ -257,7 +364,7 @@ namespace Capstone.DAO
             return listItem;
         }
 
-
+       
     }
 
 

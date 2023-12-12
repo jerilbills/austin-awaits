@@ -29,14 +29,42 @@ namespace Capstone.Controllers
 
 
 
+        //[HttpPut("{itemId}")]
+
+        //public ActionResult<ListItem> UpdateListItemStatusAndClaimant(int itemId, int listId, ListItem itemToUpdate)
+        //{
+        //    try
+        //    {
+        //        ListItem updatingListItem = listItemDao.GetActiveListItemById(itemId, listId);
+                
+        //        if (updatingListItem == null)
+        //        {
+        //            return NotFound();
+        //        }
+
+        //        User loggedInUser = userDao.GetActiveUserByUsername(User.Identity.Name);
+
+        //        ListItem updatedListItem = listItemDao.UpdateListItemStatusAndClaimant(listId, itemId, loggedInUser.UserId, itemToUpdate);
+
+        //        return updatedListItem;
+
+        //    }
+        //    catch (SystemException)
+        //    {
+        //        return StatusCode(500);
+        //    }
+
+        //}
+
         [HttpPut("{itemId}")]
 
-        public ActionResult<ListItem> UpdateListItemStatusAndClaimant(int itemId, int listId, ListItem itemToUpdate)
+        public ActionResult<ListItem> UpdateListItem(ListItem itemToUpdate)
         {
+            ListItem output = null;
             try
             {
-                ListItem updatingListItem = listItemDao.GetActiveListItemById(itemId, listId);
-                
+                ListItem updatingListItem = listItemDao.GetActiveListItemById(itemToUpdate.ItemId, itemToUpdate.ListId);
+
                 if (updatingListItem == null)
                 {
                     return NotFound();
@@ -44,15 +72,14 @@ namespace Capstone.Controllers
 
                 User loggedInUser = userDao.GetActiveUserByUsername(User.Identity.Name);
 
-                ListItem updatedListItem = listItemDao.UpdateListItemStatusAndClaimant(listId, itemId, loggedInUser.UserId, itemToUpdate);
-
-                return updatedListItem;
+                output = listItemDao.UpdateListItem(loggedInUser.UserId, itemToUpdate);
 
             }
             catch (SystemException)
             {
                 return StatusCode(500);
             }
+            return output;
 
         }
 
@@ -126,5 +153,27 @@ namespace Capstone.Controllers
 
             return output;
         }
+
+        [HttpPost]
+
+        public ActionResult<ListItem> AddListItemToShoppingList(ListItem itemToAdd)
+        {
+            ListItem added;
+            try
+            {
+                added = listItemDao.AddListItemToShoppingList(itemToAdd);
+                return Created($"{itemToAdd.ItemId}", added);
+            }
+            catch (System.Exception)
+            {
+
+                return StatusCode(500);
+            }
+
+        }
+
+
+
+
     }
 }
