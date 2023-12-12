@@ -143,6 +143,23 @@ namespace Capstone.Controllers
             return output;
         }
 
+        [HttpGet("/list/draft")]
+
+        public ActionResult<List<ShoppingList>> GetAllDraftShoppingLists()
+        {
+            List<ShoppingList> output = new List<ShoppingList>();
+            try
+            {
+                output = shoppingListDao.GetAllDraftLists();
+            }
+            catch (Exception)
+            {
+                return StatusCode(500);
+            }
+
+            return output;
+        }
+
         [HttpDelete("{listId}")]
 
         public ActionResult<int> DeleteShoppingListById(int listId)
