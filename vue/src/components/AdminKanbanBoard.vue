@@ -1,20 +1,23 @@
 <template>
     <div class="kanban-board-header">
-        <div class="page-title" v-if="$store.state.activeList.name">{{ $store.state.activeList.name }} (Due {{ dueDate }})
+        <div class="page-title" v-if="activeList.name">{{ activeList.name }} (Due {{ dueDate }})
         </div>
         <div class="page-title" v-else>Please select a list to work on. Austin Awaits!</div>
 
-        <div class="invites" v-if="$store.state.activeList.name">
+        <div class="invites" v-if="activeList.name">
             <div class="is-size-7">List Owner</div>
-            <div><img src="https://api.dicebear.com/7.x/initials/svg?seed=JB" class="avatar"></div>
+            <div class="has-tooltip-above has-tooltip-primary" :data-tooltip="listOwnerTooltip()"><img
+                    :src="activeList.listOwner.avatarUrl" class="avatar"></div>
             <div>&nbsp;&nbsp;</div>
-            <div class="is-size-7">List Members</div>
-            <div>
-                <img src="https://api.dicebear.com/7.x/initials/svg?seed=JB" class="avatar">
-                <img src="https://api.dicebear.com/7.x/initials/svg?seed=DM" class="avatar">
-                <img src="https://api.dicebear.com/7.x/initials/svg?seed=NH" class="avatar">
-                <img src="https://api.dicebear.com/7.x/initials/svg?seed=JF" class="avatar">
+
+            <div v-if="invitedUsers" class="is-size-7" :key="$store.state.listInvitesRefreshKey">
+                <span class="invite-title">List Invites</span>
+                <span v-for="user in invitedUsers" :key="user.userId" class="has-tooltip-above has-tooltip-primary"
+                    :data-tooltip="inviteeTooltip(user)">
+                    <img :src="user.invitedUser.avatarUrl" class="avatar">
+                </span>
             </div>
+
             <div>
                 <i class="fa fa-user-plus fa-lg" @click="openInviteUserToListModal()"></i>
             </div>
@@ -49,10 +52,11 @@
 
                 <div class="add-item-button">
                     <button v-if="column.title == 'Items Needed' && this.$store.state.user.role === 'admin'"
-                        class="button is-primary is-small"><i class="fa-solid fa-circle-plus" @click="addItemModal()">
-                        </i> Add Item</button>
+                        class="button is-primary is-small" @click="openAddItemModal()">
+                        <i class="fa-solid fa-circle-plus"></i> Add Item
+                    </button>
                 </div>
-                
+
                 <!-- SNACKBAR ALERTS-->
                 <div id="snackbar-purchased">Items cannot be removed from Purchased.</div>
                 <div id="snackbar-claimed">You are not the owner of this item.</div>
@@ -62,6 +66,8 @@
                 <!-- MODALS -->
                 <ItemDetailsModal v-if="showItemModal" :item="selectedItem" @close="closeItemModal" />
                 <InviteUserToListModal v-if="showInviteUserToListModal" @close="closeInviteUserToListModal" />
+                <ListAddItemModal :isModalOpen="showAddItemModal" :closeModal="closeAddItemModal"
+                    :availableItems="availableItems" @item-added="handleItemAdded" />
             </div>
         </div>
     </div>
@@ -71,12 +77,16 @@
 import ShoppingListService from '../services/ShoppingListService';
 import ItemDetailsModal from './ItemDetailsModal.vue';
 import InviteUserToListModal from './InviteUserToListModal.vue';
+import ListAddItemModal from './ListAddItemModal.vue';
+import InviteService from '../services/InviteService';
+
 
 export default {
     name: 'AdminKanbanBoard',
     components: {
         ItemDetailsModal,
-        InviteUserToListModal
+        InviteUserToListModal,
+        ListAddItemModal
     },
     data() {
         return {
@@ -84,6 +94,8 @@ export default {
             showInviteUserToListModal: false,
             selectedItem: null,
             dragCounter: 0,
+            showAddItemModal: false,
+            availableItems: [],
         };
     },
     computed: {
@@ -111,8 +123,43 @@ export default {
         isAdmin() {
             return this.$store.state.user.role === "admin";
         },
+        activeList() {
+            return this.$store.state.activeList;
+        },
+        isInviteUsersChanged() {
+            return this.$store.state.listInvitesRefreshKey;
+        }
+    },
+    watch: {
+        activeList(newVal, oldVal) {
+            if (newVal != oldVal && newVal.name != null) {
+                this.getListInvites();
+            }
+        },
+        isInviteUsersChanged(newVal, oldVal) {
+            if (newVal != oldVal) {
+                this.showUserInvitedSnackbar();
+                this.getListInvites();
+            }
+        },
     },
     methods: {
+        getListInvites() {
+            this.invitedUsers = {};
+            if (this.activeList) {
+                InviteService
+                    .getListInvites(this.$store.state.activeList.departmentId, this.$store.state.activeList.listId)
+                    .then(response => {
+                        if (response.data.constructor != Array) {
+                            return;
+                        }
+                        this.invitedUsers = response.data.sort((a, b) => ((a.lastName + ", " + a.firstName) > (a.lastName + ", " + a.firstName)) ? 1 : -1);
+                    })
+                    .catch(error => {
+                        console.error('Error fetching list invites:', error);
+                    })
+            }
+        },
         dragStart(columnTitle) {
             this.draggedColumn = columnTitle;
             console.log(this.draggedColumn);
@@ -234,6 +281,13 @@ export default {
                 x.className = x.className.replace("show", "");
             }, 4000);
         },
+        showUserInvitedSnackbar() {
+            let x = document.getElementById("snackbar-user-invited");
+            x.className = "show";
+            setTimeout(function () {
+                x.className = x.className.replace("show", "");
+            }, 4000);
+        },
         openItemModal(item) {
             this.selectedItem = item;
             this.showItemModal = true;
@@ -257,10 +311,31 @@ export default {
         claimedByUserTooltip(item) {
             return item.claimedByUser.firstName + " " + item.claimedByUser.lastName;
         },
-        handleAdminButtonClick() {
-            console.log("Button clicked");
+        inviteeTooltip(user) {
+            return user.invitedUser.firstName + " " + user.invitedUser.lastName;
+        },
+        listOwnerTooltip() {
+            return this.$store.state.activeList.listOwner.firstName + " " + this.$store.state.activeList.listOwner.lastName;
+        },   
+        // handleAdminButtonClick() {
+        //     console.log("Button clicked");
+        // },
+        openAddItemModal() {
+            this.showAddItemModal = true;
+        },
+        closeAddItemModal() {
+            this.showAddItemModal = false;
+        },
+        fetchAvailableItems() {
+            this.availableItems = [
+                { itemId: 1, itemName: 'Item A' },
+                { itemId: 2, itemName: 'Item B' },
+            ]
         }
     },
+    created() {
+        this.fetchAvailableItems();
+    }
 }
 </script>
   
@@ -274,6 +349,25 @@ export default {
 
 .custom-box {
     width: 100%;
+}
+.invite-title {
+  display: inline-block; 
+  padding-top: 6px; 
+  vertical-align: top;
+}
+.invites {
+  flex-grow: 3;
+  flex-shrink: 1;
+  flex-basis: 3;
+  margin-right: 25px;
+  margin-left: auto;
+  text-align: right;
+  margin-bottom: auto;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 10px;
 }
 
 h6 {

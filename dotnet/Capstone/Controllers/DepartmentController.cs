@@ -18,8 +18,7 @@ namespace Capstone.Controllers
         }
 
         [HttpGet]
-
-        public ActionResult<List<Department>> GetItemsByListId(int list_id)
+        public ActionResult<List<Department>> GetDepartments()
         {
             List<Department> output = new List<Department>();
             try

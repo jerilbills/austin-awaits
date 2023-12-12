@@ -6,6 +6,8 @@ using Capstone.Security;
 using System.Collections.Generic;
 using System.Net.NetworkInformation;
 using System;
+using System.Globalization;
+using Capstone.Exceptions;
 
 namespace Capstone.Controllers
 {
@@ -106,5 +108,113 @@ namespace Capstone.Controllers
             }
             return output;
         }
+
+
+        [HttpPost]
+        public ActionResult<ShoppingList> CreateShoppingList(ShoppingList newList)
+        {
+            ShoppingList added;
+            try
+            {
+                added = shoppingListDao.CreateShoppingList(newList);
+                return Created($"/{added.ListId}", added);
+            }
+            catch (System.Exception)
+            {
+
+                return StatusCode(500);
+            }
+            
+        }
+
+
+
+        [HttpGet("/list/active")]
+        [Authorize(Roles = "admin")]
+
+        public ActionResult<List<ShoppingList>> GetAllActiveShoppingLists()
+        {
+            List<ShoppingList> output = new List<ShoppingList>();
+            try
+            {
+                output = shoppingListDao.GetAllActiveShoppingLists();
+            }
+            catch (Exception)
+            {
+                return StatusCode(500);
+            }
+
+            return output;
+        }
+
+        [HttpGet("/list/completed")]
+        [Authorize(Roles = "admin")]
+
+        public ActionResult<List<ShoppingList>> GetAllCompletedShoppingLists()
+        {
+            List<ShoppingList> output = new List<ShoppingList>();
+            try
+            {
+                output = shoppingListDao.GetAllCompletedLists();
+            }
+            catch (Exception)
+            {
+                return StatusCode(500);
+            }
+
+            return output;
+        }
+
+        [HttpGet("/list/draft")]
+        [Authorize(Roles = "admin")]
+
+        public ActionResult<List<ShoppingList>> GetAllDraftShoppingLists()
+        {
+            List<ShoppingList> output = new List<ShoppingList>();
+            try
+            {
+                output = shoppingListDao.GetAllDraftLists();
+            }
+            catch (Exception)
+            {
+                return StatusCode(500);
+            }
+
+            return output;
+        }
+
+        [HttpDelete("{listId}")]
+        [Authorize(Roles = "admin")]
+        public ActionResult<int> DeleteShoppingListById(int listId)
+        {
+            int numberOfRows = 0;
+            try
+            {
+                numberOfRows = shoppingListDao.DeleteShoppingListByShoppingListId(listId);
+                return numberOfRows == 1 ? NoContent() : NotFound();
+            }
+            catch (Exception)
+            {
+                return StatusCode(500);
+            }
+        }
+
+        [HttpGet("{listId}")]
+
+        public ActionResult<ShoppingList> GetActiveShoppingListById(int listId)
+        {
+            ShoppingList output = new ShoppingList();
+            try
+            {
+                output = shoppingListDao.GetActiveShoppingListById(listId);
+            }
+            catch (Exception)
+            {
+                return StatusCode(500);
+            }
+
+            return output;
+        }
+
     }
 }

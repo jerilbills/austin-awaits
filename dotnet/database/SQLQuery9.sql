@@ -1,0 +1,12 @@
+/****** Script for SelectTopNRows command from SSMS  ******/
+SELECT TOP (1000) [item_id]
+      ,[item_name]
+      ,[item_description]
+      ,[item_image_url]
+      ,[is_tracked_inventory]
+      ,[created_by_user_id]
+      ,[created_date_utc]
+      ,[last_modified_by_user_id]
+      ,[last_modified_date_utc]
+      ,[is_active]
+  FROM [dummy_data].[dbo].[items]

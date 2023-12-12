@@ -11,6 +11,8 @@ import ListView from '../views/ListView.vue';
 import CompletedListView from '../views/CompletedListView.vue';
 import AdminKanbanView from '../views/AdminKanbanView.vue';
 import AdminCatalogView from '../views/AdminCatalogView.vue';
+import AdminCompletedListView from '../views/AdminCompletedListView.vue';
+import CreateNewListView from '../views/CreateNewListView.vue';
 /**
  * The Vue Router is used to "direct" the browser to render a specific view component
  * inside of App.vue depending on the URL.
@@ -66,7 +68,17 @@ const routes = [
     path:"/testing/catalog",
     name:"itemCatalog",
     component: AdminCatalogView,
-  }
+  },
+  {
+    path:"/testing/completed",
+    name:"completedLists",
+    component: AdminCompletedListView,
+  },
+  {
+    path:"/testing/create",
+    name:"createList",
+    component: CreateNewListView,
+  },
 ];
 
 // Create the router

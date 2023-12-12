@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Net.NetworkInformation;
+using System.Text.RegularExpressions;
 
 namespace Capstone.DAO
 {
@@ -24,7 +25,7 @@ namespace Capstone.DAO
         {
             string sql = "INSERT INTO lists (list_name, department_id, " +
                 "list_status_id, list_owner_user_id, due_date_utc, " +
-                "created_date_utc, last_modified_date_utc, is_active) " +
+                "created_date_utc, last_modified_date_utc, is_active) OUTPUT inserted.list_id " +
                 "VALUES (@list_name, @department_id, @list_status_id, " +
                 "@list_owner_user_id, @due_date, @created_date, " +
                 "@last_modified_date, @is_active)";
@@ -68,14 +69,85 @@ namespace Capstone.DAO
             throw new System.NotImplementedException();
         }
 
-        public int DeleteShoppingList(ShoppingList listToDelete)
+        public int DeleteShoppingListByShoppingListId(int shoppingListId)
         {
-            throw new System.NotImplementedException();
+            int numberOfRows = 0;
+            string listItemSql = "DELETE FROM list_items WHERE list_id = @list_id;";
+            string listSql = "DELETE FROM lists WHERE list_id = @list_id;";
+
+            try
+            {
+                using(SqlConnection conn = new SqlConnection(connectionString))
+                {
+                    conn.Open();
+                    SqlCommand cmd = new SqlCommand(listItemSql, conn);
+                    cmd.Parameters.AddWithValue("@list_id", shoppingListId);
+                    cmd.ExecuteNonQuery();
+
+                    cmd = new SqlCommand(listSql, conn);
+                    cmd.Parameters.AddWithValue("@list_id", shoppingListId);
+                    numberOfRows = cmd.ExecuteNonQuery();
+                }
+            }
+            catch (Exception)
+            {
+
+                throw new DaoException();
+            }
+
+            return numberOfRows;
+
         }
 
-        public List<ShoppingList> GetShoppingLists()
+        public List<ShoppingList> GetAllActiveShoppingLists()
         {
-            throw new System.NotImplementedException();
+            string sql = "SELECT lists.list_id, list_name, " +
+                "departments.department_id, list_status_id, " +
+                "list_owner_user_id, due_date_utc, lists.created_date_utc, " +
+                "lists.last_modified_date_utc, lists.is_active, username, " +
+                "user_role, first_name, last_name, avatar_url, " +
+                "lists.department_id, department_name, " +
+                "COUNT(list_items.item_id) AS number_of_items " +
+                "FROM lists LEFT JOIN users " +
+                "ON lists.list_owner_user_id = users.user_id " +
+                "LEFT JOIN departments " +
+                "ON lists.department_id = departments.department_id " +
+                "LEFT JOIN list_items " +
+                "ON lists.list_id = list_items.list_id " +
+                "WHERE lists.is_active = 1 " +
+                "GROUP BY lists.list_id, lists.list_name, lists.department_id, " +
+                "departments.department_id, departments.department_name, " +
+                "lists.list_status_id, lists.list_owner_user_id, " +
+                "lists.due_date_utc, lists.created_date_utc, " +
+                "lists.last_modified_date_utc, lists.is_active, users.username, " +
+                "users.user_role, users.first_name, users.last_name, " +
+                "users.avatar_url; ";
+
+            List<ShoppingList> output = new List<ShoppingList>();
+
+            try
+            {
+                using (SqlConnection conn = new SqlConnection(connectionString))
+                {
+                    conn.Open();
+                    SqlCommand cmd = new SqlCommand(sql, conn);
+
+                    SqlDataReader reader = cmd.ExecuteReader();
+
+                    while(reader.Read())
+                    {
+                        ShoppingList shoppingList = MapRowToShoppingList(reader);
+                        output.Add(shoppingList);
+                    }
+                }
+            }
+            catch (Exception)
+            {
+
+                throw new DaoException();
+            }
+
+            return output;
         }
 
         public ShoppingList PurchaseItem(Item itemToPurchase)
@@ -95,7 +167,7 @@ namespace Capstone.DAO
                         JOIN departments AS D ON D.department_id = L.department_id
                         JOIN users ON L.list_owner_user_id = users.user_id
                         LEFT JOIN list_items AS LI ON LI.list_id = L.list_id
-                        WHERE L.list_id = @listId AND L.is_active = 1 AND LI.is_active = 1 
+                        WHERE L.list_id = @listId AND L.is_active = 1 AND (LI.item_id IS NULL OR LI.is_active = 1) 
                         GROUP BY L.list_id, L.list_name, L.department_id, D.department_name,
                         L.list_status_id, L.list_owner_user_id, L.due_date_utc,
                         L.created_date_utc, L.last_modified_date_utc, L.is_active, 
@@ -161,6 +233,7 @@ namespace Capstone.DAO
                 }
                 else
                 {
+
                     output = GetActiveShoppingListById(listToUpdate.ListId);
                 }
             }
@@ -271,6 +344,106 @@ namespace Capstone.DAO
 
         }
 
+        public List<ShoppingList> GetAllCompletedLists()
+        {
+            List<ShoppingList> output = new List<ShoppingList>();
+            string sql = "SELECT lists.list_id, list_name, " +
+                "departments.department_id, list_status_id, " +
+                "list_owner_user_id, due_date_utc, lists.created_date_utc, " +
+                "lists.last_modified_date_utc, lists.is_active, username, " +
+                "user_role, first_name, last_name, avatar_url, " +
+                "lists.department_id, department_name, " +
+                "COUNT(list_items.item_id) AS number_of_items " +
+                "FROM lists LEFT JOIN users " +
+                "ON lists.list_owner_user_id = users.user_id " +
+                "LEFT JOIN departments " +
+                "ON lists.department_id = departments.department_id " +
+                "LEFT JOIN list_items " +
+                "ON lists.list_id = list_items.list_id " +
+                "WHERE list_status_id = 3 " +
+                "GROUP BY lists.list_id, lists.list_name, lists.department_id, " +
+                "departments.department_id, departments.department_name, " +
+                "lists.list_status_id, lists.list_owner_user_id, " +
+                "lists.due_date_utc, lists.created_date_utc, " +
+                "lists.last_modified_date_utc, lists.is_active, users.username, " +
+                "users.user_role, users.first_name, users.last_name, " +
+                "users.avatar_url; ";
+
+            try
+            {
+                using (SqlConnection conn = new SqlConnection(connectionString))
+                {
+                    conn.Open();
+                    SqlCommand cmd = new SqlCommand(sql, conn);
+
+                    SqlDataReader reader = cmd.ExecuteReader();
+
+                    while (reader.Read())
+                    {
+                        ShoppingList shoppingList = MapRowToShoppingList(reader);
+                        output.Add(shoppingList);
+                    }
+                }
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+
+            return output;
+        }
+
+        public List<ShoppingList> GetAllDraftLists()
+        {
+            List<ShoppingList> output = new List<ShoppingList>();
+            string sql = "SELECT lists.list_id, list_name, " +
+                "departments.department_id, list_status_id, " +
+                "list_owner_user_id, due_date_utc, lists.created_date_utc, " +
+                "lists.last_modified_date_utc, lists.is_active, username, " +
+                "user_role, first_name, last_name, avatar_url, " +
+                "lists.department_id, department_name, " +
+                "COUNT(list_items.item_id) AS number_of_items " +
+                "FROM lists LEFT JOIN users " +
+                "ON lists.list_owner_user_id = users.user_id " +
+                "LEFT JOIN departments " +
+                "ON lists.department_id = departments.department_id " +
+                "LEFT JOIN list_items " +
+                "ON lists.list_id = list_items.list_id " +
+                "WHERE list_status_id = 1 " +
+                "GROUP BY lists.list_id, lists.list_name, lists.department_id, " +
+                "departments.department_id, departments.department_name, " +
+                "lists.list_status_id, lists.list_owner_user_id, " +
+                "lists.due_date_utc, lists.created_date_utc, " +
+                "lists.last_modified_date_utc, lists.is_active, users.username, " +
+                "users.user_role, users.first_name, users.last_name, " +
+                "users.avatar_url; ";
+
+            try
+            {
+                using (SqlConnection conn = new SqlConnection(connectionString))
+                {
+                    conn.Open();
+                    SqlCommand cmd = new SqlCommand(sql, conn);
+
+                    SqlDataReader reader = cmd.ExecuteReader();
+
+                    while (reader.Read())
+                    {
+                        ShoppingList shoppingList = MapRowToShoppingList(reader);
+                        output.Add(shoppingList);
+                    }
+                }
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+
+            return output;
+        }
+
         public ShoppingList MapRowToShoppingList(SqlDataReader reader)
         {
             ShoppingList shoppingList = new ShoppingList();
@@ -301,5 +474,6 @@ namespace Capstone.DAO
 
             return shoppingList;
         }
+
     }
 }

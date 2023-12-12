@@ -1,121 +1,180 @@
 <template>
-    <div class="modal-container">
-        <div class="modal-content">
-            <label for="item-name">Item Name</label>
-        </div>
-    </div>
+  <div class="modal" :class="{ 'is-active': showModal }">
+    <div class="modal-background" @click="hideModal"></div>
+    <div class="modal-content">
+      <div class="box">
+        <h2>Add New Item</h2>
+        <form @submit.prevent="addItem">
 
-    <div class="button-container">
-        <button type="button" class="close-button" @click="closeItemModal">
-            <span aria-hidden="true">&times;</span>
-        </button>
+          <!-- Item Name -->
+          <div class="field">
+            <label class="label">Item Name:</label>
+            <div class="control">
+              <input class="input" v-model="newItemName" @blur="getImages(newItemName)" required />
+            </div>
+          </div>
+
+          <!-- Item Description -->
+          <div class="field">
+            <label class="label">Item Description:</label>
+            <div class="control">
+              <textarea class="textarea" v-model="newItemDescription" required></textarea>
+            </div>
+          </div>
+
+          <!-- Item Image -->
+          <div class="item-image">
+            <div class="field">
+              <label class="label">Select Item Image:</label>
+              <div class="control image-options">
+                <div v-for="(image, index) in displayedImages" :key="image.id" class="image-option">
+                  <img :src="image" alt="Potential Image" @click="selectImage(image)"
+                    :class="{ 'selected': image === newItemImage }" />
+                </div>
+              </div>
+            </div>
+
+            <!-- Pagination Controls -->
+            <div class="pagination" v-if="totalPages > 1">
+              <button @click="prevPage" :disabled="currentPage === 1" class="button is-primary is-small">
+                Previous
+              </button>
+              <span v-if="totalPages > 0">{{ currentPage }} of {{ totalPages }}</span>
+              <button @click="nextPage" :disabled="currentPage === totalPages" class="button is-primary is-small"
+                type="button">
+                Next
+              </button>
+            </div>
+          </div>
+          
+
+          <!-- Submit and Cancel Buttons -->
+          <div class="field is-grouped">
+            <div class="control">
+              <button type="submit" class="button is-primary">Submit</button>
+            </div>
+            <div class="control">
+              <button @click="hideModal" class="button is-link">Cancel</button>
+            </div>
+          </div>
+        </form>
+      </div>
     </div>
+    <button class="modal-close is-large" aria-label="close" @click="hideModal"></button>
+  </div>
 </template>
   
 <script>
+import ImageService from '../services/ImageService';
+
 export default {
-    props: ['item'],
-    data() {
-        return {};
+  props: {
+    showModal: Boolean,
+    hideModal: Function,
+    addNewItem: Function
+  },
+  data() {
+    return {
+      newItemName: "",
+      newItemDescription: "",
+      newItemImage: "",
+      potentialImages: [],
+      itemsPerPage: 3,
+      currentPage: 1,
+      numberOfPages: 0,
+    };
+  },
+  computed: {
+    totalPages() {
+      return Math.ceil((this.potentialImages.images || []).length / this.itemsPerPage);
     },
-    methods: {
-        closeItemModal() {
-            this.$emit('close');
-        },
-        showItemStatus(item) {
-            if (item.listItemStatusId === 1) {
-                return 'Needed';
-            } else if (item.listItemStatusId === 2) {
-                return "Claimed";
-            } else if (item.listItemStatusId === 3) {
-                return "Purchased";
-            }
-        }
+    displayedImages() {
+      const startIndex = (this.currentPage - 1) * this.itemsPerPage;
+      const endIndex = startIndex + this.itemsPerPage;
+
+      if (this.potentialImages && this.potentialImages.images) {
+        return this.potentialImages.images.slice(startIndex, endIndex);
+      } else {
+        return [];
+      }
     },
+  },
+  methods: {
+    addItem() {
+      const newItem = {
+        name: this.newItemName,
+        itemImage: this.newItemImage,
+        itemDescription: this.newItemDescription
+      };
+
+      this.newItemName = "";
+      this.newItemDescription = "";
+      this.newItemImage = "";
+      this.potentialImages = [];
+
+      this.hideModal();
+    },
+    selectImage(imageUrl) {
+      this.newItemImage = imageUrl;
+    },
+    prevPage() {
+      if (this.currentPage > 1) {
+        this.currentPage--;
+      }
+    },
+    nextPage() {
+      if (this.currentPage < this.totalPages) {
+        this.currentPage++;
+      }
+    },
+    getImages(itemName) {
+      const payload = {
+        "itemName": itemName
+      };
+      ImageService.getPotentialImages(payload)
+        .then(response => {
+          this.potentialImages = response.data;
+        })
+        .catch(error => {
+          console.error('Error fetching potential images:', error);
+        });
+    },
+  },
 };
 </script>
   
 <style scoped>
-.modal-container {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 999;
-    /* Ensure it appears above other content */
+.modal {
 }
-
 .modal-content {
-    background-color: #fff;
-    padding: 20px;
-    border-radius: 5px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-    max-width: 900px;
-    width: 100%;
-    position: relative;
+  max-width: 800px;
+  margin: 0 auto;
 }
 
-.flex-container {
-    display: flex;
+
+.image-options {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-start;
 }
 
-.modal-image {
-    width: 250px;
-    height: auto;
-    margin-right: 30px;
+.image-option {
+  margin-right: 10px;
 }
 
-.text-container {
-    flex: 1;
+.image-option img {
+  cursor: pointer;
+  border: 2px solid transparent;
+  width: auto;
+  height: 150px;
+  cursor: pointer;
 }
 
-.button-container {
-    position: absolute;
-    top: 10px;
-    right: 10px;
+.image-option img.selected {
+  border: 2px solid #bf5700;
 }
-
-.close-button {
-    background-color: #bf5700;
-    color: #fff;
-}
-
-.item-name {
-    font-size: 24px;
-    font-weight: 600;
-    margin-bottom: 15px;
-}
-
-.item-status {
-    font-size: 14px;
-    font-weight: 400;
-    margin-bottom: 15px;
-}
-
-.item-quantity {
-    font-size: 14px;
-    font-weight: 400;
-    margin-bottom: 15px;
-}
-
-.item-description {
-    font-size: 16px;
-    margin-bottom: 60px;
-}
-
-.last-modified {
-    font-size: 10px;
-    font-weight: 400;
-    margin-bottom: 15px;
-}
-
-button:hover {
-    cursor: pointer;
+.item-image {
+  height:260px
 }
 </style>
   

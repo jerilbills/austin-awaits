@@ -16,18 +16,24 @@
         </div>
         <div>
             <!-- <li class="add-list-button" @click="addListModal">Create New List</li> -->
-            <button class="button is-secondary is-small"  style="margin-top:20px; margin-bottom: 20px;">Create New List</button>
+            <RouterLink to="create">
+
+                <button class="button is-secondary is-small" style="margin-top:20px; margin-bottom: 20px;">Create New
+                    List</button>
+            </RouterLink>
+
+
         </div>
 
         <div class="admin">
             <em>ADMIN</em>
             <ul>
-                <router-link to="testing">
+                <router-link to="">
                     <li class="completed">View Completed Lists</li>
                 </router-link>
             </ul>
             <ul>
-                <router-link to="catalog">
+                <router-link to="/testing/catalog">
                     <li class="completed">View Item Catalog</li>
                 </router-link>
             </ul>
@@ -38,8 +44,10 @@
             </ul>
         </div>
 
+        <!--ADD LIST MODAL-->
+        <AddListModal v-if="showListModal" @close-modal="hideModal()" />
 
-        
+
 
         <div>&nbsp;</div>
     </div>
@@ -48,14 +56,17 @@
 <script>
 import ShoppingListService from '../services/ShoppingListService';
 import DepartmentService from '../services/DepartmentService';
+import AddListModal from './AddListModal.vue';
 
 export default {
+    components: { AddListModal },
     data() {
         return {
             lists: [],
             invitedLists: [],
             selectedOption: null,
             departments: [],
+            showListModal: false,
         };
     },
 
@@ -131,6 +142,13 @@ export default {
         inProgressListsByDepartment(department) {
             return this.lists.filter((list) => list.departmentName === department && list.status == 2);
         },
+        showModal() {
+            console.log("ShowModal")
+            this.isModalVisible = true;
+        },
+        hideModal() {
+            this.isModalVisible = false;
+        }
     },
 };
 </script>
@@ -142,9 +160,7 @@ export default {
     color: #FFF;
     padding: 25px;
     position: fixed;
-    /* Set position to fixed */
     top: 25px;
-    /* Pin to the top of the viewport */
     left: 0;
     height: 100%;
     font-family: 'Barlow', sans-serif;
