@@ -49,10 +49,11 @@
 
                 <div class="add-item-button">
                     <button v-if="column.title == 'Items Needed' && this.$store.state.user.role === 'admin'"
-                        class="button is-primary is-small"><i class="fa-solid fa-circle-plus" @click="addItemModal()">
-                        </i> Add Item</button>
+                        class="button is-primary is-small" @click="openAddItemModal()">
+                        <i class="fa-solid fa-circle-plus"></i> Add Item
+                    </button>
                 </div>
-                
+
                 <!-- SNACKBAR ALERTS-->
                 <div id="snackbar-purchased">Items cannot be removed from Purchased.</div>
                 <div id="snackbar-claimed">You are not the owner of this item.</div>
@@ -62,6 +63,8 @@
                 <!-- MODALS -->
                 <ItemDetailsModal v-if="showItemModal" :item="selectedItem" @close="closeItemModal" />
                 <InviteUserToListModal v-if="showInviteUserToListModal" @close="closeInviteUserToListModal" />
+                <ListAddItemModal :isModalOpen="showAddItemModal" :closeModal="closeAddItemModal" :availableItems="availableItems"
+                    @item-added="handleItemAdded" />
             </div>
         </div>
     </div>
@@ -71,12 +74,14 @@
 import ShoppingListService from '../services/ShoppingListService';
 import ItemDetailsModal from './ItemDetailsModal.vue';
 import InviteUserToListModal from './InviteUserToListModal.vue';
+import ListAddItemModal from './ListAddItemModal.vue';
 
 export default {
     name: 'AdminKanbanBoard',
     components: {
         ItemDetailsModal,
-        InviteUserToListModal
+        InviteUserToListModal,
+        ListAddItemModal
     },
     data() {
         return {
@@ -84,6 +89,8 @@ export default {
             showInviteUserToListModal: false,
             selectedItem: null,
             dragCounter: 0,
+            showAddItemModal: false,
+            availableItems: [],
         };
     },
     computed: {
@@ -259,8 +266,23 @@ export default {
         },
         handleAdminButtonClick() {
             console.log("Button clicked");
+        },
+        openAddItemModal() {
+            this.showAddItemModal = true;
+        },
+        closeAddItemModal() {
+            this.showAddItemModal = false;
+        },
+        fetchAvailableItems() {
+            this.availableItems = [
+                { itemId: 1, itemName: 'Item A' },
+                { itemId: 2, itemName: 'Item B' },
+            ]
         }
     },
+    created() {
+        this.fetchAvailableItems();
+    }
 }
 </script>
   

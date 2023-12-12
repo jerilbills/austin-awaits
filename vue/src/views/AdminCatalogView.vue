@@ -28,7 +28,7 @@
                         </thead>
                         <tbody>
                             <tr v-for="(item, index) in paginatedItems" :key="index">
-                                <td @click="navigateTo(item.listId)">{{ item.name }}</td>
+                                <td @click="showModalWithItem(item)">{{ item.name }}</td>
                                 <td>
                                     <img :src="item.itemImage" alt="Item Image"
                                         style="max-width: 100px; max-height: 100px;" />
@@ -64,6 +64,7 @@ import AdminKanbanBoard from "../components/AdminKanbanBoard.vue";
 import AdminSidebar from "../components/AdminSidebar.vue";
 import LoadingOverlay from "../components/LoadingOverlay.vue";
 import AddItemModal from "../components/AddItemModal.vue";
+import ImageService from "../services/ImageService.js";
 
 
 export default {
@@ -80,9 +81,10 @@ export default {
         return {
             searchTerm: '',
             loading: false,
-            itemsPerPage: 10,
+            itemsPerPage: 12,
             currentPage: 1,
             modalVisible: false,
+            selectedItem: null,
             items: [
                 {
                     name: 'Item 1',
@@ -188,7 +190,8 @@ export default {
             const startIndex = (this.currentPage - 1) * this.itemsPerPage;
             const endIndex = startIndex + this.itemsPerPage;
             return this.filteredItems.slice(startIndex, endIndex);
-        }
+        },
+
     },
     methods: {
         addNewItem() {
@@ -204,7 +207,12 @@ export default {
                 this.currentPage++;
             }
         },
-        showModal() {
+        showModal(item) {
+            this.selectedItem = item;
+            this.modalVisible = true;
+        },
+        showModalWithItem(item) {
+            this.selectedItem = item;
             this.modalVisible = true;
         },
         hideModal() {
@@ -228,6 +236,7 @@ export default {
     background-color: #FFFFFF;
     background-position: right bottom;
     background-repeat: no-repeat;
+    overflow-x: hidden;
 }
 
 .table-buttons {
@@ -243,6 +252,7 @@ export default {
 
 .table-container {
     margin-top: 30px;
+    overflow-x: hidden;
 }
 
 .input {
