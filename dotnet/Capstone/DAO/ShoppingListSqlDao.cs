@@ -112,7 +112,7 @@ namespace Capstone.DAO
                 "ON lists.department_id = departments.department_id " +
                 "LEFT JOIN list_items " +
                 "ON lists.list_id = list_items.list_id " +
-                "WHERE lists.is_active = 1 " +
+                "WHERE lists.is_active = 1 AND lists.list_status_id = 2" +
                 "GROUP BY lists.list_id, lists.list_name, lists.department_id, " +
                 "departments.department_id, departments.department_name, " +
                 "lists.list_status_id, lists.list_owner_user_id, " +

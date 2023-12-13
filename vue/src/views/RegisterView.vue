@@ -39,13 +39,33 @@
 
         <div class="field is-horizontal" >
           <div class="field-label is-normal">
+            <div class="label">Role&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
+          </div>
+          <div class="field-body">
+            <div class="field">
+              <div class="control">
+                <label class="radio" for="userrole">
+                <input type="radio" id="userrole" name="role" value="user" v-model="user.role" checked>
+                  Purchaser
+                </label>
+                  <label class="radio" for="adminrole">
+                <input type="radio" id="adminrole" name="role" value="admin" v-model="user.role" @click="setAdminDepartment()">
+                Boss Hog
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="field is-horizontal" >
+          <div class="field-label is-normal">
             <label for="department" class="label">Department</label>
           </div>
           <div class="field-body">
             <div class="field">
               <div class="control is-expanded has-icons-left">
                 <div class="select">
-                  <select id="department" name="department" v-model="user.departmentId" required>
+                  <select id="department" name="department" v-model="user.departmentId" :disabled="user.role == 'admin'">
                     <option v-for="dept in departments" :key="dept.departmentId" :value="dept.departmentId">
                       {{ dept.departmentName }}
                     </option>
@@ -150,7 +170,7 @@ export default {
         password: '',
         firstName: '',
         lastName: '',
-        departmentId: 0,
+        departmentId: -1,
         confirmPassword: '',
         role: 'user',
       },
@@ -165,7 +185,8 @@ export default {
   },
   computed: {
     hasRequiredFields() {
-      return this.user.firstName && this.user.lastName && this.user.username && (this.departments.length == 0 || this.user.departmentId) && this.user.password && this.user.confirmPassword;
+      let hasAppropriateDepartment = this.user.role == 'admin' ? this.user.departmentId == 0 : this.user.departmentId > 0; 
+      return this.user.firstName && this.user.lastName && this.user.username && hasAppropriateDepartment && this.user.password && this.user.confirmPassword;
     }
   },
   methods: {
@@ -239,6 +260,9 @@ export default {
     isPasswordComplexEnough() {
       let passwordRequirements = new RegExp('(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.{8,})');
       return passwordRequirements.test(this.user.password);
+    },
+    setAdminDepartment() {
+      this.user.departmentId = 0;
     }
   },
   created() {

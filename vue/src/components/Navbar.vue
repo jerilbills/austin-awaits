@@ -11,8 +11,11 @@
       <div class="navbar-end ">
         <div class="navbar-item">
           <div class="buttons">
-            <span class="is-size-7 welcome">Welcome, {{ $store.state.user.firstName }} {{ $store.state.user.lastName }} {{
-              userDepartmentName ? "(" + userDepartmentName + ")" : "" }}</span>
+            <span class="is-size-7 welcome">
+              Welcome, {{ $store.state.user.firstName }} {{ $store.state.user.lastName }} 
+              {{userDepartmentName ? "(" + userDepartmentName + ")" : "" }} 
+              {{ $store.state.user.departmentId == 0 ? "(Boss Hog)" : "" }}
+          </span>
             <!-- May add functionality in future 
               <a class="navbar-item" href="/">
               My Account

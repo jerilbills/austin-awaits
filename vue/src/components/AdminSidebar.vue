@@ -45,6 +45,10 @@
             </ul>
         </div>
 
+        <div class="boss-hog">
+            <img src="../assets/like-a-boss.png" alt="Work Like a Boss" width="100">
+        </div>
+
         <!--ADD LIST MODAL-->
         <AddListModal v-if="showListModal" @close-modal="hideModal()" />
 
@@ -168,7 +172,7 @@ export default {
 <style scoped>
 .sidebar {
     width: 250px;
-    background-color: #4C8077;
+    background-color: #000;
     color: #FFF;
     padding: 25px;
     position: fixed;
@@ -235,6 +239,10 @@ em {
     font-size: medium;
     font-weight: bold;
     font-style: normal;
+}
+
+.boss-hog {
+    text-align: center;
 }
 </style>
     
