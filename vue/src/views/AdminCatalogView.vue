@@ -40,16 +40,15 @@
 
                     <!-- Pagination Controls -->
                     <div class="pagination">
-                        <button @click="prevPage" :disabled="currentPage === 1" class="button is-primary is-small">Previous</button>
+                        <button @click="prevPage" :disabled="currentPage === 1"
+                            class="button is-primary is-small">Previous</button>
                         <span>{{ currentPage }} of {{ totalPages }}</span>
-                        <button @click="nextPage" :disabled="currentPage === totalPages" class="button is-primary is-small">Next</button>
+                        <button @click="nextPage" :disabled="currentPage === totalPages"
+                            class="button is-primary is-small">Next</button>
                     </div>
 
                     <div>
-                        <AddItemModal 
-                        :showModal="modalVisible"
-                        :hideModal="hideModal"
-                        :addNewItem="addNewItem"/>
+                        <AddItemModal :showModal="modalVisible" :hideModal="hideModal" :addNewItem="addNewItem" />
                     </div>
                 </div>
             </div>
@@ -65,7 +64,7 @@ import AdminSidebar from "../components/AdminSidebar.vue";
 import LoadingOverlay from "../components/LoadingOverlay.vue";
 import AddItemModal from "../components/AddItemModal.vue";
 import ImageService from "../services/ImageService.js";
-
+import ItemService from "../services/ItemService";
 
 export default {
     components: {
@@ -85,96 +84,7 @@ export default {
             currentPage: 1,
             modalVisible: false,
             selectedItem: null,
-            items: [
-                {
-                    name: 'Item 1',
-                    itemImage: 'https://via.placeholder.com/150x150',
-                    itemDescription: 'This is the first item in the catalog'
-                },
-                {
-                    name: 'Item 2',
-                    itemImage: 'https://via.placeholder.com/150x150',
-                    itemDescription: 'This is the second item in the catalog'
-
-                },
-                {
-                    name: 'Item 3',
-                    itemImage: 'https://via.placeholder.com/150x150',
-                    itemDescription: 'This is the third item in the catalog'
-                },
-                {
-                    name: 'Item 4',
-                    itemImage: 'https://via.placeholder.com/150x150',
-                    itemDescription: 'This is the fourth item in the catalog'
-
-                },
-                {
-                    name: 'Item 5',
-                    itemImage: 'https://via.placeholder.com/150x150',
-                    itemDescription: 'This is the fifth item in the catalog'
-                },
-                {
-                    name: 'Item 6',
-                    itemImage: 'https://via.placeholder.com/150x150',
-                    itemDescription: 'This is the sixth item in the catalog'
-
-                },
-                {
-                    name: 'Item 7',
-                    itemImage: 'https://via.placeholder.com/150x150',
-                    itemDescription: 'This is the seventh item in the catalog'
-                },
-                {
-                    name: 'Item 8',
-                    itemImage: 'https://via.placeholder.com/150x150',
-                    itemDescription: 'This is the eighth item in the catalog'
-
-                },
-                {
-                    name: 'Item 9',
-                    itemImage: 'https://via.placeholder.com/150x150',
-                    itemDescription: 'This is the ninth item in the catalog'
-                },
-                {
-                    name: 'Item 10',
-                    itemImage: 'https://via.placeholder.com/150x150',
-                    itemDescription: 'This is the tenth item in the catalog'
-
-                },
-                {
-                    name: 'Item 11',
-                    itemImage: 'https://via.placeholder.com/150x150',
-                    itemDescription: 'This is the eleventh item in the catalog'
-                },
-                {
-                    name: 'Item 12',
-                    itemImage: 'https://via.placeholder.com/150x150',
-                    itemDescription: 'This is the twelfth item in the catalog'
-
-                },
-                {
-                    name: 'Item 13',
-                    itemImage: 'https://via.placeholder.com/150x150',
-                    itemDescription: 'This is the thirteenth item in the catalog'
-                },
-                {
-                    name: 'Item 14',
-                    itemImage: 'https://via.placeholder.com/150x150',
-                    itemDescription: 'This is the fourteenth item in the catalog'
-
-                },
-                {
-                    name: 'Item 15',
-                    itemImage: 'https://via.placeholder.com/150x150',
-                    itemDescription: 'This is the fifteenth item in the catalog'
-                },
-                {
-                    name: 'Item 16',
-                    itemImage: 'https://via.placeholder.com/150x150',
-                    itemDescription: 'This is the sixteenth item in the catalog'
-
-                },
-            ],
+            items: [],
         }
     },
     computed: {
@@ -220,8 +130,14 @@ export default {
         }
     },
     created() {
-
-    }
+        ItemService.getAllItems()
+            .then(response => {
+                this.items = response.data;
+            })
+            .catch(error => {
+                console.error("Error retrieving items", error);
+            });
+    },
 };
 </script>
   

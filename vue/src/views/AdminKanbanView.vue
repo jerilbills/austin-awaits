@@ -8,7 +8,7 @@
             <AdminSidebar :key="$store.state.sideBarRefreshKey" />
 
             <!-- KanbanBoard component goes here -->
-            <AdminKanbanBoard />
+            <KanbanBoard />
 
         </div>
     </div>
@@ -18,12 +18,14 @@
 import Navbar from "../components/Navbar.vue";
 import AdminKanbanBoard from "../components/AdminKanbanBoard.vue";
 import AdminSidebar from "../components/AdminSidebar.vue";
+import KanbanBoard from "../components/KanbanBoard.vue";
 
 export default {
     components: {
         Navbar,
         AdminKanbanBoard,
-        AdminSidebar
+        AdminSidebar,
+        KanbanBoard
     },
 };
 </script>

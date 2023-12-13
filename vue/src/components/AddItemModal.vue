@@ -29,7 +29,7 @@
               <div class="control image-options">
                 <div v-for="(image, index) in displayedImages" :key="image.id" class="image-option">
                   <img :src="image" alt="Potential Image" @click="selectImage(image)"
-                    :class="{ 'selected': image === newItemImage }" />
+                    :class="{ 'selected': image === newImgUrl }" />
                 </div>
               </div>
             </div>
@@ -51,7 +51,7 @@
           <!-- Submit and Cancel Buttons -->
           <div class="field is-grouped">
             <div class="control">
-              <button type="submit" class="button is-primary">Submit</button>
+              <button type="submit" class="button is-primary" @click="addNewItem()">Submit</button>
             </div>
             <div class="control">
               <button @click="hideModal" class="button is-link">Cancel</button>
@@ -66,6 +66,7 @@
   
 <script>
 import ImageService from '../services/ImageService';
+import ItemService from '../services/ItemService';
 
 export default {
   props: {
@@ -77,7 +78,7 @@ export default {
     return {
       newItemName: "",
       newItemDescription: "",
-      newItemImage: "",
+      newImgUrl: "",
       potentialImages: [],
       itemsPerPage: 3,
       currentPage: 1,
@@ -101,21 +102,34 @@ export default {
   },
   methods: {
     addItem() {
+      if(!this.newItemName || !this.newItemDescription || !this.newImgUrl) {
+        console.error("All fields are required");
+      }
+      
       const newItem = {
         name: this.newItemName,
-        itemImage: this.newItemImage,
-        itemDescription: this.newItemDescription
+        imgUrl: this.newImgUrl,
+        description: this.newItemDescription,
+        createdBy: this.$store.state.user.userId,
       };
-
-      this.newItemName = "";
-      this.newItemDescription = "";
-      this.newItemImage = "";
-      this.potentialImages = [];
-
-      this.hideModal();
+      
+      ItemService.addItemToCatalog(newItem)
+      .then(response => {
+        console.log("Item added successfully",response.data);
+        
+        this.newItemName = "";
+        this.newItemDescription = "";
+        this.newImgUrl = "";
+        this.potentialImages = [];
+        
+        this.hideModal();
+      })
+      .catch(error => {
+        console.error("Error adding item", error);
+      });
     },
     selectImage(imageUrl) {
-      this.newItemImage = imageUrl;
+      this.newImgUrl = imageUrl;
     },
     prevPage() {
       if (this.currentPage > 1) {

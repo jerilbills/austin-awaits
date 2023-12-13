@@ -2,11 +2,13 @@
   <div class="modal" :class="{ 'is-active': isModalOpen }">
     <div class="modal-background" @click="closeModal"></div>
     <div class="modal-content" style="background-color: #ffffff; max-width: 500px; padding: 20px;">
-      <button class="delete is-large" aria-label="close" @click="closeModal" style="position: absolute; top: 10px; right: 10px;"></button>      <div class="field">
+      <button class="delete is-large" aria-label="close" @click="closeModal"
+        style="position: absolute; top: 10px; right: 10px;"></button>
+      <div class="field">
         <label class="item-name">Item Name</label>
-        <select class="select" v-model="selectedItem" required>
+        <select class="select" v-model="selectedItemId" required>
           <option v-for="item in availableItems" :key="item.itemId" :value="item.itemId">
-            {{ item.itemName }}
+            {{ item.name }}
           </option>
         </select>
       </div>
@@ -35,12 +37,12 @@ export default {
   },
   methods: {
     addItem() {
-      if (!this.selectedItem) {
-        // Handle the case where no item is selected
+      if (!this.selectedItemId) {
         return;
       }
+      const selectedItem = this.availableItems.find(item => item.itemId === this.selectedItemId);
       const newItem = {
-        name: this.availableItems.find(item => item.itemId === this.selectedItem).itemName,
+        name: selectedItem.name,
         quantity: this.itemQuantity,
       };
       this.$emit("item-added", newItem);

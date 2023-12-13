@@ -31,6 +31,10 @@ export default {
 
     getCompletedListsByDepartment(departmentId) {
         return axios.get('/department/' + departmentId + '/list?status=3')
-    }
+    },
+    
+    getAllActiveLists(){
+        return axios.get('/list/active')
+    },
   
   }
