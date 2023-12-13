@@ -67,7 +67,7 @@
                 <ItemDetailsModal v-if="showItemModal" :item="selectedItem" @close="closeItemModal" />
                 <InviteUserToListModal v-if="showInviteUserToListModal" @close="closeInviteUserToListModal" />
                 <ListAddItemModal :isModalOpen="showAddItemModal" :closeModal="closeAddItemModal"
-                    :availableItems="availableItems" @item-added="handleItemAdded" />
+                    :itemsThatCanBeAdded="itemsThatCanBeAdded" @item-added="handleItemAdded" />
             </div>
         </div>
     </div>
@@ -100,6 +100,12 @@ export default {
         };
     },
     computed: {
+        itemsThatCanBeAdded() {
+          return this.availableItems.filter((item) => { return item.itemId != this.itemsIdsAlreadyInList.find((existingItemId) => { return existingItemId == item.itemId }) });
+        },
+        itemsIdsAlreadyInList() {
+            return this.$store.state.activeItems.map((item) => { return item.itemId });
+        },
         isDraggedOver() {
             return this.dragCounter > 0;
         },
@@ -335,12 +341,13 @@ export default {
     created() {
         ItemService.getAllItems()
             .then(response => {
-                this.availableItems = response.data;
+                this.availableItems = response.data.sort((a, b) => (a.name > b.name) ? 1 : -1);
+                console.log(this.availableItems);
             })
             .catch(error => {
                 console.error("Error retrieving items", error);
             });
-    }
+    },
 }
 </script>
 

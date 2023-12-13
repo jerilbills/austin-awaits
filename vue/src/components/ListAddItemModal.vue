@@ -14,7 +14,7 @@
               <div class="control is-expanded">
                 <div class="select">
                   <select id="item" name="item" v-model="selectedItemId" required>
-                    <option v-for="item in availableItems" :key="item.itemId" :value="item.itemId">
+                    <option v-for="item in itemsThatCanBeAdded" :key="item.itemId" :value="item.itemId">
                       {{ item.name }}
                     </option>
                   </select>                
@@ -48,7 +48,7 @@ export default {
   props: {
     isModalOpen: Boolean,
     closeModal: Function,
-    availableItems: Array,
+    itemsThatCanBeAdded: Array,
   },
   data() {
     return {
