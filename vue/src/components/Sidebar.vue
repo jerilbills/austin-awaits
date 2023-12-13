@@ -37,7 +37,7 @@
     </ul>
     <div>&nbsp;</div>
     <ul>
-      <router-link to="completedlists">
+      <router-link to="completed">
         <li class="completed">Completed Lists</li>
       </router-link>
     </ul>

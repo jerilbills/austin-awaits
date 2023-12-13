@@ -206,6 +206,7 @@ export default {
         completeList() {
             this.showListCompletedSnackbar();
             this.$store.state.activeList.status = 3;
+            setTimeout(() => {
             ShoppingListService
                 .updateList(this.$store.state.activeList)
                 .then(response => {
@@ -216,6 +217,7 @@ export default {
                 .catch(error => {
                     console.error('Error updating list:', error);
                 })
+            }, 4000);
         },
         updateItemStatus(columnStatusId) {
             const formattedDate = new Date().toISOString();

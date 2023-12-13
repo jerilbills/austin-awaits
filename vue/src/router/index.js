@@ -1,18 +1,18 @@
-import { createRouter as createRouter, createWebHistory } from 'vue-router'
-import { useStore } from 'vuex'
+import { createRouter as createRouter, createWebHistory } from "vue-router";
+import { useStore } from "vuex";
 
 // Import components
-import HomeView from '../views/HomeView.vue';
-import LoginView from '../views/LoginView.vue';
-import LogoutView from '../views/LogoutView.vue';
-import RegisterView from '../views/RegisterView.vue';
-import DepartmentListView from '../views/DepartmentListView.vue';
-import ListView from '../views/ListView.vue';
-import CompletedListView from '../views/CompletedListView.vue';
-import AdminKanbanView from '../views/AdminKanbanView.vue';
-import AdminCatalogView from '../views/AdminCatalogView.vue';
-import AdminCompletedListView from '../views/AdminCompletedListView.vue';
-import CreateNewListView from '../views/CreateNewListView.vue';
+import HomeView from "../views/HomeView.vue";
+import LoginView from "../views/LoginView.vue";
+import LogoutView from "../views/LogoutView.vue";
+import RegisterView from "../views/RegisterView.vue";
+import DepartmentListView from "../views/DepartmentListView.vue";
+import ListView from "../views/ListView.vue";
+import CompletedListView from "../views/CompletedListView.vue";
+import AdminKanbanView from "../views/AdminKanbanView.vue";
+import AdminCatalogView from "../views/AdminCatalogView.vue";
+import AdminCompletedListView from "../views/AdminCompletedListView.vue";
+import CreateNewListView from "../views/CreateNewListView.vue";
 /**
  * The Vue Router is used to "direct" the browser to render a specific view component
  * inside of App.vue depending on the URL.
@@ -23,81 +23,95 @@ import CreateNewListView from '../views/CreateNewListView.vue';
  */
 const routes = [
   {
-    path: '/',
-    name: 'home',
+    path: "/",
+    name: "home",
     component: DepartmentListView,
     meta: {
-      requiresAuth: true
-    }
+      requiresAuth: true,
+    },
+  },
+  {
+    path: "/admin/",
+    name: "adminHome",
+    component: AdminKanbanView,
+    meta: {
+      requiresAuth: true,
+    },
   },
   {
     path: "/login",
     name: "login",
     component: LoginView,
     meta: {
-      requiresAuth: false
-    }
+      requiresAuth: false,
+    },
   },
   {
     path: "/logout",
     name: "logout",
     component: LogoutView,
     meta: {
-      requiresAuth: false
-    }
+      requiresAuth: false,
+    },
   },
   {
     path: "/register",
     name: "register",
     component: RegisterView,
     meta: {
-      requiresAuth: false
-    }
+      requiresAuth: false,
+    },
   },
   {
-    path:"/completedlists",
-    name:"completedLists",
-    component: CompletedListView
+    path: "/completed",
+    name: "completed",
+    component: CompletedListView,
+    meta: {
+      requiresAuth: true,
+    },
   },
   {
-    path:"/testing",
-    name:"testing",
-    component: AdminKanbanView,
-  },
-  {
-    path:"/testing/catalog",
-    name:"itemCatalog",
+    path: "/admin/catalog",
+    name: "itemCatalog",
     component: AdminCatalogView,
+    meta: {
+      requiresAuth: true,
+    },
   },
   {
-    path:"/testing/completed",
-    name:"completedLists",
+    path: "/admin/completed",
+    name: "completedLists",
     component: AdminCompletedListView,
+    meta: {
+      requiresAuth: true,
+    },
   },
   {
-    path:"/testing/create",
-    name:"createList",
+    path: "/admin/create",
+    name: "createList",
     component: CreateNewListView,
+    meta: {
+      requiresAuth: true,
+    },
   },
 ];
 
 // Create the router
 const router = createRouter({
   history: createWebHistory(),
-  routes: routes
+  routes: routes,
 });
 
 router.beforeEach((to) => {
-
   // Get the Vuex store
   const store = useStore();
 
   // Determine if the route requires Authentication
-  const requiresAuth = to.matched.some(x => x.meta.requiresAuth);
+  const requiresAuth = to.matched.some((x) => x.meta.requiresAuth);
 
   // If it does and they are not logged in, send the user to "/login"
-  if (requiresAuth && store.state.token === '') {
-    return {name: "login"};
+  if (requiresAuth && store.state.token === "") {
+    return { name: "login" };
   }
   // Otherwise, do nothing and they'll go to their next destination
 });

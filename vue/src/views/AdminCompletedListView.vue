@@ -14,6 +14,7 @@
                         <tr>
                             <th>Employee Name</th>
                             <th>List Owner</th>
+                            <th>Department</th>
                             <th>Number of Items</th>
                             <th>Due Date</th>
                             <th>Completed Date</th>
@@ -23,6 +24,7 @@
                         <tr v-for="(item, index) in filteredData" :key="index">
                             <td @click="navigateTo(item.listId)">{{ item.name }}</td>
                             <td>{{ item.ownerName }}</td>
+                            <td>{{ item.departmentName }}</td>
                             <td>{{ item.numberOfItems }}</td>
                             <td>{{ formatDate(item.dueDate) }}</td>
                             <td>{{ formatDate(item.lastModified) }}</td>
@@ -66,6 +68,7 @@ export default {
                 numberOfItems: item.numberOfItems,
                 dueDate: item.dueDate,
                 lastModified: item.lastModified,
+                departmentName: item.departmentName,
                 listId: item.listId, // Adding listId for the navigateTo method
             })).filter((item) =>
                 Object.values(item).some(
