@@ -62,12 +62,13 @@
                 <div id="snackbar-claimed">You are not the owner of this item.</div>
                 <div id="snackbar-needed">Items must be claimed before they can be purchased.</div>
                 <div id="snackbar-completed">All items on the list have been purchased. Well done, partner!</div>
+                <div id="snackbar-item-added">Item added to list.</div>
 
                 <!-- MODALS -->
                 <ItemDetailsModal v-if="showItemModal" :item="selectedItem" @close="closeItemModal" />
                 <InviteUserToListModal v-if="showInviteUserToListModal" @close="closeInviteUserToListModal" />
                 <ListAddItemModal :isModalOpen="showAddItemModal" :closeModal="closeAddItemModal"
-                    :availableItems="availableItems" @item-added="handleItemAdded" />
+                    :itemsThatCanBeAdded="itemsThatCanBeAdded" @item-added="handleItemAdded" />
             </div>
         </div>
     </div>
@@ -100,6 +101,12 @@ export default {
         };
     },
     computed: {
+        itemsThatCanBeAdded() {
+          return this.availableItems.filter((item) => { return item.itemId != this.itemsIdsAlreadyInList.find((existingItemId) => { return existingItemId == item.itemId }) });
+        },
+        itemsIdsAlreadyInList() {
+            return this.$store.state.activeItems.map((item) => { return item.itemId });
+        },
         isDraggedOver() {
             return this.dragCounter > 0;
         },
@@ -289,6 +296,13 @@ export default {
                 x.className = x.className.replace("show", "");
             }, 4000);
         },
+        showItemAddedSnackbar() {
+            let x = document.getElementById("snackbar-item-added");
+            x.className = "show";
+            setTimeout(function () {
+                x.className = x.className.replace("show", "");
+            }, 4000);
+        },
         openItemModal(item) {
             this.selectedItem = item;
             this.showItemModal = true;
@@ -327,16 +341,22 @@ export default {
         closeAddItemModal() {
             this.showAddItemModal = false;
         },
+        handleItemAdded(item) {
+        this.$store.commit('ADD_ACTIVE_ITEM', item);
+        this.showItemAddedSnackbar();
+        this.$store.commit('REFRESH_SIDE_BAR');
+      },
     },
     created() {
         ItemService.getAllItems()
             .then(response => {
-                this.availableItems = response.data;
+                this.availableItems = response.data.sort((a, b) => (a.name > b.name) ? 1 : -1);
+                console.log(this.availableItems);
             })
             .catch(error => {
                 console.error("Error retrieving items", error);
             });
-    }
+    },
 }
 </script>
 
@@ -484,7 +504,8 @@ h6 {
 #snackbar-purchased,
 #snackbar-claimed,
 #snackbar-needed,
-#snackbar-completed {
+#snackbar-completed,
+#snackbar-item-added {
     visibility: hidden;
     min-width: 250px;
     margin-left: -125px;
@@ -507,7 +528,8 @@ h6 {
 
 #snackbar-purchased.show,
 #snackbar-claimed.show,
-#snackbar-needed.show {
+#snackbar-needed.show,
+#snackbar-item-added.show {
     visibility: visible;
     /* Show the snackbar */
     /* Add animation: Take 0.5 seconds to fade in and out the snackbar.
