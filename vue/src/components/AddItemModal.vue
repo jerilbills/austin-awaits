@@ -29,7 +29,7 @@
               <div class="control image-options">
                 <div v-for="(image, index) in displayedImages" :key="image.id" class="image-option">
                   <img :src="image" alt="Potential Image" @click="selectImage(image)"
-                    :class="{ 'selected': image === newImgUrl }" />
+                    :class="{ 'selected': image === newImgUrl }" @error="imgPlaceholder"/>
                 </div>
               </div>
             </div>
@@ -153,6 +153,9 @@ export default {
           console.error('Error fetching potential images:', error);
         });
     },
+    imgPlaceholder(e) {
+        e.target.src = "/src/assets/blank-pixel.png"
+    }
   },
 };
 </script>

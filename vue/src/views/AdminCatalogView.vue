@@ -16,7 +16,7 @@
                 <div class="table-container">
                     <div class="table-buttons">
                         <input class="input" type="text" v-model="searchTerm" placeholder="Search..." />
-                        <button class="button is-primary" @click="showModal">Add New Item</button>
+                        <button class="button is-primary" @click="showModal" style="margin-right:10px">Add New Item</button>
                     </div>
                     <table class="table">
                         <thead>
@@ -31,7 +31,7 @@
                                 <td @click="showModalWithItem(item)">{{ item.name }}</td>
                                 <td>
                                     <img :src="item.imgUrl" alt="Item Image"
-                                        style="max-width: 100px; max-height: 100px;" />
+                                        style="max-width: 100px; max-height: 100px;" @error="imgPlaceholder" />
                                 </td>
                                 <td>{{ item.description }}</td>
                             </tr>
@@ -127,7 +127,10 @@ export default {
         },
         hideModal() {
             this.modalVisible = false;
-        }
+        },
+        imgPlaceholder(e) {
+        e.target.src = "/src/assets/blank-pixel.png"
+    }
     },
     created() {
         ItemService.getAllItems()
