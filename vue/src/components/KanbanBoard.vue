@@ -325,17 +325,11 @@ export default {
             this.showAddItemModal = true;
         },
         closeAddItemModal() {
-            this.itemQuantity = 1;
-            this.selectedItem = null;
             this.showAddItemModal = false;
         },
         handleItemAdded(item) {
-        
-        alert(item.itemId + " - QTY: " + item.quantity)
-
-        // push list item to API
-        // get new list item back so we can get the id OR force a refresh of the kanban board
-
+        this.$store.commit('ADD_ACTIVE_ITEM', item);
+        this.$store.commit('REFRESH_SIDE_BAR');
       },
     },
     created() {

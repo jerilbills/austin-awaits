@@ -76,6 +76,9 @@ export function createStore(currentToken, currentUser) {
       },
       REFRESH_LIST_INVITES(state) {
         state.listInvitesRefreshKey += 1;
+      },
+      ADD_ACTIVE_ITEM(state, item) {
+        state.activeItems.push(item);
       }
 
     },

@@ -36,5 +36,15 @@ export default {
     getAllActiveLists(){
         return axios.get('/list/active')
     },
+
+    createNewList(departmentId, newList) {
+        return axios.post('/department/'+ departmentId + '/list', newList)
+    },
+    getAllDraftLists() {
+        return axios.get('/list/draft')
+    },
+    getAllCompletedLists() {
+        return axios.get('/list/completed')
+    },
   
   }

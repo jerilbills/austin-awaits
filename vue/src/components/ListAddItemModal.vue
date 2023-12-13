@@ -42,6 +42,8 @@
 </template>
 
 <script>
+import ItemService from '../services/ItemService';
+
 export default {
   props: {
     isModalOpen: Boolean,
@@ -62,10 +64,18 @@ export default {
   methods: {
     addItem() {
       const newItem = {
+        listId: this.$store.state.activeList.listId,
         itemId: this.selectedItemId,
-        quantity: this.itemQuantity,
+        quantity: this.itemQuantity
       };
-      this.$emit("item-added", newItem);
+
+      ItemService.addItemToList(this.$store.state.user.departmentId, this.$store.state.activeList.listId, newItem)
+      .then(response => {
+        this.$emit("item-added", response.data);
+      })
+      .catch(error => {
+        console.error("Error adding item to list", error);
+      });
       this.itemQuantity = 1;
       this.selectedItemId = null;
       this.closeModal();
