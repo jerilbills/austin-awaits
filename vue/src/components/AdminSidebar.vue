@@ -184,6 +184,7 @@ export default {
     /* Faint border on the right side */
     box-shadow: 10px 0px 5px rgba(0, 0, 0, 0.1);
     /* Drop shadow on the right side */
+    overflow-y: scroll;
 }
 
 ul {
@@ -244,5 +245,28 @@ em {
 .boss-hog {
     text-align: center;
 }
+
+.sidebar::-webkit-scrollbar {
+    width: 12px; /* Set the width of the scrollbar */
+}
+
+.sidebar::-webkit-scrollbar-thumb {
+    background-color: #666; /* Set the color of the scrollbar thumb */
+    border-radius: 6px; /* Set the border radius of the scrollbar thumb */
+}
+
+.sidebar::-webkit-scrollbar-track {
+    background-color: #333; /* Set the color of the scrollbar track */
+    border-radius: 8px; /* Set the border radius of the scrollbar track */
+}
+
+.sidebar::-webkit-scrollbar-thumb:hover {
+    background-color: #555; /* Set the color of the scrollbar thumb on hover */
+}
+
+.sidebar::-webkit-scrollbar-corner {
+    background-color: #000; /* Set the color of the scrollbar corner (between vertical and horizontal scrollbar) */
+}
+
 </style>
     
