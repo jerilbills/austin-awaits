@@ -46,8 +46,7 @@
                         <button @click="nextPage" :disabled="currentPage === totalPages"
                             class="button is-primary is-small">Next</button>
                     </div>
-                    <!-- SNACKBAR ALERTS-->
-                    <div id="snackbar-item-added">Item added to catalog.</div>
+
                     <div>
                         <AddItemModal :showModal="modalVisible" :hideModal="hideModal" :addNewItem="addNewItem" />
                     </div>
@@ -55,7 +54,8 @@
             </div>
 
         </div>
-
+                    <!-- SNACKBAR ALERTS-->
+                    <div id="snackbar-item-added">Item added to catalog.</div>
     </div>
 </template>
 <script>
@@ -143,7 +143,7 @@ export default {
             x.className = "show";
             setTimeout(function () {
                 x.className = x.className.replace("show", "");
-            }, 3750);
+            }, 4000);
         },
     },
     created() {
@@ -263,56 +263,6 @@ export default {
   Delay the fade out process for 3.5 seconds */
     -webkit-animation: fadein 0.5s, fadeout 0.5s 3.5s;
     animation: fadein 0.5s, fadeout 0.5s 3.5s;
-}
-
-
-/* Animations to fade the snackbar in and out */
-@-webkit-keyframes fadein {
-    from {
-        bottom: 0;
-        opacity: 0;
-    }
-
-    to {
-        bottom: 30px;
-        opacity: 1;
-    }
-}
-
-@keyframes fadein {
-    from {
-        bottom: 0;
-        opacity: 0;
-    }
-
-    to {
-        bottom: 30px;
-        opacity: 1;
-    }
-}
-
-@-webkit-keyframes fadeout {
-    from {
-        bottom: 30px;
-        opacity: 1;
-    }
-
-    to {
-        bottom: 0;
-        opacity: 0;
-    }
-}
-
-@keyframes fadeout {
-    from {
-        bottom: 30px;
-        opacity: 1;
-    }
-
-    to {
-        bottom: 0;
-        opacity: 0;
-    }
 }
 
 </style>
