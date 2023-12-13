@@ -22,7 +22,7 @@ namespace Capstone.DAO
         {
             List<Department> output = new List<Department>();
 
-            string sql = "SELECT department_id, department_name FROM departments WHERE is_active = 1";
+            string sql = "SELECT department_id, department_name FROM departments WHERE department_id != 0 AND is_active = 1";
 
             try
             {
