@@ -46,13 +46,16 @@
                         <button @click="nextPage" :disabled="currentPage === totalPages"
                             class="button is-primary is-small">Next</button>
                     </div>
-
+                    <!-- SNACKBAR ALERTS-->
+                    <div id="snackbar-item-added">Item added to catalog.</div>
                     <div>
                         <AddItemModal :showModal="modalVisible" :hideModal="hideModal" :addNewItem="addNewItem" />
                     </div>
-                </div>
+                </div>         
             </div>
+
         </div>
+
     </div>
 </template>
 <script>
@@ -80,7 +83,7 @@ export default {
         return {
             searchTerm: '',
             loading: false,
-            itemsPerPage: 12,
+            itemsPerPage: 5,
             currentPage: 1,
             modalVisible: false,
             selectedItem: null,
@@ -125,12 +128,23 @@ export default {
             this.selectedItem = item;
             this.modalVisible = true;
         },
-        hideModal() {
+        hideModal(item) {
             this.modalVisible = false;
+            if(item) {
+                this.items.unshift(item);
+                this.showItemAddedSnackbar();
+            }
         },
         imgPlaceholder(e) {
         e.target.src = "/src/assets/blank-pixel.png"
-    }
+        },
+        showItemAddedSnackbar() {
+            let x = document.getElementById("snackbar-item-added");
+            x.className = "show";
+            setTimeout(function () {
+                x.className = x.className.replace("show", "");
+            }, 3750);
+        },
     },
     created() {
         ItemService.getAllItems()
@@ -224,6 +238,81 @@ export default {
 
 .content::-webkit-scrollbar-corner {
     background-color: #000; /* Set the color of the scrollbar corner (between vertical and horizontal scrollbar) */
+}
+
+#snackbar-item-added {
+    visibility: hidden;
+    min-width: 250px;
+    margin-left: -125px;
+    /* Divide value of min-width by 2 */
+    background-color: #333;
+    color: #fff;
+    text-align: center;
+    border-radius: 2px;
+    padding: 16px;
+    position: fixed;
+    z-index: 1;
+    left: 50%;
+    bottom: 30px;
+}
+
+#snackbar-item-added.show {
+    visibility: visible;
+    /* Show the snackbar */
+    /* Add animation: Take 0.5 seconds to fade in and out the snackbar.
+  Delay the fade out process for 3.5 seconds */
+    -webkit-animation: fadein 0.5s, fadeout 0.5s 3.5s;
+    animation: fadein 0.5s, fadeout 0.5s 3.5s;
+}
+
+
+/* Animations to fade the snackbar in and out */
+@-webkit-keyframes fadein {
+    from {
+        bottom: 0;
+        opacity: 0;
+    }
+
+    to {
+        bottom: 30px;
+        opacity: 1;
+    }
+}
+
+@keyframes fadein {
+    from {
+        bottom: 0;
+        opacity: 0;
+    }
+
+    to {
+        bottom: 30px;
+        opacity: 1;
+    }
+}
+
+@-webkit-keyframes fadeout {
+    from {
+        bottom: 30px;
+        opacity: 1;
+    }
+
+    to {
+        bottom: 0;
+        opacity: 0;
+    }
+}
+
+@keyframes fadeout {
+    from {
+        bottom: 30px;
+        opacity: 1;
+    }
+
+    to {
+        bottom: 0;
+        opacity: 0;
+    }
 }
 
 </style>
