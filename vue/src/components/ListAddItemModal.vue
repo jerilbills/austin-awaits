@@ -2,7 +2,7 @@
   <div class="modal" :class="{ 'is-active': isModalOpen }">
     <div class="modal-background" @click="closeModal"></div>
     <div class="modal-content" style="background-color: #ffffff; max-width: 500px; padding: 20px;">
-      <button class="delete is-large" aria-label="close" @click="closeModal"
+      <button class="delete is-large" aria-label="close" @click="close"
         style="position: absolute; top: 10px; right: 10px;"></button>
 
       <div class="field is-horizontal" style="padding-top: 40px;">
@@ -36,7 +36,7 @@
           </div>
         </div>
       <button class="button is-primary" @click="addItem" style="margin-right: 5px;" :disabled="!hasRequiredFields">Save Item</button>
-      <button class="button is-link" @click="closeModal">Cancel</button>
+      <button class="button is-link" @click="close">Cancel</button>
     </div>
   </div>
 </template>
@@ -61,17 +61,20 @@ export default {
   },
   methods: {
     addItem() {
-      if (!this.selectedItemId && !this.itemQuantity > 0) {
-        return;
-      }
-      // const selectedItem = this.availableItems.find(item => item.itemId === this.selectedItemId);
       const newItem = {
         itemId: this.selectedItemId,
         quantity: this.itemQuantity,
       };
       this.$emit("item-added", newItem);
+      this.itemQuantity = 1;
+      this.selectedItemId = null;
       this.closeModal();
     },
+    close() {
+      this.itemQuantity = 1;
+      this.selectedItemId = null;
+      this.closeModal();
+    }
   },
 };
 </script>
