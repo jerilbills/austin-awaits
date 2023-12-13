@@ -104,7 +104,7 @@ export default {
         this.loading = true;
 
         setTimeout(() => {
-            ShoppingListService.getCompletedListsByDepartment(this.$store.state.user.departmentId)
+            ShoppingListService.getAllCompletedLists()
                 .then((response) => {
                     this.data = response.data;
                 })

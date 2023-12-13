@@ -30,10 +30,10 @@
                             <tr v-for="(item, index) in paginatedItems" :key="index">
                                 <td @click="showModalWithItem(item)">{{ item.name }}</td>
                                 <td>
-                                    <img :src="item.itemImage" alt="Item Image"
+                                    <img :src="item.imgUrl" alt="Item Image"
                                         style="max-width: 100px; max-height: 100px;" />
                                 </td>
-                                <td>{{ item.itemDescription }}</td>
+                                <td>{{ item.description }}</td>
                             </tr>
                         </tbody>
                     </table>
@@ -148,7 +148,7 @@ export default {
 
 #page {
     height: 100vh;
-    background-image: url('../assets/austin-background.png');
+    /* background-image: url('../assets/austin-background.png'); */
     background-color: #FFFFFF;
     background-position: right bottom;
     background-repeat: no-repeat;
