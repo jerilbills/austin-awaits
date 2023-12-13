@@ -10,7 +10,7 @@
           <div class="field">
             <label class="label">Item Name:</label>
             <div class="control">
-              <input class="input" v-model="newItemName" @blur="getImages(newItemName)" required />
+              <input class="input" name="itemname" v-model="newItemName" @blur="getImages(newItemName)" required />
             </div>
           </div>
 
@@ -18,7 +18,7 @@
           <div class="field">
             <label class="label">Item Description:</label>
             <div class="control">
-              <textarea class="textarea" v-model="newItemDescription" required></textarea>
+              <textarea class="textarea" name="description" v-model="newItemDescription" required></textarea>
             </div>
           </div>
 
@@ -29,7 +29,7 @@
               <div class="control image-options">
                 <div v-for="(image, index) in displayedImages" :key="image.id" class="image-option">
                   <img :src="image" alt="Potential Image" @click="selectImage(image)"
-                    :class="{ 'selected': image === newImgUrl }" />
+                    :class="{ 'selected': image === newImgUrl }" @error="imgPlaceholder"/>
                 </div>
               </div>
             </div>
@@ -54,13 +54,13 @@
               <button type="submit" class="button is-primary" @click="addNewItem()">Submit</button>
             </div>
             <div class="control">
-              <button @click="hideModal" class="button is-link">Cancel</button>
+              <button @click="closeModalWithoutItem" class="button is-link">Cancel</button>
             </div>
           </div>
         </form>
       </div>
     </div>
-    <button class="modal-close is-large" aria-label="close" @click="hideModal"></button>
+    <button class="modal-close is-large" aria-label="close" @click="closeModalWithoutItem"></button>
   </div>
 </template>
   
@@ -116,17 +116,22 @@ export default {
       ItemService.addItemToCatalog(newItem)
       .then(response => {
         console.log("Item added successfully",response.data);
-        
         this.newItemName = "";
         this.newItemDescription = "";
         this.newImgUrl = "";
         this.potentialImages = [];
-        
-        this.hideModal();
+        this.hideModal(response.data);
       })
       .catch(error => {
         console.error("Error adding item", error);
       });
+    },
+    closeModalWithoutItem() {
+        this.newItemName = "";
+        this.newItemDescription = "";
+        this.newImgUrl = "";
+        this.potentialImages = [];
+        this.hideModal();
     },
     selectImage(imageUrl) {
       this.newImgUrl = imageUrl;
@@ -153,6 +158,9 @@ export default {
           console.error('Error fetching potential images:', error);
         });
     },
+    imgPlaceholder(e) {
+        e.target.src = "/src/assets/blank-pixel.png"
+    }
   },
 };
 </script>

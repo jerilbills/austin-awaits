@@ -62,6 +62,7 @@
                 <div id="snackbar-claimed">You are not the owner of this item.</div>
                 <div id="snackbar-needed">Items must be claimed before they can be purchased.</div>
                 <div id="snackbar-completed">All items on the list have been purchased. Well done, partner!</div>
+                <div id="snackbar-user-invited">User has been invited to the list.</div>
                 <div id="snackbar-item-added">Item added to list.</div>
 
                 <!-- MODALS -->
@@ -353,7 +354,6 @@ export default {
         ItemService.getAllItems()
             .then(response => {
                 this.availableItems = response.data.sort((a, b) => (a.name > b.name) ? 1 : -1);
-                console.log(this.availableItems);
             })
             .catch(error => {
                 console.error("Error retrieving items", error);
@@ -507,6 +507,7 @@ h6 {
 #snackbar-claimed,
 #snackbar-needed,
 #snackbar-completed,
+#snackbar-user-invited,
 #snackbar-item-added {
     visibility: hidden;
     min-width: 250px;
@@ -531,6 +532,7 @@ h6 {
 #snackbar-purchased.show,
 #snackbar-claimed.show,
 #snackbar-needed.show,
+#snackbar-user-invited.show,
 #snackbar-item-added.show {
     visibility: visible;
     /* Show the snackbar */
