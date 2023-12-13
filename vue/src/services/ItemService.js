@@ -1,9 +1,15 @@
 import axios from 'axios';
 
-export default () {
+export default {
 
     // TEAM 1 BELOW THIS LINE
+    addItemToCatalog(newItem) {
+        return axios.post('/item', newItem)
+    },
     
+    getAllItems() {
+        return axios.get('/item')
+    },
     
     
     

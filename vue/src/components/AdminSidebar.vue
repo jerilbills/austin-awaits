@@ -84,7 +84,7 @@ export default {
             .catch((error) => {
                 console.error('Error fetching departments:', error);
             });
-        ShoppingListService.getListsInProgress(this.$store.state.user.departmentId)
+        ShoppingListService.getAllActiveLists()
             .then((response) => {
                 this.lists = response.data.sort((a, b) => (a.name > b.name ? 1 : -1));
             })
