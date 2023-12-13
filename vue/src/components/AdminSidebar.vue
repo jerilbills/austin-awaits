@@ -10,9 +10,10 @@
                 </li>
             </ul>
         </div>
-        <div class="drafts">
+        <div class="drafts" v-if="draftLists.length > 0">
             <em>Draft Lists</em>
-            <li style="list-style: none; margin-left:10px;">Nothing to see here....</li>
+            <li v-for="list in draftLists" :key="list.listId" @click="navigateTo(department.departmentId, list.listId)"
+                style="list-style: none; margin-left:10px;">{{ list.name }} ({{ list.numberOfItems }})</li>
         </div>
         <div>
             <!-- <li class="add-list-button" @click="addListModal">Create New List</li> -->
@@ -67,6 +68,7 @@ export default {
             selectedOption: null,
             departments: [],
             showListModal: false,
+            draftLists: [],
         };
     },
 
@@ -99,6 +101,10 @@ export default {
             .catch((error) => {
                 console.error('Error fetching invited lists:', error);
             });
+        ShoppingListService.getAllDraftLists()
+            .then((response) => {
+                this.draftLists = response.data.sort((a, b) => (a.name > b.name ? 1 : -1));
+            })
     },
 
     methods: {
@@ -148,6 +154,12 @@ export default {
         },
         hideModal() {
             this.isModalVisible = false;
+        },
+        getAllDraftLists() {
+            ShoppingListService.getAllDraftLists()
+                .then((response) => {
+                    this.draftLists = response.data.sort((a, b) => (a.name > b.name ? 1 : -1));
+                })
         }
     },
 };

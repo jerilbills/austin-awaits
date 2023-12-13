@@ -11,7 +11,9 @@ export default {
         return axios.get('/item')
     },
     
-    
+    addItemToList(departmentId, listId, newListItem){
+        return axios.post('/department/'+departmentId+'/list/'+listId+'/listitem', newListItem)
+    }
     
     
     

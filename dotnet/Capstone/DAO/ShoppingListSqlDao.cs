@@ -27,8 +27,8 @@ namespace Capstone.DAO
                 "list_status_id, list_owner_user_id, due_date_utc, " +
                 "created_date_utc, last_modified_date_utc, is_active) OUTPUT inserted.list_id " +
                 "VALUES (@list_name, @department_id, @list_status_id, " +
-                "@list_owner_user_id, @due_date, @created_date, " +
-                "@last_modified_date, @is_active)";
+                "@list_owner_user_id, @due_date, GETDATE(), " +
+                "GETDATE(), @is_active)";
 
             ShoppingList output = null;
             int newListId = 0;
@@ -44,8 +44,6 @@ namespace Capstone.DAO
                     cmd.Parameters.AddWithValue("@list_status_id", newShoppingList.Status);
                     cmd.Parameters.AddWithValue("@list_owner_user_id", newShoppingList.OwnerId);
                     cmd.Parameters.AddWithValue("@due_date", newShoppingList.DueDate);
-                    cmd.Parameters.AddWithValue("@created_date", DateTime.UtcNow);
-                    cmd.Parameters.AddWithValue("@last_modified_date", DateTime.UtcNow);
                     cmd.Parameters.AddWithValue("@is_active", true);
 
                     newListId = Convert.ToInt32(cmd.ExecuteScalar());

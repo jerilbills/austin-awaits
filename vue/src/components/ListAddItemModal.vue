@@ -23,6 +23,8 @@
 </template>
 
 <script>
+import ItemService from '../services/ItemService';
+
 export default {
   props: {
     isModalOpen: Boolean,
@@ -42,10 +44,26 @@ export default {
       }
       const selectedItem = this.availableItems.find(item => item.itemId === this.selectedItemId);
       const newItem = {
+        listId: this.$store.state.activeList.listId,
+        itemId: selectedItem.itemId,
         name: selectedItem.name,
+        description: selectedItem.description,
+        imgUrl: selectedItem.imgUrl,
+        listItemStatusId: 1,
+        createdBy: this.$store.state.user.userId,
+        lastModifiedBy: this.$store.state.user.userId,
         quantity: this.itemQuantity,
+        claimedBy: null,
+        isActive: true,
       };
-      this.$emit("item-added", newItem);
+
+      ItemService.addItemToList(this.$store.state.user.departmentId, this.$store.state.activeList.listId, newItem)
+      .then(response => {
+        this.$emit("item-added", newItem);
+      })
+      .catch(error => {
+        console.error("Error adding item to list", error);
+      });
       this.closeModal();
     },
   },
