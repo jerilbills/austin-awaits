@@ -160,6 +160,11 @@ namespace Capstone.Controllers
         public ActionResult<ListItem> AddListItemToShoppingList(ListItem itemToAdd)
         {
             ListItem added;
+
+            User loggedInUser = userDao.GetActiveUserByUsername(User.Identity.Name);
+
+            itemToAdd.LastModifiedBy = loggedInUser.UserId;
+
             try
             {
                 added = listItemDao.AddListItemToShoppingList(itemToAdd);

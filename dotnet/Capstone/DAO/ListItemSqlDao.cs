@@ -256,10 +256,10 @@ namespace Capstone.DAO
             ListItem added = null;
             ListItem output = null;
 
-            string sql = "INSERT INTO list_items(list_id, item_id, quantity, list_item_claimed_by_user_id, list_item_status_id, " +
-                "created_date_utc, last_modified_by_user_id, last_modified_date_utc, is_active)" +
-                "OUTPUT inserted.list_id, inserted.item_id " +
-                "VALUES(@listId, @itemId, @quantity, @claimedBy, @listItemStatusId, @createdDate , @lastModifiedById, @lastModifiedDate, @isActive);";
+            string sql = @"INSERT INTO list_items (list_id, item_id, quantity, list_item_claimed_by_user_id, list_item_status_id,
+                        created_date_utc, last_modified_by_user_id, last_modified_date_utc, is_active)
+                        OUTPUT inserted.list_id, inserted.item_id
+                        VALUES (@listId, @itemId, @quantity, @claimedBy, @listItemStatusId, @createdDate , @lastModifiedById, @lastModifiedDate, @isActive);";
 
             try
             {
@@ -272,15 +272,17 @@ namespace Capstone.DAO
                     conn.Open();
                     SqlCommand cmd = new SqlCommand(sql, conn);
 
-                    cmd.Parameters.AddWithValue("@listId", itemToAdd.ListId);
-                    cmd.Parameters.AddWithValue("@itemId", itemToAdd.ItemId);
-                    cmd.Parameters.AddWithValue("@quantity", itemToAdd.Quantity);
-                    cmd.Parameters.AddWithValue("@claimedBy", itemToAdd.ClaimedBy);
-                    cmd.Parameters.AddWithValue("@listItemStatusId", itemToAdd.ListItemStatusId);
-                    cmd.Parameters.AddWithValue("@createdDate", itemToAdd.CreatedDate);
-                    cmd.Parameters.AddWithValue("@lastModifiedById", itemToAdd.LastModifiedBy);
-                    cmd.Parameters.AddWithValue("@lastModifiedDate", itemToAdd.LastModifiedDate);
-                    cmd.Parameters.AddWithValue("@isActive", itemToAdd.IsActive);
+                    DateTime now = DateTime.UtcNow;
+
+                    cmd.Parameters.AddWithValue("@listId", itemToAdd.ListId);  // should be sent up
+                    cmd.Parameters.AddWithValue("@itemId", itemToAdd.ItemId);  // should be sent up
+                    cmd.Parameters.AddWithValue("@quantity", itemToAdd.Quantity); // should be sent up
+                    cmd.Parameters.AddWithValue("@claimedBy", DBNull.Value);  // should be null -- list items start in needed, so they have no claimant
+                    cmd.Parameters.AddWithValue("@listItemStatusId", 1); // should default to 1 - needed
+                    cmd.Parameters.AddWithValue("@createdDate", now); // should default to now
+                    cmd.Parameters.AddWithValue("@lastModifiedById", itemToAdd.LastModifiedBy); // should be sent up (or interpreted from the logged in user)
+                    cmd.Parameters.AddWithValue("@lastModifiedDate", now); // should default to now
+                    cmd.Parameters.AddWithValue("@isActive", 1); // should default to 1
 
                     SqlDataReader reader = cmd.ExecuteReader();
                     if (reader.Read())
