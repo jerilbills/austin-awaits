@@ -1,6 +1,10 @@
 <template>
     <div class="kanban-board-header">
-        <div class="page-title" v-if="activeList.name">{{ activeList.name }} (Due {{ dueDate }})
+        <div class="page-title" v-if="activeList.name">{{ activeList.name }} (Due {{ dueDate }})  
+            <p v-show="activeList.status === 1" class="draft-status">
+                  - DRAFT   
+                <button class="button is-primary is-small" @click="createList">Publish List</button>
+            </p>
         </div>
         <div class="page-title" v-else>Please select a list to work on. Austin Awaits!</div>
 
@@ -102,7 +106,7 @@ export default {
     },
     computed: {
         itemsThatCanBeAdded() {
-          return this.availableItems.filter((item) => { return item.itemId != this.itemsIdsAlreadyInList.find((existingItemId) => { return existingItemId == item.itemId }) });
+            return this.availableItems.filter((item) => { return item.itemId != this.itemsIdsAlreadyInList.find((existingItemId) => { return existingItemId == item.itemId }) });
         },
         itemsIdsAlreadyInList() {
             return this.$store.state.activeItems.map((item) => { return item.itemId });
@@ -207,16 +211,16 @@ export default {
             this.showListCompletedSnackbar();
             this.$store.state.activeList.status = 3;
             setTimeout(() => {
-            ShoppingListService
-                .updateList(this.$store.state.activeList)
-                .then(response => {
-                    this.$store.commit('CLEAR_ACTIVE_LIST');
-                    this.$store.commit('CLEAR_ITEMS');
-                    this.$store.commit('REFRESH_SIDE_BAR');
-                })
-                .catch(error => {
-                    console.error('Error updating list:', error);
-                })
+                ShoppingListService
+                    .updateList(this.$store.state.activeList)
+                    .then(response => {
+                        this.$store.commit('CLEAR_ACTIVE_LIST');
+                        this.$store.commit('CLEAR_ITEMS');
+                        this.$store.commit('REFRESH_SIDE_BAR');
+                    })
+                    .catch(error => {
+                        console.error('Error updating list:', error);
+                    })
             }, 4000);
         },
         updateItemStatus(columnStatusId) {
@@ -344,10 +348,10 @@ export default {
             this.showAddItemModal = false;
         },
         handleItemAdded(item) {
-        this.$store.commit('ADD_ACTIVE_ITEM', item);
-        this.showItemAddedSnackbar();
-        this.$store.commit('REFRESH_SIDE_BAR');
-      },
+            this.$store.commit('ADD_ACTIVE_ITEM', item);
+            this.showItemAddedSnackbar();
+            this.$store.commit('REFRESH_SIDE_BAR');
+        },
     },
     created() {
         ItemService.getAllItems()
@@ -439,6 +443,7 @@ h6 {
     flex-shrink: 2;
     font-family: Rye, Cutive, Georgia, 'Times New Roman', Times, serif;
     font-size: 1.5rem;
+    display: flex;
 }
 
 .column {

@@ -79,6 +79,7 @@ import AdminSidebar from "../components/AdminSidebar.vue";
 import DepartmentService from "../services/DepartmentService";
 import ListAddItemModal from "../components/ListAddItemModal.vue";
 import ItemService from "../services/ItemService";
+import router from "../router";
 
 export default {
   components: {
@@ -173,13 +174,19 @@ export default {
       }
       ShoppingListService.createNewList(this.selectedDepartment, newList)
         .then((response) => {
+          let newListId = response.data.listId;
           console.log("list added", response.data);
+          console.log(newListId);
+          this.$store.commit('SET_ACTIVE_LIST', response.data);
+          this.navigateTo(this.$store.state.activeList.listId);
           this.$store.commit('REFRESH_SIDE_BAR');
         })
         .catch((error) => {
           console.log(error);
         });
+
     },
+    
     saveAsDraft() {
       const dateObject = new Date(this.dueDate);
       let departmentId = this.selectedDepartment;
@@ -204,12 +211,40 @@ export default {
       }
       ShoppingListService.createNewList(this.selectedDepartment, newList)
         .then((response) => {
+          let newListId = response.data.listId;
           console.log("list added", response.data);
+          console.log(newListId);
+          this.$store.commit('SET_ACTIVE_LIST', response.data);
+          this.$router.push({
+            name: 'adminHome',
+            params: {
+
+            },
+          });
           this.$store.commit('REFRESH_SIDE_BAR');
         })
         .catch((error) => {
           console.log(error);
         });
+    },
+
+    navigateTo(listId) {
+      let activeList
+      ShoppingListService.getSpecificList(listId)
+        .then((response) => {
+          this.$store.commit('SET_ITEMS', response.data);
+          this.$store.commit('SET_ACTIVE_LIST', listId);
+        })
+        .catch((error) => {
+          console.error('Error fetching list:', error);
+        });
+      this.selectedOption = 'all';
+      this.$router.push({
+        name: 'adminHome',
+        params: {
+
+        },
+      });
     },
 
   },
