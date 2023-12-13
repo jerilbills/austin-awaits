@@ -22,10 +22,10 @@ namespace Capstone.Controllers
         [HttpPost]
         public ActionResult<PotentialImage> GetPotentialImages(PotentialImage imageRequest)
         {
-            // Use comments to tobble between using Bing for results and our static data for results (to save on API calls)
-            return ReturnBingImages(imageRequest);
+            // Use comments to toggle between using Bing for results and our static data for results (to save on API calls)
+            //return ReturnBingImages(imageRequest);
 
-            // return ReturnStaticImages(imageRequest);
+            return ReturnStaticImages(imageRequest);
         }
 
         private ActionResult<PotentialImage> ReturnBingImages(PotentialImage imageRequest)
