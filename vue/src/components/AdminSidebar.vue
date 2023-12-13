@@ -12,7 +12,7 @@
         </div>
         <div class="drafts" v-if="draftLists.length > 0">
             <em>Draft Lists</em>
-            <li v-for="list in draftLists" :key="list.listId" @click="navigateTo(department.departmentId, list.listId)"
+            <li v-for="list in draftLists" :key="list.listId" @click="navigateToDraft(list)"
                 style="list-style: none; margin-left:10px;">{{ list.name }} ({{ list.numberOfItems }})</li>
         </div>
         <div>
@@ -108,13 +108,6 @@ export default {
 
     methods: {
         navigateTo(departmentId, listId) {
-            this.$router.push({
-                name: 'adminHome',
-                params: {
-                    departmentId: departmentId,
-                    listId: listId,
-                },
-            });
             let activeList = null;
             ShoppingListService.getSpecificList(departmentId, listId)
                 .then((response) => {
@@ -129,6 +122,37 @@ export default {
                 .catch((error) => {
                     console.error('Error fetching list:', error);
                 });
+            this.$router.push({
+                name: 'adminHome',
+                params: {
+
+                },
+            });
+            this.selectedOption = 'all';
+        },
+
+        navigateToDraft(list) {
+            let activeList = null;
+            ShoppingListService.getSpecificList(list.departmentId, list.listId)
+                .then((response) => {
+                    console.log(response.data);
+                    this.$store.commit('SET_ITEMS', response.data);
+                    if (this.lists.find((element) => element.listId == list.listId)) {
+                        activeList = this.lists.find((element) => element.listId == list.listId);
+                    } else if (this.invitedLists.find((element) => element.listId == list.listId)) {
+                        activeList = this.invitedLists.find((element) => element.listId == list.listId);
+                    }
+                    this.$store.commit('SET_ACTIVE_LIST', list);
+                })
+                .catch((error) => {
+                    console.error('Error fetching list:', error);
+                });
+            this.$router.push({
+                name: 'adminHome',
+                params: {
+
+                },
+            });
             this.selectedOption = 'all';
         },
         filterByClaimed() {
@@ -249,26 +273,32 @@ em {
 }
 
 .sidebar::-webkit-scrollbar {
-    width: 12px; /* Set the width of the scrollbar */
+    width: 12px;
+    /* Set the width of the scrollbar */
 }
 
 .sidebar::-webkit-scrollbar-thumb {
-    background-color: #666; /* Set the color of the scrollbar thumb */
-    border-radius: 6px; /* Set the border radius of the scrollbar thumb */
+    background-color: #666;
+    /* Set the color of the scrollbar thumb */
+    border-radius: 6px;
+    /* Set the border radius of the scrollbar thumb */
 }
 
 .sidebar::-webkit-scrollbar-track {
-    background-color: #333; /* Set the color of the scrollbar track */
-    border-radius: 8px; /* Set the border radius of the scrollbar track */
+    background-color: #333;
+    /* Set the color of the scrollbar track */
+    border-radius: 8px;
+    /* Set the border radius of the scrollbar track */
 }
 
 .sidebar::-webkit-scrollbar-thumb:hover {
-    background-color: #555; /* Set the color of the scrollbar thumb on hover */
+    background-color: #555;
+    /* Set the color of the scrollbar thumb on hover */
 }
 
 .sidebar::-webkit-scrollbar-corner {
-    background-color: #000; /* Set the color of the scrollbar corner (between vertical and horizontal scrollbar) */
+    background-color: #000;
+    /* Set the color of the scrollbar corner (between vertical and horizontal scrollbar) */
 }
-
 </style>
     
