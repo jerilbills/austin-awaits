@@ -153,6 +153,7 @@ export default {
     background-position: right bottom;
     background-repeat: no-repeat;
     overflow-x: hidden;
+    overflow-y: auto;
 }
 
 .table-buttons {
@@ -199,4 +200,27 @@ export default {
     margin-right: 15px;
     margin-left: 15px
 }
+
+.content::-webkit-scrollbar {
+    width: 12px; /* Set the width of the scrollbar */
+}
+
+.content::-webkit-scrollbar-thumb {
+    background-color: #666; /* Set the color of the scrollbar thumb */
+    border-radius: 6px; /* Set the border radius of the scrollbar thumb */
+}
+
+.content::-webkit-scrollbar-track {
+    background-color: #333; /* Set the color of the scrollbar track */
+    border-radius: 8px; /* Set the border radius of the scrollbar track */
+}
+
+.content::-webkit-scrollbar-thumb:hover {
+    background-color: #555; /* Set the color of the scrollbar thumb on hover */
+}
+
+.content::-webkit-scrollbar-corner {
+    background-color: #000; /* Set the color of the scrollbar corner (between vertical and horizontal scrollbar) */
+}
+
 </style>

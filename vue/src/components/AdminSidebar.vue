@@ -17,7 +17,7 @@
         </div>
         <div>
             <!-- <li class="add-list-button" @click="addListModal">Create New List</li> -->
-            <RouterLink to="create">
+            <RouterLink to="/admin/create">
 
                 <button class="button is-secondary is-small" style="margin-top:20px; margin-bottom: 20px;">Create New
                     List</button>
@@ -29,18 +29,13 @@
         <div class="admin">
             <em>ADMIN</em>
             <ul>
-                <router-link to="">
+                <router-link to="/admin/completed">
                     <li class="completed">View Completed Lists</li>
                 </router-link>
             </ul>
             <ul>
-                <router-link to="/testing/catalog">
+                <router-link to="/admin/catalog">
                     <li class="completed">View Item Catalog</li>
-                </router-link>
-            </ul>
-            <ul>
-                <router-link to="testing">
-                    <li class="completed">View Purchased Items</li>
                 </router-link>
             </ul>
         </div>
@@ -113,6 +108,13 @@ export default {
 
     methods: {
         navigateTo(departmentId, listId) {
+            this.$router.push({
+                name: 'adminHome',
+                params: {
+                    departmentId: departmentId,
+                    listId: listId,
+                },
+            });
             let activeList = null;
             ShoppingListService.getSpecificList(departmentId, listId)
                 .then((response) => {

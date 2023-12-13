@@ -5,9 +5,10 @@
 
     <div class="main-layout">
       <!-- Include the Sidebar component -->
-      <Sidebar :key="$store.state.sideBarRefreshKey"/>
-
-      <!-- KanbanBoard component goes here -->
+      <AdminSidebar v-show="$store.state.user.role === 'admin'" :key="$store.state.sideBarRefreshKey" />
+      <Sidebar v-show="$store.state.user.role !== 'admin'" :key="$store.state.sideBarRefreshKey" />
+      
+      
       <KanbanBoard />
 
     </div>
@@ -18,12 +19,14 @@
 import Navbar from "../components/Navbar.vue";
 import KanbanBoard from "../components/KanbanBoard.vue";
 import Sidebar from "../components/Sidebar.vue";
+import AdminSidebar from "../components/AdminSidebar.vue";
 
 export default {
   components: {
     Navbar,
     KanbanBoard,
     Sidebar,
+    AdminSidebar,
   },
 };
 </script>
