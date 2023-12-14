@@ -145,6 +145,9 @@ export default {
                 x.className = x.className.replace("show", "");
             }, 4000);
         },
+        beforeWindowUnload(e) {
+            this.$store.commit('LOGOUT');
+        }
     },
     created() {
         ItemService.getAllItems()
@@ -154,6 +157,8 @@ export default {
             .catch(error => {
                 console.error("Error retrieving items", error);
             });
+
+        window.addEventListener('beforeunload', this.beforeWindowUnload);
     },
 };
 </script>

@@ -27,6 +27,14 @@ export default {
         AdminSidebar,
         KanbanBoard
     },
+    methods: {
+        beforeWindowUnload(e) {
+            this.$store.commit('LOGOUT');
+        }
+    },
+    created() {
+        window.addEventListener('beforeunload', this.beforeWindowUnload);
+    }
 };
 </script>
   

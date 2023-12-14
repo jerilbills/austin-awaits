@@ -29,6 +29,10 @@ export function createStore(currentToken, currentUser) {
         localStorage.removeItem("user");
         state.token = "";
         state.user = {};
+        state.activeItems = [];
+        state.activeList = {};
+        state.sideBarRefreshKey = 0;
+        state.listInvitesRefreshKey = 0;
         axios.defaults.headers.common = {};
       },
       SET_NOTIFICATION(state, notification) {
