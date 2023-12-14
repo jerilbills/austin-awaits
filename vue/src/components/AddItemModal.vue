@@ -115,11 +115,7 @@ export default {
       
       ItemService.addItemToCatalog(newItem)
       .then(response => {
-        console.log("Item added successfully",response.data);
-        this.newItemName = "";
-        this.newItemDescription = "";
-        this.newImgUrl = "";
-        this.potentialImages = [];
+        this.clearData();
         this.hideModal(response.data);
       })
       .catch(error => {
@@ -127,11 +123,16 @@ export default {
       });
     },
     closeModalWithoutItem() {
-        this.newItemName = "";
+        this.clearData();
+        this.hideModal();
+    },
+    clearData() {
+      this.newItemName = "";
         this.newItemDescription = "";
         this.newImgUrl = "";
         this.potentialImages = [];
-        this.hideModal();
+        this.currentPage = 1;
+        this.numberOfPages = 0;
     },
     selectImage(imageUrl) {
       this.newImgUrl = imageUrl;
@@ -182,13 +183,14 @@ export default {
 
 .modal-close:active, .modal-close:hover {
   background-color: rgba(10, 10, 10, 0.4);
+
 }
 
 
 .image-options {
   display: flex;
   flex-wrap: wrap;
-  justify-content: flex-start;
+  justify-content: space-between;
 }
 
 .image-option {
@@ -198,16 +200,16 @@ export default {
 .image-option img {
   cursor: pointer;
   border: 2px solid transparent;
-  width: auto;
+  max-width: 180px;
   height: 150px;
   cursor: pointer;
 }
 
 .image-option img.selected {
-  border: 2px solid #bf5700;
+  border: 3px solid #bf5700;
 }
 .item-image {
-  height:260px
+  height:260px;
 }
 </style>
   
