@@ -1,8 +1,8 @@
 <template>
   <div class="modal" :class="{ 'is-active': showModal }">
-    <div class="modal-background" @click="addItem"></div>
+    <div class="modal-background" @click="closeWithoutEdit"></div>
     <div class="modal-content">
-      <div class="modal-close-div"><button class="modal-close is-large" aria-label="close" @click="addItem"></button></div>
+      <div class="modal-close-div"><button class="modal-close is-large" aria-label="close" @click="closeWithoutEdit"></button></div>
       <div class="box">
         <h2>Edit Item</h2>
         <form @submit.prevent="addItem">
@@ -63,7 +63,7 @@
               <button type="submit" class="button is-primary" @click="addItem" :disabled="!hasRequiredFields">Save</button>
             </div>
             <div class="control">
-              <button @click="addItem" class="button is-link">Cancel</button>
+              <button @click="closeWithoutEdit" class="button is-link">Cancel</button>
             </div>
           </div>
         </form>
@@ -123,6 +123,10 @@ export default {
     }
   },
   methods: {
+    closeWithoutEdit() {
+      this.clearData();
+      this.hideModal();
+    },
     hasItemChanged() {
       return this.itemUnderEdit.name != this.selectedItem.name || 
       this.itemUnderEdit.description != this.selectedItem.description || 
@@ -130,6 +134,7 @@ export default {
       !this.existingImage;
     },
     addItem() {
+
       if (this.hasItemChanged()) {
         // create item to put
         const updatedItem = {
@@ -152,8 +157,7 @@ export default {
       }
       else {
         // item hasn't changed - just do a normal close
-        this.clearData();
-        this.hideModal();
+        this.closeWithoutEdit();
       }
     },
     clearData() {

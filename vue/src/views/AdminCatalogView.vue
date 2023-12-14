@@ -146,7 +146,7 @@ export default {
             if (updatedItem) {
                 let foundIndex = this.items.findIndex(existing => existing.itemId == updatedItem.itemId);
                 if (foundIndex > 0) {
-                    this.items[foundIndex] = Object.assign({}, updatedItem);
+                    this.items[foundIndex] = updatedItem;
                 }
             }
         },
