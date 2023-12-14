@@ -1,4 +1,5 @@
 <template>
+    <LoadingOverlay :loading="loading" />
     <div class="sidebar is-dark">
         <span class="sidebar-header"><span class="icon"><i class="fa fa-home"></i></span> Active Lists</span>
         <div v-for="(department, index) in departments" :key="index">
@@ -57,9 +58,14 @@
 import ShoppingListService from '../services/ShoppingListService';
 import DepartmentService from '../services/DepartmentService';
 import AddListModal from './AddListModal.vue';
+import LoadingOverlay from './LoadingOverlay.vue';
 
 export default {
-    components: { AddListModal },
+    components: {
+        AddListModal,
+        LoadingOverlay,
+    },
+
     data() {
         return {
             lists: [],
@@ -68,6 +74,7 @@ export default {
             departments: [],
             showListModal: false,
             draftLists: [],
+            loading: true,
         };
     },
 
@@ -104,6 +111,9 @@ export default {
             .then((response) => {
                 this.draftLists = response.data.sort((a, b) => (a.name > b.name ? 1 : -1));
             })
+            .finally(() => {
+                this.loading = false;
+            });
     },
 
     methods: {

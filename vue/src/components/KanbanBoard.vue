@@ -1,9 +1,9 @@
 <template>
     <div class="kanban-board-header">
         <div class="page-title" v-if="activeList.name">{{ activeList.name }} (Due {{ dueDate }})  
-            <p v-show="activeList.status === 1" class="draft-status">
+            <p v-show="activeList.status === 1" class="draft-status" style="font-family: 'Cutive', Courier, monospace;" >
                   - DRAFT   
-                <button class="button is-primary is-small" @click="createList">Publish List</button>
+                <button class="button is-primary is-small" @click="publishList">Publish List</button>
             </p>
         </div>
         <div class="page-title" v-else>Please select a list to work on. Austin Awaits!</div>
@@ -340,9 +340,6 @@ export default {
         listOwnerTooltip() {
             return this.$store.state.activeList.listOwner.firstName + " " + this.$store.state.activeList.listOwner.lastName;
         },
-        // handleAdminButtonClick() {
-        //     console.log("Button clicked");
-        // },
         openAddItemModal() {
             this.showAddItemModal = true;
         },
@@ -354,6 +351,19 @@ export default {
             this.showItemAddedSnackbar();
             this.$store.commit('REFRESH_SIDE_BAR');
         },
+        publishList() {
+            this.$store.state.activeList.status = 2;
+            ShoppingListService
+              .updateList(this.$store.state.activeList)
+              .then(response => {
+                    this.$store.commit('CLEAR_ACTIVE_LIST');
+                    this.$store.commit('CLEAR_ITEMS');
+                    this.$store.commit('REFRESH_SIDE_BAR');
+                })
+              .catch(error => {
+                    console.error('Error updating list:', error);
+                })
+        }
     },
     created() {
         ItemService.getAllItems()
@@ -420,6 +430,8 @@ h6 {
     justify-content: space-between;
     width: 100%;
     position: relative;
+    display: flex;
+    align-items: center;
 }
 
 .invites {
