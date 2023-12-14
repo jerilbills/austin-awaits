@@ -1,7 +1,7 @@
 <template>
     <div class="kanban-board-header">
         <div class="page-title" v-if="activeList.name">{{ activeList.name }} (Due {{ dueDate }})  
-            <p v-show="activeList.status === 1" class="draft-status" style="font-family: 'Courier New', Courier, monospace;" >
+            <p v-show="activeList.status === 1" class="draft-status" style="font-family: 'Cutive', Courier, monospace;" >
                   - DRAFT   
                 <button class="button is-primary is-small" @click="publishList">Publish List</button>
             </p>
