@@ -2,6 +2,7 @@
   <div class="modal" :class="{ 'is-active': showModal }">
     <div class="modal-background" @click="hideModal"></div>
     <div class="modal-content">
+      <div class="modal-close-div"><button class="modal-close is-large" aria-label="close" @click="closeModalWithoutItem"></button></div>
       <div class="box">
         <h2>Add New Item</h2>
         <form @submit.prevent="addItem">
@@ -26,7 +27,9 @@
           <div class="item-image">
             <div class="field">
               <label class="label">Select Item Image:</label>
-              <div class="control image-options">
+              <div class="images-not-loaded" v-if="!potentialImages.images && !loadingItems"><p>Please enter an <u>Item Name</u> to display potential images.</p><p>Be as specific and descriptive as possible.</p></div>
+              <div><progress class="progress is-small is-primary" max="100" v-if="loadingItems"></progress></div>
+              <div class="control image-options" v-if="potentialImages.images && !loadingItems">
                 <div v-for="(image, index) in displayedImages" :key="image.id" class="image-option">
                   <img :src="image" alt="Potential Image" @click="selectImage(image)"
                     :class="{ 'selected': image === newImgUrl }" @error="imgPlaceholder"/>
@@ -51,7 +54,7 @@
           <!-- Submit and Cancel Buttons -->
           <div class="field is-grouped">
             <div class="control">
-              <button type="submit" class="button is-primary" @click="addNewItem()">Submit</button>
+              <button type="submit" class="button is-primary" @click="addNewItem()" :disabled="!newItemName || !newItemDescription">Submit</button>
             </div>
             <div class="control">
               <button @click="closeModalWithoutItem" class="button is-link">Cancel</button>
@@ -60,7 +63,6 @@
         </form>
       </div>
     </div>
-    <button class="modal-close is-large" aria-label="close" @click="closeModalWithoutItem"></button>
   </div>
 </template>
   
@@ -83,6 +85,7 @@ export default {
       itemsPerPage: 3,
       currentPage: 1,
       numberOfPages: 0,
+      loadingItems: false
     };
   },
   computed: {
@@ -115,11 +118,7 @@ export default {
       
       ItemService.addItemToCatalog(newItem)
       .then(response => {
-        console.log("Item added successfully",response.data);
-        this.newItemName = "";
-        this.newItemDescription = "";
-        this.newImgUrl = "";
-        this.potentialImages = [];
+        this.clearData();
         this.hideModal(response.data);
       })
       .catch(error => {
@@ -127,11 +126,17 @@ export default {
       });
     },
     closeModalWithoutItem() {
-        this.newItemName = "";
+        this.clearData();
+        this.hideModal();
+    },
+    clearData() {
+      this.newItemName = "";
         this.newItemDescription = "";
         this.newImgUrl = "";
         this.potentialImages = [];
-        this.hideModal();
+        this.currentPage = 1;
+        this.numberOfPages = 0;
+        this.loadingItems = false;
     },
     selectImage(imageUrl) {
       this.newImgUrl = imageUrl;
@@ -150,9 +155,11 @@ export default {
       const payload = {
         "itemName": itemName
       };
+      this.loadingItems = true;
       ImageService.getPotentialImages(payload)
         .then(response => {
           this.potentialImages = response.data;
+          this.loadingItems = false;
         })
         .catch(error => {
           console.error('Error fetching potential images:', error);
@@ -173,11 +180,25 @@ export default {
   margin: 0 auto;
 }
 
+.modal-close {
+  position: absolute;
+  top: 10px; 
+  right: 10px;
+  background-color: rgba(10, 10, 10, 0.2);
+}
 
+.modal-close:active, .modal-close:hover {
+  background-color: rgba(10, 10, 10, 0.4);
+
+}
+
+.images-not-loaded {
+  color: #bf5700;
+}
 .image-options {
   display: flex;
   flex-wrap: wrap;
-  justify-content: flex-start;
+  justify-content: space-between;
 }
 
 .image-option {
@@ -187,16 +208,16 @@ export default {
 .image-option img {
   cursor: pointer;
   border: 2px solid transparent;
-  width: auto;
+  max-width: 180px;
   height: 150px;
   cursor: pointer;
 }
 
 .image-option img.selected {
-  border: 2px solid #bf5700;
+  border: 3px solid #bf5700;
 }
 .item-image {
-  height:260px
+  height:260px;
 }
 </style>
   
