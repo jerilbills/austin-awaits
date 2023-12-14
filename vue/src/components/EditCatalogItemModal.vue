@@ -11,7 +11,7 @@
           <div class="field">
             <label class="label">Item Name:</label>
             <div class="control">
-              <input class="input" name="itemname" id="name" v-model="itemUnderEdit.name" required />
+              <input class="input" name="itemname" id="name" v-model="itemUnderEdit.name" @blur="getImages(itemUnderEdit.name)" required />
             </div>
           </div>
 
@@ -28,6 +28,32 @@
             <label class="label">Item Image: <div class="button is-primary is-small" @click="clearImage">Change Image</div></label>
             <div class="control">
               <img id='existing-image' :src="itemUnderEdit.imgUrl" :alt="itemUnderEdit.name" @error="imgPlaceholder" style="max-height: 250px;"/>
+            </div>
+          </div>
+
+          <!-- Choose New Item Image -->
+          <div class="item-image" v-if="!existingImage">
+            <div class="field">
+              <label class="label">Item Image:</label>
+              <div><progress class="progress is-small is-primary" max="100" v-if="loadingItems"></progress></div>
+              <div class="control image-options" v-if="potentialImages.images && !loadingItems">
+                <div v-for="(image, index) in displayedImages" :key="image.id" class="image-option">
+                  <img :src="image" alt="Potential Image" @click="selectImage(image)"
+                    :class="{ 'selected': image === newImgUrl }" @error="imgPlaceholder"/>
+                </div>
+              </div>
+            </div>
+
+            <!-- Pagination Controls -->
+            <div class="pagination" v-if="totalPages > 1">
+              <button @click="prevPage" :disabled="currentPage === 1" class="button is-primary is-small">
+                Previous
+              </button>
+              <span v-if="totalPages > 0">{{ currentPage }} of {{ totalPages }}</span>
+              <button @click="nextPage" :disabled="currentPage === totalPages" class="button is-primary is-small"
+                type="button">
+                Next
+              </button>
             </div>
           </div>
 
@@ -70,6 +96,13 @@ export default {
       itemUnderEdit: {},
       existingImage: false
     };
+  },
+  watch: {
+    existingImage(newValue, oldValue) {
+      if (oldValue == true && newValue == false) {
+        this.getImages(this.itemUnderEdit.name);
+      }
+    }
   },
   computed: {
     totalPages() {
@@ -132,7 +165,6 @@ export default {
         this.numberOfPages = 0;
         this.loadingItems = false;
         this.itemUnderEdit = {};
-        this.existingImage = false;
     },
     selectImage(imageUrl) {
       this.newImgUrl = imageUrl;
@@ -148,18 +180,20 @@ export default {
       }
     },
     getImages(itemName) {
-      const payload = {
-        "itemName": itemName
-      };
-      this.loadingItems = true;
-      ImageService.getPotentialImages(payload)
-        .then(response => {
-          this.potentialImages = response.data;
-          this.loadingItems = false;
-        })
-        .catch(error => {
-          console.error('Error fetching potential images:', error);
-        });
+      if (!this.existingImage) {
+        const payload = {
+          "itemName": itemName
+        };
+        this.loadingItems = true;
+        ImageService.getPotentialImages(payload)
+          .then(response => {
+            this.potentialImages = response.data;
+            this.loadingItems = false;
+          })
+          .catch(error => {
+            console.error('Error fetching potential images:', error);
+          });
+      }
     },
     imgPlaceholder(e) {
         e.target.src = "/src/assets/blank-pixel.png"
