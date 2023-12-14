@@ -27,7 +27,9 @@
           <div class="item-image">
             <div class="field">
               <label class="label">Select Item Image:</label>
-              <div class="control image-options">
+              <div class="images-not-loaded" v-if="!potentialImages.images && !loadingItems"><p>Please enter an <u>Item Name</u> to display potential images.</p><p>Be as specific and descriptive as possible.</p></div>
+              <div><progress class="progress is-small is-primary" max="100" v-if="loadingItems"></progress></div>
+              <div class="control image-options" v-if="potentialImages.images && !loadingItems">
                 <div v-for="(image, index) in displayedImages" :key="image.id" class="image-option">
                   <img :src="image" alt="Potential Image" @click="selectImage(image)"
                     :class="{ 'selected': image === newImgUrl }" @error="imgPlaceholder"/>
@@ -52,7 +54,7 @@
           <!-- Submit and Cancel Buttons -->
           <div class="field is-grouped">
             <div class="control">
-              <button type="submit" class="button is-primary" @click="addNewItem()">Submit</button>
+              <button type="submit" class="button is-primary" @click="addNewItem()" :disabled="!newItemName || !newItemDescription">Submit</button>
             </div>
             <div class="control">
               <button @click="closeModalWithoutItem" class="button is-link">Cancel</button>
@@ -83,6 +85,7 @@ export default {
       itemsPerPage: 3,
       currentPage: 1,
       numberOfPages: 0,
+      loadingItems: false
     };
   },
   computed: {
@@ -133,6 +136,7 @@ export default {
         this.potentialImages = [];
         this.currentPage = 1;
         this.numberOfPages = 0;
+        this.loadingItems = false;
     },
     selectImage(imageUrl) {
       this.newImgUrl = imageUrl;
@@ -151,9 +155,11 @@ export default {
       const payload = {
         "itemName": itemName
       };
+      this.loadingItems = true;
       ImageService.getPotentialImages(payload)
         .then(response => {
           this.potentialImages = response.data;
+          this.loadingItems = false;
         })
         .catch(error => {
           console.error('Error fetching potential images:', error);
@@ -186,7 +192,9 @@ export default {
 
 }
 
-
+.images-not-loaded {
+  color: #bf5700;
+}
 .image-options {
   display: flex;
   flex-wrap: wrap;
