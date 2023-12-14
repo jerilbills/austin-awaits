@@ -49,6 +49,7 @@
 
                     <div>
                         <AddItemModal :showModal="modalVisible" :hideModal="hideModal" :addNewItem="addNewItem" />
+                        <EditCatalogItemModal :showModal="modalVisibleEdit" :hideModal="hideModalEdit" :selectedItem="selectedItem"/>
                     </div>
                 </div>         
             </div>
@@ -66,6 +67,7 @@ import AdminKanbanBoard from "../components/AdminKanbanBoard.vue";
 import AdminSidebar from "../components/AdminSidebar.vue";
 import LoadingOverlay from "../components/LoadingOverlay.vue";
 import AddItemModal from "../components/AddItemModal.vue";
+import EditCatalogItemModal from "../components/EditCatalogItemModal.vue";
 import ImageService from "../services/ImageService.js";
 import ItemService from "../services/ItemService";
 
@@ -77,7 +79,8 @@ export default {
         // AdminKanbanBoard,
         AdminSidebar,
         LoadingOverlay,
-        AddItemModal
+        AddItemModal,
+        EditCatalogItemModal
     },
     data() {
         return {
@@ -86,6 +89,7 @@ export default {
             itemsPerPage: 5,
             currentPage: 1,
             modalVisible: false,
+            modalVisibleEdit: false,
             selectedItem: null,
             items: [],
             
@@ -127,7 +131,7 @@ export default {
         },
         showModalWithItem(item) {
             this.selectedItem = item;
-            this.modalVisible = true;
+            this.modalVisibleEdit = true;
         },
         hideModal(item) {
             this.modalVisible = false;
@@ -135,6 +139,10 @@ export default {
                 this.items.unshift(item);
                 this.showItemAddedSnackbar();
             }
+        },
+        hideModalEdit(item) {
+            this.modalVisibleEdit = false;
+            this.selectedItem = null;
         },
         imgPlaceholder(e) {
         e.target.src = "/src/assets/blank-pixel.png"
