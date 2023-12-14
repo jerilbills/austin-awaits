@@ -67,7 +67,7 @@
 
                 <!-- MODALS -->
                 <ItemDetailsModal v-if="showItemModal" :item="selectedItem" @close="closeItemModal" />
-                <InviteUserToListModal v-if="showInviteUserToListModal" @close="closeInviteUserToListModal" />
+                <InviteUserToListModal v-if="showInviteUserToListModal" @close="closeInviteUserToListModal" :invited-users="invitedUsers" />
                 <ListAddItemModal :isModalOpen="showAddItemModal" :closeModal="closeAddItemModal"
                     :itemsThatCanBeAdded="itemsThatCanBeAdded" @item-added="handleItemAdded" />
             </div>
@@ -99,6 +99,7 @@ export default {
             dragCounter: 0,
             showAddItemModal: false,
             availableItems: [],
+            invitedUsers: []
         };
     },
     computed: {
@@ -141,7 +142,7 @@ export default {
     },
     watch: {
         activeList(newVal, oldVal) {
-            if (newVal != oldVal && newVal.name != null) {
+            if (newVal && newVal.name != null) {
                 this.getListInvites();
             }
         },
@@ -358,6 +359,7 @@ export default {
             .catch(error => {
                 console.error("Error retrieving items", error);
             });
+
     },
 }
 </script>
