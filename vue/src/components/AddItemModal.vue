@@ -2,6 +2,7 @@
   <div class="modal" :class="{ 'is-active': showModal }">
     <div class="modal-background" @click="hideModal"></div>
     <div class="modal-content">
+      <div class="modal-close-div"><button class="modal-close is-large" aria-label="close" @click="closeModalWithoutItem"></button></div>
       <div class="box">
         <h2>Add New Item</h2>
         <form @submit.prevent="addItem">
@@ -60,7 +61,6 @@
         </form>
       </div>
     </div>
-    <button class="modal-close is-large" aria-label="close" @click="closeModalWithoutItem"></button>
   </div>
 </template>
   
@@ -171,6 +171,17 @@ export default {
 .modal-content {
   max-width: 800px;
   margin: 0 auto;
+}
+
+.modal-close {
+  position: absolute;
+  top: 10px; 
+  right: 10px;
+  background-color: rgba(10, 10, 10, 0.2);
+}
+
+.modal-close:active, .modal-close:hover {
+  background-color: rgba(10, 10, 10, 0.4);
 }
 
 
