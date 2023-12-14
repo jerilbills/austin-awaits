@@ -1,8 +1,8 @@
 <template>
   <div class="modal" :class="{ 'is-active': showModal }">
-    <div class="modal-background" @click="hideModal"></div>
+    <div class="modal-background" @click="addItem"></div>
     <div class="modal-content">
-      <div class="modal-close-div"><button class="modal-close is-large" aria-label="close" @click="closeModalWithoutItem"></button></div>
+      <div class="modal-close-div"><button class="modal-close is-large" aria-label="close" @click="addItem"></button></div>
       <div class="box">
         <h2>Edit Item</h2>
         <form @submit.prevent="addItem">
@@ -60,10 +60,10 @@
           <!-- Submit and Cancel Buttons -->
           <div class="field is-grouped">
             <div class="control">
-              <button type="submit" class="button is-primary" @click="addEditedItem()" :disabled="!hasRequiredFields">Save</button>
+              <button type="submit" class="button is-primary" @click="addItem" :disabled="!hasRequiredFields">Save</button>
             </div>
             <div class="control">
-              <button @click="closeModalWithoutItem" class="button is-link">Cancel</button>
+              <button @click="addItem" class="button is-link">Cancel</button>
             </div>
           </div>
         </form>

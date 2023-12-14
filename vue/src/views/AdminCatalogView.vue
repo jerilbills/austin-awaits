@@ -18,7 +18,7 @@
                         <input class="input" type="text" v-model="searchTerm" placeholder="Search..." />
                         <button class="button is-primary" @click="showModal" style="margin-right:10px">Add New Item</button>
                     </div>
-                    <table class="table">
+                    <table class="table" style="width: 100%; height: 100%;">
                         <thead>
                             <tr>
                                 <th>Item Name</th>
@@ -27,13 +27,13 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr v-for="(item, index) in paginatedItems" :key="index">
-                                <td @click="showModalWithItem(item)">{{ item.name }}</td>
+                            <tr v-for="(item, index) in paginatedItems" :key="index" style="height: 100px;" @click="showModalWithItem(item)">
+                                <td>{{ item.name }}</td>
                                 <td>
                                     <img :src="item.imgUrl" alt="Item Image"
-                                        style="max-width: 100px; max-height: 100px;" @error="imgPlaceholder" />
+                                        style="max-width: 100px; max-height: 80px;" @error="imgPlaceholder" />
                                 </td>
-                                <td>{{ item.description }}</td>
+                                <td style="word-wrap: break-word;">{{ item.description }}</td>
                             </tr>
                         </tbody>
                     </table>
@@ -143,8 +143,10 @@ export default {
         hideModalEdit(updatedItem) {
             this.modalVisibleEdit = false;
             this.selectedItem = null;          
-            let foundIndex = this.items.findIndex(existing => existing.itemId = updatedItem.itemId);
-            this.items[foundIndex] = updatedItem;
+            if (updatedItem) {
+                let foundIndex = this.items.findIndex(existing => existing.itemId == updatedItem.itemId);
+                this.items[foundIndex] = Object.assign({}, updatedItem);
+            }
         },
         imgPlaceholder(e) {
         e.target.src = "/src/assets/blank-pixel.png"
@@ -189,10 +191,7 @@ export default {
 
 #page {
     height: 100vh;
-    /* background-image: url('../assets/austin-background.png'); */
     background-color: #FFFFFF;
-    background-position: right bottom;
-    background-repeat: no-repeat;
     overflow-x: hidden;
     overflow-y: auto;
 }
@@ -222,7 +221,7 @@ export default {
 .table td {
     overflow: hidden;
     text-overflow: ellipsis;
-    white-space: nowrap;
+    white-space: word-wrap;
 }
 
 .table tbody tr:nth-child(odd) {
