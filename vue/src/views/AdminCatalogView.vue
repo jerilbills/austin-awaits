@@ -140,10 +140,11 @@ export default {
                 this.showItemAddedSnackbar();
             }
         },
-        hideModalEdit(item) {
+        hideModalEdit(updatedItem) {
             this.modalVisibleEdit = false;
-            this.selectedItem = null;
-            // TODO - find existing item and update it w/ the response that came back
+            this.selectedItem = null;          
+            let foundIndex = this.items.findIndex(existing => existing.itemId = updatedItem.itemId);
+            this.items[foundIndex] = updatedItem;
         },
         imgPlaceholder(e) {
         e.target.src = "/src/assets/blank-pixel.png"
