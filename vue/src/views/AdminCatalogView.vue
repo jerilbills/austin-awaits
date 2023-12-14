@@ -7,8 +7,8 @@
             <!-- Include the Sidebar component -->
             <AdminSidebar :key="$store.state.sideBarRefreshKey" />
         </div>
+        <LoadingOverlay :loading="loading" />
         <div id="catalog">
-            <Navbar />
             <div class="content">
                 <h1>Item Catalog</h1>
                 <!-- Display loading overlay when loading is true -->
@@ -82,12 +82,13 @@ export default {
     data() {
         return {
             searchTerm: '',
-            loading: false,
+            loading: true,
             itemsPerPage: 5,
             currentPage: 1,
             modalVisible: false,
             selectedItem: null,
             items: [],
+            
         }
     },
     computed: {
@@ -150,13 +151,21 @@ export default {
         }
     },
     created() {
-        ItemService.getAllItems()
+        setTimeout(() => {
+
+            ItemService.getAllItems()
             .then(response => {
                 this.items = response.data;
             })
             .catch(error => {
                 console.error("Error retrieving items", error);
+            })
+            .finally(() => {
+                this.loading = false;
             });
+        },500);
+          
+        
 
         window.addEventListener('beforeunload', this.beforeWindowUnload);
     },

@@ -76,10 +76,8 @@ import departmentService from '../services/DepartmentService';
 import ShoppingListService from '../services/ShoppingListService';
 import LoadingOverlay from "../components/LoadingOverlay.vue";
 import AdminSidebar from "../components/AdminSidebar.vue";
-import DepartmentService from "../services/DepartmentService";
 import ListAddItemModal from "../components/ListAddItemModal.vue";
 import ItemService from "../services/ItemService";
-import router from "../router";
 
 export default {
   components: {
@@ -186,46 +184,55 @@ export default {
         });
 
     },
-    
+
     saveAsDraft() {
       const dateObject = new Date(this.dueDate);
       let departmentId = this.selectedDepartment;
-      console.log(departmentId);
-      const newList = {
-        ownerId: this.$store.state.user.userId,
-        listOwner: {
-          userId: this.$store.state.user.userId,
-          username: this.$store.state.user.username,
-          role: this.$store.state.user.role,
-          firstName: this.$store.state.user.firstName,
-          lastName: this.$store.state.user.lastName,
-          avatarUrl: this.$store.state.user.avatarUrl,
-          departmentId: this.$store.state.user.departmentId,
-        },
-        name: this.employeeName,
-        departmentId: this.selectedDepartment,
-        numberOfItems: this.addedItems.length,
-        dueDate: dateObject,
-        status: 1,
-        isActive: true,
-      }
-      ShoppingListService.createNewList(this.selectedDepartment, newList)
-        .then((response) => {
-          let newListId = response.data.listId;
-          console.log("list added", response.data);
-          console.log(newListId);
-          this.$store.commit('SET_ACTIVE_LIST', response.data);
-          this.$router.push({
-            name: 'adminHome',
-            params: {
 
-            },
+      this.$nextTick(() => {
+        console.log('Before CLEAR_ITEMS', this.addedItems);
+        this.$store.commit('CLEAR_ITEMS');
+        console.log('After CLEAR_ITEMS', this.addedItems);
+
+        const newList = {
+          ownerId: this.$store.state.user.userId,
+          listOwner: {
+            userId: this.$store.state.user.userId,
+            username: this.$store.state.user.username,
+            role: this.$store.state.user.role,
+            firstName: this.$store.state.user.firstName,
+            lastName: this.$store.state.user.lastName,
+            avatarUrl: this.$store.state.user.avatarUrl,
+            departmentId: this.$store.state.user.departmentId,
+          },
+          name: this.employeeName,
+          departmentId: this.selectedDepartment,
+          numberOfItems: this.addedItems.length,
+          dueDate: dateObject,
+          status: 1,
+          isActive: true,
+        };
+
+        ShoppingListService.createNewList(this.selectedDepartment, newList)
+          .then((response) => {
+            let newListId = response.data.listId;
+            console.log("list added", response.data);
+            console.log(newListId);
+            this.$store.commit('SET_ACTIVE_LIST', response.data);
+
+            this.$nextTick(() => {
+              this.$router.push({
+                name: 'adminHome',
+                params: {}
+              });
+            });
+
+            this.$store.commit('REFRESH_SIDE_BAR');
+          })
+          .catch((error) => {
+            console.log(error);
           });
-          this.$store.commit('REFRESH_SIDE_BAR');
-        })
-        .catch((error) => {
-          console.log(error);
-        });
+      });
     },
 
     navigateTo(listId) {
@@ -248,7 +255,7 @@ export default {
     },
 
     beforeWindowUnload(e) {
-            this.$store.commit('LOGOUT');
+      this.$store.commit('LOGOUT');
     },
 
   },
@@ -284,7 +291,7 @@ export default {
         console.error("Error retrieving items", error);
       });
 
-      window.addEventListener('beforeunload', this.beforeWindowUnload);
+    window.addEventListener('beforeunload', this.beforeWindowUnload);
   },
 }
 </script>
