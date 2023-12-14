@@ -42,7 +42,10 @@
         </div>
 
         <div class="boss-hog">
-            <img src="../assets/like-a-boss.png" alt="Work Like a Boss" width="100">
+            <img src="../assets/like-a-boss.png" alt="Work Like a Boss" width="100" @click="playBossHog">
+            <audio id="boss-hog-audio" autoplay>
+                <source id="boss-hog-audio-src" src="" type="audio/mpeg">
+            </audio>
         </div>
 
         <!--ADD LIST MODAL-->
@@ -200,6 +203,15 @@ export default {
                 .then((response) => {
                     this.draftLists = response.data.sort((a, b) => (a.name > b.name ? 1 : -1));
                 })
+        },
+        playBossHog() {
+            // find the audio element, change the src
+            let x = document.getElementById("boss-hog-audio");
+            x.src = "../src/assets/boss-hog-quote.mp3";
+
+
+            //../assets/boss-hog-quote.mp3
+            // change it back
         }
     },
 };
