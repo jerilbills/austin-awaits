@@ -149,41 +149,45 @@ export default {
       this.addedItems.push(item);
     },
     submitList() {
-      const dateObject = new Date(this.dueDate);
-      let departmentId = this.selectedDepartment;
-      console.log(departmentId);
-      const newList = {
-        ownerId: this.$store.state.user.userId,
-        listOwner: {
-          userId: this.$store.state.user.userId,
-          username: this.$store.state.user.username,
-          role: this.$store.state.user.role,
-          firstName: this.$store.state.user.firstName,
-          lastName: this.$store.state.user.lastName,
-          avatarUrl: this.$store.state.user.avatarUrl,
-          departmentId: this.$store.state.user.departmentId,
-        },
-        name: this.employeeName,
-        departmentId: this.selectedDepartment,
-        numberOfItems: this.addedItems.length,
-        dueDate: dateObject,
-        status: 2,
-        isActive: true,
-      }
-      ShoppingListService.createNewList(this.selectedDepartment, newList)
-        .then((response) => {
-          let newListId = response.data.listId;
-          console.log("list added", response.data);
-          console.log(newListId);
-          this.$store.commit('SET_ACTIVE_LIST', response.data);
-          this.navigateTo(this.$store.state.activeList.listId);
-          this.$store.commit('REFRESH_SIDE_BAR');
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-
-    },
+      this.$nextTick(() => {
+        console.log('Before CLEAR_ITEMS', this.addedItems);
+        this.$store.commit('CLEAR_ITEMS');
+        console.log('After CLEAR_ITEMS', this.addedItems);
+      })
+        const dateObject = new Date(this.dueDate);
+        let departmentId = this.selectedDepartment;
+        console.log(departmentId);
+        const newList = {
+          ownerId: this.$store.state.user.userId,
+          listOwner: {
+            userId: this.$store.state.user.userId,
+            username: this.$store.state.user.username,
+            role: this.$store.state.user.role,
+            firstName: this.$store.state.user.firstName,
+            lastName: this.$store.state.user.lastName,
+            avatarUrl: this.$store.state.user.avatarUrl,
+            departmentId: this.$store.state.user.departmentId,
+          },
+          name: this.employeeName,
+          departmentId: this.selectedDepartment,
+          numberOfItems: this.addedItems.length,
+          dueDate: dateObject,
+          status: 2,
+          isActive: true,
+        }
+        ShoppingListService.createNewList(this.selectedDepartment, newList)
+          .then((response) => {
+            let newListId = response.data.listId;
+            console.log("list added", response.data);
+            console.log(newListId);
+            this.$store.commit('SET_ACTIVE_LIST', response.data);
+            this.navigateTo(this.$store.state.activeList.listId);
+            this.$store.commit('REFRESH_SIDE_BAR');
+          })
+          .catch((error) => {
+            console.log(error);
+          })
+      },
 
     saveAsDraft() {
       const dateObject = new Date(this.dueDate);
