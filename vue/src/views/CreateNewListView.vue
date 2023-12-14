@@ -247,6 +247,10 @@ export default {
       });
     },
 
+    beforeWindowUnload(e) {
+            this.$store.commit('LOGOUT');
+    },
+
   },
   created() {
     this.loading = true;
@@ -279,6 +283,8 @@ export default {
       .catch(error => {
         console.error("Error retrieving items", error);
       });
+
+      window.addEventListener('beforeunload', this.beforeWindowUnload);
   },
 }
 </script>

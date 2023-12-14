@@ -135,6 +135,7 @@ import InviteService from '../services/InviteService';
         })
     },
     filterOutAlreadyInvitedUsers() {
+      if (this.invitedUsers) {
       const alreadyInvitedUserIds = this.invitedUsers.map(user => user.invitedUser.userId);
           console.log(this.invitedUsers);
           console.log(alreadyInvitedUserIds);
@@ -144,6 +145,7 @@ import InviteService from '../services/InviteService';
             this.errorMessage = "There are no other users in this department to add to this list";
             return;
           }
+        }
     },
     addUser() {
       const inviteToAdd = {

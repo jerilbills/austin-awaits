@@ -95,6 +95,9 @@ export default {
             const date = new Date(dateString);
             return date.toLocaleDateString();
         },
+        beforeWindowUnload(e) {
+            this.$store.commit('LOGOUT');
+        }
     },
     created() {
         this.getUserDepartment();
@@ -113,7 +116,9 @@ export default {
                     this.loading = false;
                 });
         }, 500); 
-    }
+
+        window.addEventListener('beforeunload', this.beforeWindowUnload);
+    },
 };
 </script>
 
