@@ -18,7 +18,7 @@
                         <input class="input" type="text" v-model="searchTerm" placeholder="Search..." />
                         <button class="button is-primary" @click="showModal" style="margin-right:10px">Add New Item</button>
                     </div>
-                    <table class="table">
+                    <table class="table" style="width: 100%; height: 100%;">
                         <thead>
                             <tr>
                                 <th>Item Name</th>
@@ -27,13 +27,13 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr v-for="(item, index) in paginatedItems" :key="index">
-                                <td @click="showModalWithItem(item)">{{ item.name }}</td>
+                            <tr v-for="(item, index) in paginatedItems" :key="index" style="height: 100px;" @click="showModalWithItem(item)">
+                                <td>{{ item.name }}</td>
                                 <td>
                                     <img :src="item.imgUrl" alt="Item Image"
-                                        style="max-width: 100px; max-height: 100px;" @error="imgPlaceholder" />
+                                        style="max-width: 100px; max-height: 80px;" @error="imgPlaceholder" />
                                 </td>
-                                <td>{{ item.description }}</td>
+                                <td style="word-wrap: break-word;">{{ item.description }}</td>
                             </tr>
                         </tbody>
                     </table>
@@ -49,6 +49,7 @@
 
                     <div>
                         <AddItemModal :showModal="modalVisible" :hideModal="hideModal" :addNewItem="addNewItem" />
+                        <EditCatalogItemModal :showModal="modalVisibleEdit" :hideModal="hideModalEdit" :selectedItem="selectedItem"/>
                     </div>
                 </div>         
             </div>
@@ -66,6 +67,7 @@ import AdminKanbanBoard from "../components/AdminKanbanBoard.vue";
 import AdminSidebar from "../components/AdminSidebar.vue";
 import LoadingOverlay from "../components/LoadingOverlay.vue";
 import AddItemModal from "../components/AddItemModal.vue";
+import EditCatalogItemModal from "../components/EditCatalogItemModal.vue";
 import ImageService from "../services/ImageService.js";
 import ItemService from "../services/ItemService";
 
@@ -77,7 +79,8 @@ export default {
         // AdminKanbanBoard,
         AdminSidebar,
         LoadingOverlay,
-        AddItemModal
+        AddItemModal,
+        EditCatalogItemModal
     },
     data() {
         return {
@@ -86,6 +89,7 @@ export default {
             itemsPerPage: 5,
             currentPage: 1,
             modalVisible: false,
+            modalVisibleEdit: false,
             selectedItem: null,
             items: [],
             
@@ -127,13 +131,23 @@ export default {
         },
         showModalWithItem(item) {
             this.selectedItem = item;
-            this.modalVisible = true;
+            this.modalVisibleEdit = true;
         },
         hideModal(item) {
             this.modalVisible = false;
             if(item) {
                 this.items.unshift(item);
                 this.showItemAddedSnackbar();
+            }
+        },
+        hideModalEdit(updatedItem) {
+            this.modalVisibleEdit = false;
+            this.selectedItem = null;          
+            if (updatedItem) {
+                let foundIndex = this.items.findIndex(existing => existing.itemId == updatedItem.itemId);
+                if (foundIndex > 0) {
+                    this.items[foundIndex] = Object.assign({}, updatedItem);
+                }
             }
         },
         imgPlaceholder(e) {
@@ -179,10 +193,7 @@ export default {
 
 #page {
     height: 100vh;
-    /* background-image: url('../assets/austin-background.png'); */
     background-color: #FFFFFF;
-    background-position: right bottom;
-    background-repeat: no-repeat;
     overflow-x: hidden;
     overflow-y: auto;
 }
@@ -212,7 +223,7 @@ export default {
 .table td {
     overflow: hidden;
     text-overflow: ellipsis;
-    white-space: nowrap;
+    white-space: word-wrap;
 }
 
 .table tbody tr:nth-child(odd) {
