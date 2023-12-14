@@ -31,8 +31,6 @@
             </div>
           </div>
 
-          
-
           <!-- Submit and Cancel Buttons -->
           <div class="field is-grouped">
             <div class="control">
@@ -88,10 +86,7 @@ export default {
       }
     },
     hasRequiredFields() {
-      // return this.itemUnderEdit.name && this.itemUnderEdit.description;
-
-      // TODO - complete POST and then turn this functionality on
-      return false;
+      return this.itemUnderEdit.name && this.itemUnderEdit.description;
     }
   },
   methods: {
@@ -108,33 +103,25 @@ export default {
           itemId: this.itemUnderEdit.itemId,
           name: this.itemUnderEdit.name,
           description: this.itemUnderEdit.description,
-          imgUrl: this.existingImage ? this.itemUnderEdit.imgUrl : this.newImgUrl,
+          imgUrl: this.existingImage ? this.itemUnderEdit.imgUrl : this.newImgUrl || '/src/assets/blank-pixel.png',
           lastModifiedBy: this.$store.state.user.userId
         };
 
-        console.log(updatedItem);
-        /*
-        // TODO - change from post to put  
-        ItemService.addItemToCatalog(updatedItem)
+        ItemService.updateItemInCatalog(updatedItem)
           .then(response => {
             this.clearData();
-
-            // TODO - passing back updated info on the return function  so grid gets updated 
             this.hideModal(response.data);
           })
           .catch(error => {
-            console.error("Error adding item", error);
+            console.error("Error updating item", error);
           });
-          */
+
       }
       else {
         // item hasn't changed - just do a normal close
-        this.closeModalWithoutItem();
-      }
-    },
-    closeModalWithoutItem() {
         this.clearData();
         this.hideModal();
+      }
     },
     clearData() {
         this.newItemName = "";

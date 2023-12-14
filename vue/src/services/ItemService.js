@@ -2,9 +2,12 @@ import axios from 'axios';
 
 export default {
 
-    // TEAM 1 BELOW THIS LINE
     addItemToCatalog(newItem) {
         return axios.post('/item', newItem)
+    },
+
+    updateItemInCatalog(updatedItem) {
+        return axios.put('/item/' + updatedItem.itemId, updatedItem)
     },
     
     getAllItems() {
@@ -14,16 +17,4 @@ export default {
     addItemToList(departmentId, listId, newListItem){
         return axios.post('/department/'+departmentId+'/list/'+listId+'/listitem', newListItem)
     }
-    
-    
-    
-    
-    
-    
-    // TEAM 2 BELOW THIS LINE
-
-
-
-
-
 }

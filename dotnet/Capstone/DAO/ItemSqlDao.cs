@@ -134,10 +134,12 @@ namespace Capstone.DAO
             string sql = "UPDATE items SET item_name = @item_name, " +
                 "item_description = @item_description, item_image_url = @item_image_url, " +
                 "last_modified_by_user_id = @last_modified_by, " +
-                "last_modified_date_utc = @last_modified_date, " +
+                "last_modified_date_utc = @last_modified_date " +
                 "WHERE item_id = @item_id;";
 
             Item output = null;
+
+            int rowsImpacted = 0;
 
             try
             {
@@ -153,11 +155,11 @@ namespace Capstone.DAO
                     cmd.Parameters.AddWithValue("@last_modified_by", itemToUpdate.LastModifiedBy);
                     cmd.Parameters.AddWithValue("@last_modified_date", DateTime.UtcNow);
 
-                    SqlDataReader reader = cmd.ExecuteReader();
+                    rowsImpacted = cmd.ExecuteNonQuery();
 
-                    if (reader.Read())
+                    if (rowsImpacted != 1)
                     {
-                        output = MapRowToItem(reader);
+                        throw new DaoException();
                     }
 
                 }
@@ -167,7 +169,7 @@ namespace Capstone.DAO
                 throw new DaoException();
             }
 
-            return output;
+            return GetItemByItemId(itemToUpdate.ItemId);
         }
 
 
