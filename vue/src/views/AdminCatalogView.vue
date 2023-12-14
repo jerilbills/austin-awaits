@@ -145,7 +145,9 @@ export default {
             this.selectedItem = null;          
             if (updatedItem) {
                 let foundIndex = this.items.findIndex(existing => existing.itemId == updatedItem.itemId);
-                this.items[foundIndex] = Object.assign({}, updatedItem);
+                if (foundIndex > 0) {
+                    this.items[foundIndex] = Object.assign({}, updatedItem);
+                }
             }
         },
         imgPlaceholder(e) {
